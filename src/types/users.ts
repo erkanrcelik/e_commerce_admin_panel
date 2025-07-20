@@ -69,7 +69,7 @@ export interface UpdateUserData {
   };
 }
 
-export interface UserFilters {
+export interface UserFilters extends Record<string, string | boolean | number | undefined> {
   search?: string;
   role?: UserRole;
   status?: UserStatus;

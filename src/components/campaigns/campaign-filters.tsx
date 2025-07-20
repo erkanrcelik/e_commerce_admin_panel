@@ -5,11 +5,11 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select';
 
 import type { CampaignFilters as CampaignFiltersType } from '@/types/campaigns';
@@ -58,14 +58,14 @@ export function CampaignFilters({
 
         <div className="flex items-center gap-2">
           <Select
-            value={filters.status || ''}
-            onValueChange={value => handleFilterChange('status', value)}
+            value={filters.status || 'all'}
+            onValueChange={value => handleFilterChange('status', value === 'all' ? '' : value)}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="paused">Paused</SelectItem>
@@ -75,14 +75,14 @@ export function CampaignFilters({
           </Select>
 
           <Select
-            value={filters.type || ''}
-            onValueChange={value => handleFilterChange('type', value)}
+            value={filters.type || 'all'}
+            onValueChange={value => handleFilterChange('type', value === 'all' ? '' : value)}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Types</SelectItem>
+              <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="discount">Discount</SelectItem>
               <SelectItem value="flash_sale">Flash Sale</SelectItem>
               <SelectItem value="free_shipping">Free Shipping</SelectItem>
@@ -92,14 +92,14 @@ export function CampaignFilters({
           </Select>
 
           <Select
-            value={filters.scope || ''}
-            onValueChange={value => handleFilterChange('scope', value)}
+            value={filters.scope || 'all'}
+            onValueChange={value => handleFilterChange('scope', value === 'all' ? '' : value)}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Scope" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Scopes</SelectItem>
+              <SelectItem value="all">All Scopes</SelectItem>
               <SelectItem value="all_products">All Products</SelectItem>
               <SelectItem value="category">Category</SelectItem>
               <SelectItem value="specific_products">
@@ -110,14 +110,14 @@ export function CampaignFilters({
           </Select>
 
           <Select
-            value={filters.sortBy || ''}
-            onValueChange={value => handleFilterChange('sortBy', value)}
+            value={filters.sortBy || 'default'}
+            onValueChange={value => handleFilterChange('sortBy', value === 'default' ? '' : value)}
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Default</SelectItem>
+              <SelectItem value="default">Default</SelectItem>
               <SelectItem value="name">Name</SelectItem>
               <SelectItem value="createdAt">Created Date</SelectItem>
               <SelectItem value="startDate">Start Date</SelectItem>

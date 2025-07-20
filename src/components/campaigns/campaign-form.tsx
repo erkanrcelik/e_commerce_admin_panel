@@ -4,9 +4,14 @@ import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -14,16 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 import type {
   Campaign,
+  CampaignScope,
+  CampaignType,
   CreateCampaignData,
+  DiscountType,
   UpdateCampaignData,
 } from '@/types/campaigns';
 
@@ -78,7 +81,9 @@ export function CampaignForm({
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+        <form onSubmit={(e) => {
+          void handleSubmit(handleFormSubmit)(e);
+        }} className="space-y-6">
           {/* Basic Information */}
           <Card>
             <CardHeader>
@@ -104,7 +109,7 @@ export function CampaignForm({
                 <div className="space-y-2">
                   <Label htmlFor="type">Campaign Type</Label>
                   <Select
-                    onValueChange={value => setValue('type', value as any)}
+                    onValueChange={value => setValue('type', value as CampaignType)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select campaign type" />
@@ -145,7 +150,7 @@ export function CampaignForm({
                 <div className="space-y-2">
                   <Label htmlFor="scope">Scope</Label>
                   <Select
-                    onValueChange={value => setValue('scope', value as any)}
+                    onValueChange={value => setValue('scope', value as CampaignScope)}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select scope" />
@@ -177,7 +182,7 @@ export function CampaignForm({
                   <Label htmlFor="discountType">Discount Type</Label>
                   <Select
                     onValueChange={value =>
-                      setValue('discountType', value as any)
+                      setValue('discountType', value as DiscountType)
                     }
                   >
                     <SelectTrigger>

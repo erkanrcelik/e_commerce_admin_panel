@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 
 import { NProgressProvider } from '@/components/providers/nprogress-provider';
@@ -7,6 +7,11 @@ import { ReduxProvider } from '@/providers/redux-provider';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: 'playableFactory - Digital Experiences',
@@ -20,7 +25,6 @@ export const metadata: Metadata = {
     'playable',
   ],
   authors: [{ name: 'playableFactory Team' }],
-  viewport: 'width=device-width, initial-scale=1',
   robots: 'index, follow',
   openGraph: {
     title: 'playableFactory - Digital Experiences',

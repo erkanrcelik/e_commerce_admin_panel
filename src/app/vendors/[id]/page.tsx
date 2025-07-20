@@ -1,38 +1,38 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
-  ArrowLeft,
-  Edit,
-  Trash2,
-  Building,
-  Mail,
-  Phone,
-  Clock,
-  MapPin,
-  Star,
-  FileText,
+    ArrowLeft,
+    Building,
+    Clock,
+    Edit,
+    FileText,
+    Mail,
+    MapPin,
+    Phone,
+    Star,
+    Trash2,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar';
+import { Badge } from '@/components/ui/badge';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
 } from '@/components/ui/sidebar';
 
 import type { VendorDetails } from '@/types/vendors';
@@ -590,7 +590,7 @@ function VendorDetailContent({
                     <div key={review.id} className="space-y-2">
                       <div className="flex items-center gap-2">
                         <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
+                          {Array.from({ length: 5 }).map((_, i) => (
                             <Star
                               key={i}
                               className={`h-3 w-3 ${

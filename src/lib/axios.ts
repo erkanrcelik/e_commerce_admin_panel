@@ -27,7 +27,7 @@ interface ApiErrorResponse {
  * Handles authentication, cookies, and error responses
  */
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3006/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -126,7 +126,7 @@ api.interceptors.request.use(
     return config;
   },
   error => {
-    return Promise.reject(error);
+    return Promise.reject(new Error((error as Error).message || 'Request failed'));
   }
 );
 
@@ -157,7 +157,7 @@ api.interceptors.response.use(
             }
           );
 
-          const { token, refreshToken: newRefreshToken } = response.data;
+          const { token, refreshToken: newRefreshToken } = response.data as { token: string; refreshToken?: string };
 
           // Update tokens
           setAuthToken(token);
@@ -172,7 +172,7 @@ api.interceptors.response.use(
           // Refresh failed - redirect to login
           removeAuthTokens();
           window.location.href = '/login';
-          return Promise.reject(refreshError);
+          return Promise.reject(new Error(refreshError instanceof Error ? refreshError.message : 'Token refresh failed'));
         }
       } else {
         // No refresh token or refresh already attempted
@@ -185,7 +185,7 @@ api.interceptors.response.use(
 
     // Handle other HTTP errors
     if (error.response) {
-      const { status, data } = error.response;
+      const { status, data } = error.response as { status: number; data: ApiErrorResponse };
 
       switch (status) {
         case 400:
@@ -237,14 +237,14 @@ api.interceptors.response.use(
         duration: 3000,
       });
     } else {
-      // Other error
-      toast.error('Error', {
-        description: error.message || 'An unexpected error occurred',
-        duration: 3000,
-      });
+          // Other error
+    toast.error('Error', {
+      description: (error as Error).message || 'An unexpected error occurred',
+      duration: 3000,
+    });
     }
 
-    return Promise.reject(error);
+    return Promise.reject(new Error((error as Error).message || 'Request failed'));
   }
 );
 

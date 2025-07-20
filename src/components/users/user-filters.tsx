@@ -5,11 +5,11 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select';
 
 import type { UserFilters as UserFiltersType } from '@/types/users';
@@ -52,14 +52,14 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
 
         <div className="flex items-center gap-2">
           <Select
-            value={filters.role || ''}
-            onValueChange={value => handleFilterChange('role', value)}
+            value={filters.role || 'all'}
+            onValueChange={value => handleFilterChange('role', value === 'all' ? '' : value)}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Roles</SelectItem>
+              <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="customer">Customer</SelectItem>
               <SelectItem value="vendor">Vendor</SelectItem>
               <SelectItem value="admin">Admin</SelectItem>
@@ -68,14 +68,14 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
           </Select>
 
           <Select
-            value={filters.status || ''}
-            onValueChange={value => handleFilterChange('status', value)}
+            value={filters.status || 'all'}
+            onValueChange={value => handleFilterChange('status', value === 'all' ? '' : value)}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Status</SelectItem>
+              <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="active">Active</SelectItem>
               <SelectItem value="inactive">Inactive</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
@@ -84,14 +84,14 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
           </Select>
 
           <Select
-            value={filters.sortBy || ''}
-            onValueChange={value => handleFilterChange('sortBy', value)}
+            value={filters.sortBy || 'default'}
+            onValueChange={value => handleFilterChange('sortBy', value === 'default' ? '' : value)}
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Default</SelectItem>
+              <SelectItem value="default">Default</SelectItem>
               <SelectItem value="name">Name</SelectItem>
               <SelectItem value="email">Email</SelectItem>
               <SelectItem value="createdAt">Created Date</SelectItem>

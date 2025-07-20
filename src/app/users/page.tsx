@@ -1,28 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Users as UsersIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Plus, Users as UsersIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { AppSidebar } from '@/components/sidebar/app-sidebar';
-import { UserCard } from '@/components/users/user-card';
-import { UserFilters } from '@/components/users/user-filters';
-
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import { FilterBar } from '@/components/layout/filter-bar';
+import { PageHeader } from '@/components/layout/page-header';
+import { PageLayout } from '@/components/layout/page-layout';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { UserCard } from '@/components/users/user-card';
 
 import type { User, UserFilters as UserFiltersType } from '@/types/users';
 
@@ -235,134 +221,171 @@ export default function UsersPage() {
     }
   };
 
+  const filterFields = [
+    {
+      key: 'search',
+      label: 'Search',
+      type: 'search' as const,
+      placeholder: 'Search users...',
+    },
+    {
+      key: 'role',
+      label: 'Role',
+      type: 'select' as const,
+      options: [
+        { value: 'all', label: 'All Roles' },
+        { value: 'customer', label: 'Customer' },
+        { value: 'vendor', label: 'Vendor' },
+        { value: 'admin', label: 'Admin' },
+        { value: 'moderator', label: 'Moderator' },
+      ],
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      type: 'select' as const,
+      options: [
+        { value: 'all', label: 'All Status' },
+        { value: 'active', label: 'Active' },
+        { value: 'inactive', label: 'Inactive' },
+        { value: 'pending', label: 'Pending' },
+        { value: 'suspended', label: 'Suspended' },
+      ],
+    },
+    {
+      key: 'sortBy',
+      label: 'Sort by',
+      type: 'select' as const,
+      width: 'w-40',
+      options: [
+        { value: 'default', label: 'Default' },
+        { value: 'name', label: 'Name' },
+        { value: 'email', label: 'Email' },
+        { value: 'createdAt', label: 'Created Date' },
+        { value: 'lastLoginAt', label: 'Last Login' },
+        { value: 'totalOrders', label: 'Orders' },
+        { value: 'totalSpent', label: 'Total Spent' },
+      ],
+    },
+    {
+      key: 'sortOrder',
+      label: 'Order',
+      type: 'select' as const,
+      width: 'w-24',
+      options: [
+        { value: 'desc', label: 'Desc' },
+        { value: 'asc', label: 'Asc' },
+      ],
+    },
+  ];
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Users</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+    <PageLayout
+      breadcrumbs={[
+        { label: 'Admin Panel', href: '/' },
+        { label: 'Users', isCurrent: true },
+      ]}
+    >
+      <PageHeader
+        title="Users"
+        description="Manage user accounts and permissions"
+        actionButton={{
+          label: 'Add User',
+          onClick: handleAddUser,
+        }}
+      />
+
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center gap-2">
+            <UsersIcon className="h-5 w-5 text-blue-600" />
+            <span className="text-sm font-medium text-gray-600">
+              Total Users
+            </span>
           </div>
-        </header>
-
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold">Users</h1>
-              <p className="text-muted-foreground">
-                Manage user accounts and permissions
-              </p>
-            </div>
-            <Button onClick={handleAddUser}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add User
-            </Button>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-lg border">
-              <div className="flex items-center gap-2">
-                <UsersIcon className="h-5 w-5 text-blue-600" />
-                <span className="text-sm font-medium text-gray-600">
-                  Total Users
-                </span>
-              </div>
-              <div className="text-2xl font-bold mt-1">{users.length}</div>
-            </div>
-            <div className="bg-white p-4 rounded-lg border">
-              <div className="flex items-center gap-2">
-                <UsersIcon className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-medium text-gray-600">
-                  Active Users
-                </span>
-              </div>
-              <div className="text-2xl font-bold mt-1">
-                {users.filter(u => u.status === 'active').length}
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-lg border">
-              <div className="flex items-center gap-2">
-                <UsersIcon className="h-5 w-5 text-orange-600" />
-                <span className="text-sm font-medium text-gray-600">
-                  Customers
-                </span>
-              </div>
-              <div className="text-2xl font-bold mt-1">
-                {users.filter(u => u.role === 'customer').length}
-              </div>
-            </div>
-            <div className="bg-white p-4 rounded-lg border">
-              <div className="flex items-center gap-2">
-                <UsersIcon className="h-5 w-5 text-purple-600" />
-                <span className="text-sm font-medium text-gray-600">
-                  Vendors
-                </span>
-              </div>
-              <div className="text-2xl font-bold mt-1">
-                {users.filter(u => u.role === 'vendor').length}
-              </div>
-            </div>
-          </div>
-
-          {/* Filters */}
-          <UserFilters filters={filters} onFiltersChange={setFilters} />
-
-          {/* Users Grid */}
-          {filteredUsers.length === 0 ? (
-            <div className="text-center py-12">
-              <UsersIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-muted-foreground">No users found</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredUsers.map(user => (
-                <UserCard key={user.id} user={user} onDelete={handleDelete} />
-              ))}
-            </div>
-          )}
+          <div className="text-2xl font-bold mt-1">{users.length}</div>
         </div>
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center gap-2">
+            <UsersIcon className="h-5 w-5 text-green-600" />
+            <span className="text-sm font-medium text-gray-600">
+              Active Users
+            </span>
+          </div>
+          <div className="text-2xl font-bold mt-1">
+            {users.filter(u => u.status === 'active').length}
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center gap-2">
+            <UsersIcon className="h-5 w-5 text-orange-600" />
+            <span className="text-sm font-medium text-gray-600">
+              Customers
+            </span>
+          </div>
+          <div className="text-2xl font-bold mt-1">
+            {users.filter(u => u.role === 'customer').length}
+          </div>
+        </div>
+        <div className="bg-white p-4 rounded-lg border">
+          <div className="flex items-center gap-2">
+            <UsersIcon className="h-5 w-5 text-purple-600" />
+            <span className="text-sm font-medium text-gray-600">
+              Vendors
+            </span>
+          </div>
+          <div className="text-2xl font-bold mt-1">
+            {users.filter(u => u.role === 'vendor').length}
+          </div>
+        </div>
+      </div>
 
-        {/* Delete Confirmation */}
-        {deletingUser && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-semibold mb-2">Delete User</h3>
-              <p className="text-muted-foreground mb-4">
-                Are you sure you want to delete "{deletingUser.firstName}{' '}
-                {deletingUser.lastName}"? This action cannot be undone.
-              </p>
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setDeletingUser(undefined)}
-                >
-                  Cancel
-                </Button>
-                <Button variant="destructive" onClick={handleDeleteConfirm}>
-                  Delete
-                </Button>
-              </div>
+      {/* Filters */}
+      <FilterBar
+        filters={filters}
+        onFiltersChange={setFilters}
+        fields={filterFields}
+        searchPlaceholder="Search users..."
+      />
+
+      {/* Users Grid */}
+      {filteredUsers.length === 0 ? (
+        <div className="text-center py-12">
+          <UsersIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-muted-foreground">No users found</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredUsers.map(user => (
+            <UserCard key={user.id} user={user} onDelete={handleDelete} />
+          ))}
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {deletingUser && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Delete User</h3>
+            <p className="text-muted-foreground mb-4">
+              Are you sure you want to delete "{deletingUser.firstName}{' '}
+              {deletingUser.lastName}"? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setDeletingUser(undefined)}
+              >
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteConfirm}>
+                Delete
+              </Button>
             </div>
           </div>
-        )}
-      </SidebarInset>
-    </SidebarProvider>
+        </div>
+      )}
+    </PageLayout>
   );
 }

@@ -1,34 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { AppSidebar } from '@/components/sidebar/app-sidebar';
 import { CategoryCard } from '@/components/categories/category-card';
 import { CategoryForm } from '@/components/categories/category-form';
-import { CategoryFilters } from '@/components/categories/category-filters';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
+import { FilterBar } from '@/components/layout/filter-bar';
+import { PageHeader } from '@/components/layout/page-header';
+import { PageLayout } from '@/components/layout/page-layout';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
 
 import type {
   Category,
+  CategoryFilters as CategoryFiltersType,
   CreateCategoryData,
   UpdateCategoryData,
 } from '@/types/categories';
-import type { CategoryFilters as CategoryFiltersType } from '@/types/categories';
 
 // Mock data for development
 const mockCategories: Category[] = [
@@ -294,102 +280,122 @@ export default function CategoriesPage() {
     setEditingCategory(undefined);
   };
 
+  const filterFields = [
+    {
+      key: 'search',
+      label: 'Search',
+      type: 'search' as const,
+      placeholder: 'Search categories...',
+    },
+    {
+      key: 'isActive',
+      label: 'Status',
+      type: 'select' as const,
+      options: [
+        { value: 'all', label: 'All Categories' },
+        { value: 'active', label: 'Active Only' },
+        { value: 'inactive', label: 'Inactive Only' },
+      ],
+    },
+    {
+      key: 'sortBy',
+      label: 'Sort by',
+      type: 'select' as const,
+      width: 'w-40',
+      options: [
+        { value: 'default', label: 'Default' },
+        { value: 'name', label: 'Name' },
+        { value: 'createdAt', label: 'Date Created' },
+        { value: 'productCount', label: 'Product Count' },
+      ],
+    },
+    {
+      key: 'sortOrder',
+      label: 'Order',
+      type: 'select' as const,
+      width: 'w-24',
+      options: [
+        { value: 'desc', label: 'Desc' },
+        { value: 'asc', label: 'Asc' },
+      ],
+    },
+  ];
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Categories</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+    <PageLayout
+      breadcrumbs={[
+        { label: 'Admin Panel', href: '/' },
+        { label: 'Categories', isCurrent: true },
+      ]}
+    >
+      <PageHeader
+        title="Categories"
+        description="Manage product categories and their settings"
+        actionButton={{
+          label: 'Add Category',
+          onClick: () => setIsFormOpen(true),
+        }}
+      />
 
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold">Categories</h1>
-              <p className="text-muted-foreground">
-                Manage product categories and their settings
-              </p>
-            </div>
-            <Button onClick={() => setIsFormOpen(true)}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Category
-            </Button>
-          </div>
+      {/* Filters */}
+      <FilterBar
+        filters={filters}
+        onFiltersChange={setFilters}
+        fields={filterFields}
+        searchPlaceholder="Search categories..."
+      />
 
-          {/* Filters */}
-          <CategoryFilters filters={filters} onFiltersChange={setFilters} />
-
-          {/* Categories Grid */}
-          {filteredCategories.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">No categories found</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredCategories.map(category => (
-                <CategoryCard
-                  key={category.id}
-                  category={category}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onToggleStatus={handleToggleStatus}
-                />
-              ))}
-            </div>
-          )}
+      {/* Categories Grid */}
+      {filteredCategories.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">No categories found</p>
         </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filteredCategories.map(category => (
+            <CategoryCard
+              key={category.id}
+              category={category}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onToggleStatus={handleToggleStatus}
+            />
+          ))}
+        </div>
+      )}
 
-        {/* Category Form */}
-        <CategoryForm
-          category={editingCategory}
-          isOpen={isFormOpen}
-          onClose={handleFormClose}
-          onSubmit={handleFormSubmit}
-          isLoading={isSubmitting}
-        />
+      {/* Category Form */}
+      <CategoryForm
+        category={editingCategory}
+        isOpen={isFormOpen}
+        onClose={handleFormClose}
+        onSubmit={handleFormSubmit}
+        isLoading={isSubmitting}
+      />
 
-        {/* Delete Confirmation */}
-        {deletingCategory && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-              <h3 className="text-lg font-semibold mb-2">Delete Category</h3>
-              <p className="text-muted-foreground mb-4">
-                Are you sure you want to delete "{deletingCategory.name}"? This
-                action cannot be undone.
-              </p>
-              <div className="flex justify-end gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setDeletingCategory(undefined)}
-                >
-                  Cancel
-                </Button>
-                <Button variant="destructive" onClick={handleDeleteCategory}>
-                  Delete
-                </Button>
-              </div>
+      {/* Delete Confirmation */}
+      {deletingCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Delete Category</h3>
+            <p className="text-muted-foreground mb-4">
+              Are you sure you want to delete "{deletingCategory.name}"? This
+              action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setDeletingCategory(undefined)}
+              >
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={handleDeleteCategory}>
+                Delete
+              </Button>
             </div>
           </div>
-        )}
-      </SidebarInset>
-    </SidebarProvider>
+        </div>
+      )}
+    </PageLayout>
   );
 }

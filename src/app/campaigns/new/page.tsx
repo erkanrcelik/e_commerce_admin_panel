@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import { ArrowLeft, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar';
@@ -18,7 +18,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -32,8 +31,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { Textarea } from '@/components/ui/textarea';
 
-import type { CreateCampaignData } from '@/types/campaigns';
+import type { CampaignScope, CampaignType, CreateCampaignData, DiscountType } from '@/types/campaigns';
 
 export default function CreateCampaignPage() {
   const router = useRouter();
@@ -105,7 +105,9 @@ export default function CreateCampaignPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={(e) => {
+            void handleSubmit(onSubmit)(e);
+          }} className="space-y-6">
             {/* Basic Information */}
             <Card>
               <CardHeader>
@@ -131,7 +133,7 @@ export default function CreateCampaignPage() {
                   <div className="space-y-2">
                     <Label htmlFor="type">Campaign Type</Label>
                     <Select
-                      onValueChange={value => setValue('type', value as any)}
+                      onValueChange={value => setValue('type', value as CampaignType)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select campaign type" />
@@ -172,7 +174,7 @@ export default function CreateCampaignPage() {
                   <div className="space-y-2">
                     <Label htmlFor="scope">Scope</Label>
                     <Select
-                      onValueChange={value => setValue('scope', value as any)}
+                      onValueChange={value => setValue('scope', value as CampaignScope)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select scope" />
@@ -202,7 +204,7 @@ export default function CreateCampaignPage() {
                     <Label htmlFor="discountType">Discount Type</Label>
                     <Select
                       onValueChange={value =>
-                        setValue('discountType', value as any)
+                        setValue('discountType', value as DiscountType)
                       }
                     >
                       <SelectTrigger>

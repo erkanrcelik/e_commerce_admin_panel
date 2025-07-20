@@ -22,7 +22,7 @@ export interface UpdateCategoryData {
   isActive?: boolean;
 }
 
-export interface CategoryFilters {
+export interface CategoryFilters extends Record<string, string | boolean | number | undefined> {
   search?: string;
   isActive?: boolean;
   sortBy?: 'name' | 'createdAt' | 'productCount';

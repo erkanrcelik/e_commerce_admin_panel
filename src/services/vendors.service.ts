@@ -1,198 +1,68 @@
 import api from '@/lib/axios';
+import type { ApiResponse } from '@/types/admin-dashboard';
 import type {
-  Vendor,
-  VendorDetails,
-  VendorApplication,
-  CreateVendorData,
-  UpdateVendorData,
-  VendorFilters,
-  VendorListResponse,
-} from '@/types/vendors';
+  ApproveSellerResponse,
+  RejectSellerResponse,
+  SellerDetail,
+  SellerStatistics,
+  SellersResponse,
+  UpdateSellerRequest,
+  UpdateSellerResponse
+} from '@/types/admin-sellers';
 
-export class VendorsService {
+// Admin Sellers Service
+export const adminSellersService = {
   /**
-   * Get all vendors with filters
+   * Get all sellers with pagination and filters
    */
-  static async getVendors(
-    filters: VendorFilters = {}
-  ): Promise<VendorListResponse> {
-    const params = new URLSearchParams();
-
-    if (filters.search) params.append('search', filters.search);
-    if (filters.status) params.append('status', filters.status);
-    if (filters.type) params.append('type', filters.type);
-    if (filters.sortBy) params.append('sortBy', filters.sortBy);
-    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
-    if (filters.page) params.append('page', filters.page.toString());
-    if (filters.limit) params.append('limit', filters.limit.toString());
-
-    const response = await api.get(`/vendors?${params.toString()}`);
-    return response.data;
-  }
+  getAll: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    isApproved?: boolean;
+  }): Promise<ApiResponse<SellersResponse>> => {
+    return api.get('/admin/sellers', { params });
+  },
 
   /**
-   * Get vendor by ID
+   * Get seller by ID
    */
-  static async getVendor(id: string): Promise<Vendor> {
-    const response = await api.get(`/vendors/${id}`);
-    return response.data;
-  }
+  getById: (id: string): Promise<ApiResponse<SellerDetail>> => {
+    return api.get(`/admin/sellers/${id}`);
+  },
 
   /**
-   * Get vendor details with stats and recent data
+   * Approve seller
    */
-  static async getVendorDetails(id: string): Promise<VendorDetails> {
-    const response = await api.get(`/vendors/${id}/details`);
-    return response.data;
-  }
+  approve: (id: string): Promise<ApiResponse<ApproveSellerResponse>> => {
+    return api.put(`/admin/sellers/${id}/approve`);
+  },
 
   /**
-   * Create new vendor
+   * Reject seller
    */
-  static async createVendor(data: CreateVendorData): Promise<Vendor> {
-    const response = await api.post('/vendors', data);
-    return response.data;
-  }
+  reject: (id: string): Promise<ApiResponse<RejectSellerResponse>> => {
+    return api.put(`/admin/sellers/${id}/reject`);
+  },
 
   /**
-   * Update vendor
+   * Update seller
    */
-  static async updateVendor(
-    id: string,
-    data: UpdateVendorData
-  ): Promise<Vendor> {
-    const response = await api.put(`/vendors/${id}`, data);
-    return response.data;
-  }
+  update: (id: string, data: UpdateSellerRequest): Promise<ApiResponse<UpdateSellerResponse>> => {
+    return api.put(`/admin/sellers/${id}`, data);
+  },
 
   /**
-   * Delete vendor
+   * Delete seller
    */
-  static async deleteVendor(id: string): Promise<void> {
-    await api.delete(`/vendors/${id}`);
-  }
+  delete: (id: string): Promise<ApiResponse<{ message: string }>> => {
+    return api.delete(`/admin/sellers/${id}`);
+  },
 
   /**
-   * Update vendor status
+   * Get seller statistics
    */
-  static async updateVendorStatus(id: string, status: string): Promise<Vendor> {
-    const response = await api.patch(`/vendors/${id}/status`, { status });
-    return response.data;
-  }
-
-  /**
-   * Approve vendor application
-   */
-  static async approveVendor(id: string, notes?: string): Promise<Vendor> {
-    const response = await api.post(`/vendors/${id}/approve`, { notes });
-    return response.data;
-  }
-
-  /**
-   * Reject vendor application
-   */
-  static async rejectVendor(id: string, notes: string): Promise<Vendor> {
-    const response = await api.post(`/vendors/${id}/reject`, { notes });
-    return response.data;
-  }
-
-  /**
-   * Suspend vendor
-   */
-  static async suspendVendor(id: string, reason: string): Promise<Vendor> {
-    const response = await api.post(`/vendors/${id}/suspend`, { reason });
-    return response.data;
-  }
-
-  /**
-   * Reactivate vendor
-   */
-  static async reactivateVendor(id: string): Promise<Vendor> {
-    const response = await api.post(`/vendors/${id}/reactivate`);
-    return response.data;
-  }
-
-  /**
-   * Get vendor applications
-   */
-  static async getVendorApplications(
-    filters: VendorFilters = {}
-  ): Promise<VendorApplication[]> {
-    const params = new URLSearchParams();
-
-    if (filters.search) params.append('search', filters.search);
-    if (filters.status) params.append('status', filters.status);
-    if (filters.type) params.append('type', filters.type);
-
-    const response = await api.get(`/vendor-applications?${params.toString()}`);
-    return response.data;
-  }
-
-  /**
-   * Review vendor application
-   */
-  static async reviewApplication(
-    id: string,
-    action: 'approve' | 'reject',
-    notes?: string
-  ): Promise<VendorApplication> {
-    const response = await api.post(`/vendor-applications/${id}/review`, {
-      action,
-      notes,
-    });
-    return response.data;
-  }
-
-  /**
-   * Upload vendor logo
-   */
-  static async uploadLogo(id: string, file: File): Promise<{ logo: string }> {
-    const formData = new FormData();
-    formData.append('logo', file);
-
-    const response = await api.post(`/vendors/${id}/logo`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  }
-
-  /**
-   * Upload vendor banner
-   */
-  static async uploadBanner(
-    id: string,
-    file: File
-  ): Promise<{ banner: string }> {
-    const formData = new FormData();
-    formData.append('banner', file);
-
-    const response = await api.post(`/vendors/${id}/banner`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  }
-
-  /**
-   * Upload vendor document
-   */
-  static async uploadDocument(
-    id: string,
-    file: File,
-    type: string
-  ): Promise<{ document: any }> {
-    const formData = new FormData();
-    formData.append('document', file);
-    formData.append('type', type);
-
-    const response = await api.post(`/vendors/${id}/documents`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  }
-}
+  getStatistics: (id: string): Promise<ApiResponse<SellerStatistics>> => {
+    return api.get(`/admin/sellers/${id}/statistics`);
+  },
+};

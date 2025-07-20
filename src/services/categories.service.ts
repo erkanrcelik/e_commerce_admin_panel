@@ -1,85 +1,59 @@
 import api from '@/lib/axios';
 import type {
-  Category,
-  CreateCategoryData,
-  UpdateCategoryData,
-  CategoryFilters,
-  CategoryListResponse,
-} from '@/types/categories';
+    CategoriesResponse,
+    Category,
+    CreateCategoryRequest,
+    ToggleStatusResponse,
+    UpdateCategoryRequest,
+} from '@/types/admin-categories';
+import type { ApiResponse } from '@/types/admin-dashboard';
 
-export class CategoriesService {
+// Admin Categories Service
+export const adminCategoriesService = {
   /**
-   * Get all categories with filters
+   * Get all categories with pagination and filters
    */
-  static async getCategories(
-    filters: CategoryFilters = {}
-  ): Promise<CategoryListResponse> {
-    const params = new URLSearchParams();
-
-    if (filters.search) params.append('search', filters.search);
-    if (filters.isActive !== undefined)
-      params.append('isActive', filters.isActive.toString());
-    if (filters.sortBy) params.append('sortBy', filters.sortBy);
-    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
-
-    const response = await api.get(`/categories?${params.toString()}`);
-    return response.data;
-  }
+  getAll: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    isActive?: boolean;
+  }): Promise<ApiResponse<CategoriesResponse>> => {
+    return api.get('/admin/categories', { params });
+  },
 
   /**
    * Get category by ID
    */
-  static async getCategory(id: string): Promise<Category> {
-    const response = await api.get(`/categories/${id}`);
-    return response.data;
-  }
+  getById: (id: string): Promise<ApiResponse<Category>> => {
+    return api.get(`/admin/categories/${id}`);
+  },
 
   /**
    * Create new category
    */
-  static async createCategory(data: CreateCategoryData): Promise<Category> {
-    const response = await api.post('/categories', data);
-    return response.data;
-  }
+  create: (data: CreateCategoryRequest): Promise<ApiResponse<Category>> => {
+    return api.post('/admin/categories', data);
+  },
 
   /**
    * Update category
    */
-  static async updateCategory(
-    id: string,
-    data: UpdateCategoryData
-  ): Promise<Category> {
-    const response = await api.put(`/categories/${id}`, data);
-    return response.data;
-  }
+  update: (id: string, data: UpdateCategoryRequest): Promise<ApiResponse<Category>> => {
+    return api.put(`/admin/categories/${id}`, data);
+  },
 
   /**
    * Delete category
    */
-  static async deleteCategory(id: string): Promise<void> {
-    await api.delete(`/categories/${id}`);
-  }
+  delete: (id: string): Promise<ApiResponse<{ message: string }>> => {
+    return api.delete(`/admin/categories/${id}`);
+  },
 
   /**
-   * Toggle category active status
+   * Toggle category status
    */
-  static async toggleCategoryStatus(id: string): Promise<Category> {
-    const response = await api.patch(`/categories/${id}/toggle`);
-    return response.data;
-  }
-
-  /**
-   * Upload category image
-   */
-  static async uploadImage(file: File): Promise<{ url: string }> {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await api.post('/categories/upload-image', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  }
-}
+  toggleStatus: (id: string): Promise<ApiResponse<ToggleStatusResponse>> => {
+    return api.put(`/admin/categories/${id}/toggle-status`);
+  },
+};

@@ -1,117 +1,62 @@
 import api from '@/lib/axios';
+import type { ApiResponse } from '@/types/admin-dashboard';
 import type {
-  User,
-  UserDetails,
-  CreateUserData,
-  UpdateUserData,
-  UserFilters,
-  UserListResponse,
-} from '@/types/users';
+    AdminUserDetail,
+    AdminUsersResponse,
+    ChangeRoleRequest,
+    ChangeRoleResponse,
+    ToggleUserStatusResponse,
+    UpdateUserRequest,
+    UpdateUserResponse
+} from '@/types/admin-users';
 
-export class UsersService {
+// Admin Users Service
+export const adminUsersService = {
   /**
-   * Get all users with filters
+   * Get all users with pagination and filters
    */
-  static async getUsers(filters: UserFilters = {}): Promise<UserListResponse> {
-    const params = new URLSearchParams();
-
-    if (filters.search) params.append('search', filters.search);
-    if (filters.role) params.append('role', filters.role);
-    if (filters.status) params.append('status', filters.status);
-    if (filters.sortBy) params.append('sortBy', filters.sortBy);
-    if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
-    if (filters.page) params.append('page', filters.page.toString());
-    if (filters.limit) params.append('limit', filters.limit.toString());
-
-    const response = await api.get(`/users?${params.toString()}`);
-    return response.data;
-  }
+  getAll: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    role?: 'admin' | 'seller' | 'customer';
+    isActive?: boolean;
+  }): Promise<ApiResponse<AdminUsersResponse>> => {
+    return api.get('/admin/users', { params });
+  },
 
   /**
    * Get user by ID
    */
-  static async getUser(id: string): Promise<User> {
-    const response = await api.get(`/users/${id}`);
-    return response.data;
-  }
-
-  /**
-   * Get user details with orders and activity
-   */
-  static async getUserDetails(id: string): Promise<UserDetails> {
-    const response = await api.get(`/users/${id}/details`);
-    return response.data;
-  }
-
-  /**
-   * Create new user
-   */
-  static async createUser(data: CreateUserData): Promise<User> {
-    const response = await api.post('/users', data);
-    return response.data;
-  }
+  getById: (id: string): Promise<ApiResponse<AdminUserDetail>> => {
+    return api.get(`/admin/users/${id}`);
+  },
 
   /**
    * Update user
    */
-  static async updateUser(id: string, data: UpdateUserData): Promise<User> {
-    const response = await api.put(`/users/${id}`, data);
-    return response.data;
-  }
+  update: (id: string, data: UpdateUserRequest): Promise<ApiResponse<UpdateUserResponse>> => {
+    return api.put(`/admin/users/${id}`, data);
+  },
 
   /**
    * Delete user
    */
-  static async deleteUser(id: string): Promise<void> {
-    await api.delete(`/users/${id}`);
-  }
+  delete: (id: string): Promise<ApiResponse<{ message: string }>> => {
+    return api.delete(`/admin/users/${id}`);
+  },
 
   /**
-   * Update user status
+   * Toggle user status
    */
-  static async updateUserStatus(id: string, status: string): Promise<User> {
-    const response = await api.patch(`/users/${id}/status`, { status });
-    return response.data;
-  }
+  toggleStatus: (id: string): Promise<ApiResponse<ToggleUserStatusResponse>> => {
+    return api.put(`/admin/users/${id}/toggle-status`);
+  },
 
   /**
-   * Verify user email
+   * Change user role
    */
-  static async verifyEmail(id: string): Promise<User> {
-    const response = await api.patch(`/users/${id}/verify-email`);
-    return response.data;
-  }
-
-  /**
-   * Verify user phone
-   */
-  static async verifyPhone(id: string): Promise<User> {
-    const response = await api.patch(`/users/${id}/verify-phone`);
-    return response.data;
-  }
-
-  /**
-   * Reset user password
-   */
-  static async resetPassword(id: string): Promise<void> {
-    await api.post(`/users/${id}/reset-password`);
-  }
-
-  /**
-   * Upload user avatar
-   */
-  static async uploadAvatar(
-    id: string,
-    file: File
-  ): Promise<{ avatar: string }> {
-    const formData = new FormData();
-    formData.append('avatar', file);
-
-    const response = await api.post(`/users/${id}/avatar`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  }
-}
+  changeRole: (id: string, data: ChangeRoleRequest): Promise<ApiResponse<ChangeRoleResponse>> => {
+    return api.put(`/admin/users/${id}/change-role`, data);
+  },
+};

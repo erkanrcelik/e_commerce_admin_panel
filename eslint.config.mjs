@@ -1,5 +1,6 @@
 // @ts-check
 import eslint from '@eslint/js';
+import nextPlugin from '@next/eslint-plugin-next';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -10,10 +11,14 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   {
+    plugins: {
+      '@next/next': nextPlugin,
+    },
     languageOptions: {
       globals: {
         ...globals.node,
         ...globals.jest,
+        ...globals.browser,
       },
       sourceType: 'commonjs',
       parserOptions: {
