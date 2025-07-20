@@ -1,41 +1,49 @@
-'use client'
+'use client';
 
-import { usePathname, useSearchParams } from 'next/navigation'
-import NProgress from 'nprogress'
-import { useEffect } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation';
+import NProgress from 'nprogress';
+import { useEffect, Suspense } from 'react';
 
 /**
  * NProgress Provider
- * 
+ *
  * Sayfa geçişlerinde header'ın üstünde progress bar gösterir
  */
-export function NProgressProvider({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
+function NProgressInner({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    NProgress.configure({ 
+    NProgress.configure({
       showSpinner: false,
       minimum: 0.1,
       easing: 'ease',
       speed: 500,
-      trickleSpeed: 200
-    })
-  }, [])
+      trickleSpeed: 200,
+    });
+  }, []);
 
   useEffect(() => {
-    NProgress.start()
-    
+    NProgress.start();
+
     // Kısa bir gecikme ile progress'i tamamla
     const timer = setTimeout(() => {
-      NProgress.done()
-    }, 100)
+      NProgress.done();
+    }, 100);
 
     return () => {
-      clearTimeout(timer)
-      NProgress.done()
-    }
-  }, [pathname, searchParams])
+      clearTimeout(timer);
+      NProgress.done();
+    };
+  }, [pathname, searchParams]);
 
-  return <>{children}</>
-} 
+  return <>{children}</>;
+}
+
+export function NProgressProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={null}>
+      <NProgressInner>{children}</NProgressInner>
+    </Suspense>
+  );
+}

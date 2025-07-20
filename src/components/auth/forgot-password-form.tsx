@@ -1,33 +1,33 @@
-'use client'
+'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
-import React from 'react'
-import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { clearError, forgotPassword } from '@/features/auth/authSlice'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useToast } from '@/hooks/use-toast'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { clearError, forgotPassword } from '@/features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { useToast } from '@/hooks/use-toast';
 import {
   forgotPasswordSchema,
   type ForgotPasswordFormData,
-} from '@/utils/validation'
+} from '@/utils/validation';
 
-import { AuthLayout } from '../layout/auth-layout'
+import { AuthLayout } from '../layout/auth-layout';
 
 /**
  * Forgot password form component
  * Handles password reset request
  */
 export function ForgotPasswordForm() {
-  const dispatch = useAppDispatch()
-  const { status } = useAppSelector(state => state.auth)
-  const { showSuccess, showError, showLoading, showInfo, dismiss } = useToast()
-  const isLoading = status === 'loading'
-  const [isSuccess, setIsSuccess] = React.useState(false)
+  const dispatch = useAppDispatch();
+  const { status } = useAppSelector(state => state.auth);
+  const { showSuccess, showError, showLoading, showInfo, dismiss } = useToast();
+  const isLoading = status === 'loading';
+  const [isSuccess, setIsSuccess] = React.useState(false);
 
   const {
     register,
@@ -40,34 +40,34 @@ export function ForgotPasswordForm() {
     defaultValues: {
       email: '',
     },
-  })
+  });
 
   /**
    * Handle form submission
    * @param data - Form data from React Hook Form
    */
   const onSubmit = async (data: ForgotPasswordFormData) => {
-    let loadingToastId: string | number | undefined
+    let loadingToastId: string | number | undefined;
 
     try {
       // Clear any previous errors
-      dispatch(clearError())
+      dispatch(clearError());
 
       // Show loading toast
       loadingToastId = showLoading({
         message: 'Sending reset instructions...',
         description: 'Please wait while we process your request',
-      })
+      });
 
       // Dispatch forgot password action
-      const result = await dispatch(forgotPassword(data))
+      const result = await dispatch(forgotPassword(data));
 
       // Dismiss loading toast
-      if (loadingToastId) dismiss(loadingToastId)
+      if (loadingToastId) dismiss(loadingToastId);
 
       if (forgotPassword.fulfilled.match(result)) {
         // Success
-        setIsSuccess(true)
+        setIsSuccess(true);
         showSuccess({
           message: 'Reset instructions sent!',
           description: `If an account with ${data.email} exists, we&apos;ve sent password reset instructions to your email.`,
@@ -76,15 +76,15 @@ export function ForgotPasswordForm() {
             label: 'Check Email',
             onClick: () => {
               // Open email client (this is a nice UX touch)
-              window.open('mailto:', '_blank')
+              window.open('mailto:', '_blank');
             },
           },
-        })
-        reset()
+        });
+        reset();
       } else if (forgotPassword.rejected.match(result)) {
         // Error (but we might want to show success anyway for security)
         const errorMessage =
-          result.payload?.message || 'Failed to send reset email'
+          result.payload?.message || 'Failed to send reset email';
         showError({
           message: 'Reset request failed',
           description: errorMessage,
@@ -92,39 +92,39 @@ export function ForgotPasswordForm() {
             label: 'Try again',
             onClick: () => {
               // Focus on email field
-              const emailInput = document.getElementById('email')
-              emailInput?.focus()
+              const emailInput = document.getElementById('email');
+              emailInput?.focus();
             },
           },
-        })
+        });
       }
     } catch (error) {
       // Dismiss loading toast if still showing
-      if (loadingToastId) dismiss(loadingToastId)
+      if (loadingToastId) dismiss(loadingToastId);
 
-      console.error('Forgot password error:', error)
+      console.error('Forgot password error:', error);
       showError({
         message: 'Unexpected error',
         description: 'Something went wrong. Please try again.',
-      })
+      });
     }
-  }
+  };
 
   /**
    * Handle sending another email
    */
   const handleSendAnother = () => {
-    setIsSuccess(false)
+    setIsSuccess(false);
     // Get the last email value and pre-fill it
-    const lastEmail = getValues('email')
+    const lastEmail = getValues('email');
     if (lastEmail) {
       // You could also auto-submit here
       showInfo({
         message: 'Form ready',
         description: `Ready to send another email to ${lastEmail}`,
-      })
+      });
     }
-  }
+  };
 
   const footerContent = (
     <>
@@ -136,7 +136,7 @@ export function ForgotPasswordForm() {
         Sign in
       </Link>
     </>
-  )
+  );
 
   return (
     <AuthLayout
@@ -145,7 +145,12 @@ export function ForgotPasswordForm() {
       footerContent={footerContent}
     >
       {!isSuccess ? (
-        <form onSubmit={e => { void handleSubmit(onSubmit)(e) }} className="space-y-4">
+        <form
+          onSubmit={e => {
+            void handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-4"
+        >
           {/* Email Field */}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -158,9 +163,7 @@ export function ForgotPasswordForm() {
               disabled={isLoading}
             />
             {errors.email && (
-              <p className="text-sm text-destructive">
-                {errors.email.message}
-              </p>
+              <p className="text-sm text-destructive">{errors.email.message}</p>
             )}
           </div>
 
@@ -191,6 +194,5 @@ export function ForgotPasswordForm() {
         </div>
       )}
     </AuthLayout>
-  )
+  );
 }
- 

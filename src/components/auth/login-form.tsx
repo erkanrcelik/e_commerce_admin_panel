@@ -1,28 +1,28 @@
-'use client'
+'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import Link from 'next/link'
-import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useForm } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { clearError, loginUser } from '@/features/auth/authSlice'
-import { useAppDispatch, useAppSelector } from '@/hooks/redux'
-import { useToast } from '@/hooks/use-toast'
-import { loginSchema, type LoginFormData } from '@/utils/validation'
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { clearError, loginUser } from '@/features/auth/authSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks/redux';
+import { useToast } from '@/hooks/use-toast';
+import { loginSchema, type LoginFormData } from '@/utils/validation';
 
-import { AuthLayout } from '../layout/auth-layout'
+import { AuthLayout } from '../layout/auth-layout';
 
 /**
  * Login form component
  * Handles user authentication with email and password
  */
 export function LoginForm() {
-  const dispatch = useAppDispatch()
-  const { status } = useAppSelector(state => state.auth)
-  const { showSuccess, showError, showLoading, dismiss } = useToast()
-  const isLoading = status === 'loading'
+  const dispatch = useAppDispatch();
+  const { status } = useAppSelector(state => state.auth);
+  const { showSuccess, showError, showLoading, dismiss } = useToast();
+  const isLoading = status === 'loading';
 
   const {
     register,
@@ -36,30 +36,30 @@ export function LoginForm() {
       password: '',
       rememberMe: false,
     },
-  })
+  });
 
   /**
    * Handle form submission
    * @param data - Form data from React Hook Form
    */
   const onSubmit = async (data: LoginFormData) => {
-    let loadingToastId: string | number | undefined
+    let loadingToastId: string | number | undefined;
 
     try {
       // Clear any previous errors
-      dispatch(clearError())
+      dispatch(clearError());
 
       // Show loading toast
       loadingToastId = showLoading({
         message: 'Signing in...',
         description: 'Please wait while we verify your credentials',
-      })
+      });
 
       // Dispatch login action
-      const result = await dispatch(loginUser(data))
+      const result = await dispatch(loginUser(data));
 
       // Dismiss loading toast
-      if (loadingToastId) dismiss(loadingToastId)
+      if (loadingToastId) dismiss(loadingToastId);
 
       if (loginUser.fulfilled.match(result)) {
         // Success
@@ -67,11 +67,11 @@ export function LoginForm() {
           message: 'Welcome back!',
           description: 'You have been successfully signed in',
           duration: 3000,
-        })
-        reset()
+        });
+        reset();
       } else if (loginUser.rejected.match(result)) {
         // Error
-        const errorMessage = result.payload?.message || 'Login failed'
+        const errorMessage = result.payload?.message || 'Login failed';
         showError({
           message: 'Sign in failed',
           description: errorMessage,
@@ -79,23 +79,23 @@ export function LoginForm() {
             label: 'Try again',
             onClick: () => {
               // Focus on email field
-              const emailInput = document.getElementById('email')
-              emailInput?.focus()
+              const emailInput = document.getElementById('email');
+              emailInput?.focus();
             },
           },
-        })
+        });
       }
     } catch (error) {
       // Dismiss loading toast if still showing
-      if (loadingToastId) dismiss(loadingToastId)
+      if (loadingToastId) dismiss(loadingToastId);
 
-      console.error('Login error:', error)
+      console.error('Login error:', error);
       showError({
         message: 'Unexpected error',
         description: 'Something went wrong. Please try again.',
-      })
+      });
     }
-  }
+  };
 
   const footerContent = (
     <>
@@ -107,7 +107,7 @@ export function LoginForm() {
         Sign up
       </Link>
     </>
-  )
+  );
 
   return (
     <AuthLayout
@@ -115,7 +115,12 @@ export function LoginForm() {
       subtitle="Sign in to your account to continue"
       footerContent={footerContent}
     >
-      <form onSubmit={e => { void handleSubmit(onSubmit)(e) }} className="space-y-4">
+      <form
+        onSubmit={e => {
+          void handleSubmit(onSubmit)(e);
+        }}
+        className="space-y-4"
+      >
         {/* Email Field */}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -181,6 +186,5 @@ export function LoginForm() {
         </Button>
       </form>
     </AuthLayout>
-  )
+  );
 }
-

@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   BadgeCheck,
@@ -8,13 +8,9 @@ import {
   LogOut,
   Settings,
   User,
-} from "lucide-react"
+} from 'lucide-react';
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,42 +19,42 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from '@/components/ui/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
-import type { SidebarUser } from "./types"
+import type { SidebarUser } from './types';
 
 interface SidebarUserProps {
-  user: SidebarUser
-  onLogout?: () => void
-  onProfile?: () => void
-  onSettings?: () => void
+  user: SidebarUser;
+  onLogout?: () => void;
+  onProfile?: () => void;
+  onSettings?: () => void;
 }
 
-export function SidebarUser({ 
-  user, 
-  onLogout, 
-  onProfile, 
-  onSettings 
+export function SidebarUser({
+  user,
+  onLogout,
+  onProfile,
+  onSettings,
 }: SidebarUserProps) {
-  const { isMobile } = useSidebar()
+  const { isMobile } = useSidebar();
 
   const handleLogout = () => {
-    onLogout?.()
-  }
+    onLogout?.();
+  };
 
   const handleProfile = () => {
-    onProfile?.()
-  }
+    onProfile?.();
+  };
 
   const handleSettings = () => {
-    onSettings?.()
-  }
+    onSettings?.();
+  };
 
   return (
     <SidebarMenu>
@@ -72,7 +68,10 @@ export function SidebarUser({
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="rounded-lg">
-                  {user.name.split(' ').map(n => n[0]).join('')}
+                  {user.name
+                    .split(' ')
+                    .map(n => n[0])
+                    .join('')}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -84,7 +83,7 @@ export function SidebarUser({
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side={isMobile ? 'bottom' : 'right'}
             align="end"
             sideOffset={4}
           >
@@ -93,7 +92,10 @@ export function SidebarUser({
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="rounded-lg">
-                    {user.name.split(' ').map(n => n[0]).join('')}
+                    {user.name
+                      .split(' ')
+                      .map(n => n[0])
+                      .join('')}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -137,5 +139,5 @@ export function SidebarUser({
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
-} 
+  );
+}

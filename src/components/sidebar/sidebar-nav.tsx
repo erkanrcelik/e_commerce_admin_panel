@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   SidebarGroup,
@@ -6,21 +6,24 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from '@/components/ui/sidebar';
 
-import type { SidebarMenuItem as SidebarMenuItemType } from "./types"
+import type { SidebarMenuItem as SidebarMenuItemType } from './types';
 
 interface SidebarNavProps {
-  items: SidebarMenuItemType[]
-  groupLabel?: string
+  items: SidebarMenuItemType[];
+  groupLabel?: string;
 }
 
-export function SidebarNav({ items, groupLabel = "Platform" }: SidebarNavProps) {
+export function SidebarNav({
+  items,
+  groupLabel = 'Platform',
+}: SidebarNavProps) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>{groupLabel}</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
+        {items.map(item => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton asChild tooltip={item.title}>
               <a href={item.url}>
@@ -32,5 +35,5 @@ export function SidebarNav({ items, groupLabel = "Platform" }: SidebarNavProps) 
         ))}
       </SidebarMenu>
     </SidebarGroup>
-  )
-} 
+  );
+}

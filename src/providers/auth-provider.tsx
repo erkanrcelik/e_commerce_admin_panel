@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import React from 'react'
+import React from 'react';
 
-import { useAuthInit } from '@/hooks/use-auth-init'
+import { useAuthInit } from '@/hooks/use-auth-init';
 
 /**
  * Auth provider component props
  */
 interface AuthProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -16,7 +16,7 @@ interface AuthProviderProps {
  * Handles auth initialization and provides loading state
  */
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { isInitialized, isLoading } = useAuthInit()
+  const { isInitialized, isLoading } = useAuthInit();
 
   // Show loading spinner while initializing auth
   if (!isInitialized && isLoading) {
@@ -27,8 +27,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
           <p className="text-sm text-muted-foreground">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  return <>{children}</>
-} 
+  return <>{children}</>;
+}

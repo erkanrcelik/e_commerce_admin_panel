@@ -1,10 +1,10 @@
-import React from 'react'
+import React from 'react';
 
 /**
  * Props for the AuthLayout component
  */
 interface AuthLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 /**
@@ -17,7 +17,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="w-full max-w-6xl">{children}</div>
     </div>
-  )
+  );
 }
 
 /**
@@ -29,4 +29,4 @@ export const metadata = {
     default: 'Authentication | E-Commerce Platform',
   },
   description: 'Secure authentication for your e-commerce account.',
-}
+};

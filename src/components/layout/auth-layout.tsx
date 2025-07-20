@@ -1,28 +1,28 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from 'next/link';
+import React from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Card, CardContent } from '@/components/ui/card'
-import { cn } from '@/utils'
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/utils';
 
 /**
  * Props for the AuthLayout component
  */
 interface AuthLayoutProps {
   /** Title of the authentication form */
-  title: string
+  title: string;
   /** Subtitle or description text */
-  subtitle: string
+  subtitle: string;
   /** Main form content */
-  children: React.ReactNode
+  children: React.ReactNode;
   /** Footer content with links */
-  footerContent?: React.ReactNode
+  footerContent?: React.ReactNode;
   /** Error message to display */
-  error?: string | null
+  error?: string | null;
   /** Success message to display */
-  success?: string | null
+  success?: string | null;
   /** Additional CSS classes */
-  className?: string
+  className?: string;
 }
 
 /**
@@ -131,5 +131,5 @@ export function AuthLayout({
         .
       </div>
     </div>
-  )
+  );
 }
