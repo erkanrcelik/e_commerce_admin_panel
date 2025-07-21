@@ -1,62 +1,92 @@
 import api from '@/lib/axios';
-import type { ApiResponse } from '@/types/admin-dashboard';
-import type {
-    AdminUserDetail,
-    AdminUsersResponse,
-    ChangeRoleRequest,
-    ChangeRoleResponse,
-    ToggleUserStatusResponse,
-    UpdateUserRequest,
-    UpdateUserResponse
-} from '@/types/admin-users';
 
-// Admin Users Service
-export const adminUsersService = {
+import type {
+  User,
+  UserFilters,
+  UserOrder,
+  UserStats,
+} from '@/types/users';
+
+/**
+ * Users service for admin operations
+ */
+export class UsersService {
+  private static readonly BASE_URL = '/admin/customers';
+
   /**
    * Get all users with pagination and filters
    */
-  getAll: (params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    role?: 'admin' | 'seller' | 'customer';
-    isActive?: boolean;
-  }): Promise<ApiResponse<AdminUsersResponse>> => {
-    return api.get('/admin/users', { params });
-  },
+  static async getUsers(
+    filters: UserFilters = {}
+  ): Promise<{ data: User[]; total: number; page: number; limit: number; totalPages: number }> {
+    const params = new URLSearchParams();
+
+    // Add pagination params
+    if (filters.page) params.append('page', filters.page.toString());
+    if (filters.limit) params.append('limit', filters.limit.toString());
+
+    // Add search param
+    if (filters.search) params.append('search', filters.search);
+
+    // Add status filter
+    if (filters.isActive !== undefined) {
+      params.append('isActive', filters.isActive.toString());
+    }
+
+    const response = await api.get<{ data: User[]; total: number; page: number; limit: number; totalPages: number }>(
+      `${this.BASE_URL}?${params.toString()}`
+    );
+
+    return response.data;
+  }
 
   /**
    * Get user by ID
    */
-  getById: (id: string): Promise<ApiResponse<AdminUserDetail>> => {
-    return api.get(`/admin/users/${id}`);
-  },
+  static async getUser(id: string): Promise<User> {
+    const response = await api.get<User>(
+      `${this.BASE_URL}/${id}`
+    );
+    return response.data;
+  }
 
   /**
-   * Update user
+   * Get user orders
    */
-  update: (id: string, data: UpdateUserRequest): Promise<ApiResponse<UpdateUserResponse>> => {
-    return api.put(`/admin/users/${id}`, data);
-  },
+  static async getUserOrders(id: string): Promise<UserOrder[]> {
+    const response = await api.get<UserOrder[]>(
+      `${this.BASE_URL}/${id}/orders`
+    );
+    return response.data;
+  }
+
+  /**
+   * Toggle user status (active/inactive)
+   */
+  static async toggleUserStatus(id: string): Promise<User> {
+    const response = await api.put<User>(
+      `${this.BASE_URL}/${id}/toggle-status`
+    );
+    return response.data;
+  }
 
   /**
    * Delete user
    */
-  delete: (id: string): Promise<ApiResponse<{ message: string }>> => {
-    return api.delete(`/admin/users/${id}`);
-  },
+  static async deleteUser(id: string): Promise<{ message: string }> {
+    const response = await api.delete<{ message: string }>(
+      `${this.BASE_URL}/${id}`
+    );
+    return response.data;
+  }
 
   /**
-   * Toggle user status
+   * Get user statistics
    */
-  toggleStatus: (id: string): Promise<ApiResponse<ToggleUserStatusResponse>> => {
-    return api.put(`/admin/users/${id}/toggle-status`);
-  },
-
-  /**
-   * Change user role
-   */
-  changeRole: (id: string, data: ChangeRoleRequest): Promise<ApiResponse<ChangeRoleResponse>> => {
-    return api.put(`/admin/users/${id}/change-role`, data);
-  },
-};
+  static async getUserStats(): Promise<UserStats> {
+    const response = await api.get<UserStats>(
+      `${this.BASE_URL}/stats/overview`
+    );
+    return response.data;
+  }
+}

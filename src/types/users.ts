@@ -2,54 +2,50 @@ export type UserRole = 'admin' | 'vendor' | 'customer' | 'moderator';
 export type UserStatus = 'active' | 'inactive' | 'suspended' | 'pending';
 
 export interface User {
-  id: string;
+  _id: string;
   email: string;
   firstName: string;
   lastName: string;
-  phone?: string;
-  avatar?: string;
+  phoneNumber?: string;
   role: UserRole;
-  status: UserStatus;
+  isActive: boolean;
+  isEmailVerified: boolean;
   createdAt: string;
   updatedAt: string;
-  lastLoginAt?: string;
-  emailVerified: boolean;
-  phoneVerified: boolean;
-  totalOrders: number;
-  totalSpent: number;
-  address?: {
+  addresses?: {
     street: string;
     city: string;
     state: string;
-    zipCode: string;
     country: string;
-  };
-}
-
-export interface Order {
-  id: string;
-  orderNumber: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  total: number;
-  items: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UserDetails extends User {
-  orders: Order[];
-  recentActivity: {
-    type: 'login' | 'order' | 'profile_update' | 'password_change';
-    description: string;
-    timestamp: string;
+    postalCode: string;
   }[];
+}
+
+export interface UserOrder {
+  orderId: string;
+  totalAmount: number;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  createdAt: string;
+  items: {
+    productId: string;
+    productName: string;
+    price: number;
+    quantity: number;
+  }[];
+}
+
+export interface UserStats {
+  total: number;
+  active: number;
+  inactive: number;
 }
 
 export interface CreateUserData {
   email: string;
   firstName: string;
   lastName: string;
-  phone?: string;
+  phoneNumber?: string;
   role: UserRole;
   password: string;
 }
@@ -57,22 +53,23 @@ export interface CreateUserData {
 export interface UpdateUserData {
   firstName?: string;
   lastName?: string;
-  phone?: string;
+  phoneNumber?: string;
   role?: UserRole;
-  status?: UserStatus;
-  address?: {
+  isActive?: boolean;
+  addresses?: {
     street: string;
     city: string;
     state: string;
-    zipCode: string;
     country: string;
-  };
+    postalCode: string;
+  }[];
 }
 
 export interface UserFilters extends Record<string, string | boolean | number | undefined> {
+  page?: number;
+  limit?: number;
   search?: string;
-  role?: UserRole;
-  status?: UserStatus;
+  isActive?: boolean;
   sortBy?:
     | 'name'
     | 'email'
@@ -81,12 +78,10 @@ export interface UserFilters extends Record<string, string | boolean | number | 
     | 'totalOrders'
     | 'totalSpent';
   sortOrder?: 'asc' | 'desc';
-  page?: number;
-  limit?: number;
 }
 
 export interface UserListResponse {
-  users: User[];
+  data: User[];
   total: number;
   page: number;
   limit: number;

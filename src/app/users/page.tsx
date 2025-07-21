@@ -9,127 +9,56 @@ import { PageHeader } from '@/components/layout/page-header';
 import { PageLayout } from '@/components/layout/page-layout';
 import { Button } from '@/components/ui/button';
 import { UserCard } from '@/components/users/user-card';
+import { useToast } from '@/hooks/use-toast';
+import { UsersService } from '@/services/users.service';
 
-import type { User, UserFilters as UserFiltersType } from '@/types/users';
-
-// Mock data for development - Only customers
-const mockUsers: User[] = [
-  {
-    id: '1',
-    email: 'customer@example.com',
-    firstName: 'Mehmet',
-    lastName: 'Kaya',
-    phone: '+90 555 456 7890',
-    avatar:
-      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-    role: 'customer',
-    status: 'active',
-    createdAt: '2024-01-13T08:00:00Z',
-    updatedAt: '2024-01-13T08:00:00Z',
-    lastLoginAt: '2024-01-20T11:20:00Z',
-    emailVerified: true,
-    phoneVerified: true,
-    totalOrders: 12,
-    totalSpent: 3450,
-    address: {
-      street: 'Atatürk Caddesi No:123',
-      city: 'İstanbul',
-      state: 'İstanbul',
-      zipCode: '34000',
-      country: 'Türkiye',
-    },
-  },
-  {
-    id: '2',
-    email: 'customer2@example.com',
-    firstName: 'Zeynep',
-    lastName: 'Arslan',
-    phone: '+90 555 321 6547',
-    avatar:
-      'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-    role: 'customer',
-    status: 'active',
-    createdAt: '2024-01-11T06:00:00Z',
-    updatedAt: '2024-01-11T06:00:00Z',
-    lastLoginAt: '2024-01-15T09:30:00Z',
-    emailVerified: true,
-    phoneVerified: true,
-    totalOrders: 8,
-    totalSpent: 1890,
-    address: {
-      street: 'İstiklal Caddesi No:45',
-      city: 'İzmir',
-      state: 'İzmir',
-      zipCode: '35000',
-      country: 'Türkiye',
-    },
-  },
-  {
-    id: '3',
-    email: 'customer3@example.com',
-    firstName: 'Elif',
-    lastName: 'Yıldız',
-    phone: '+90 555 147 2583',
-    avatar:
-      'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
-    role: 'customer',
-    status: 'pending',
-    createdAt: '2024-01-09T04:00:00Z',
-    updatedAt: '2024-01-09T04:00:00Z',
-    emailVerified: false,
-    phoneVerified: false,
-    totalOrders: 0,
-    totalSpent: 0,
-  },
-  {
-    id: '4',
-    email: 'customer4@example.com',
-    firstName: 'Ahmet',
-    lastName: 'Demir',
-    phone: '+90 555 789 1234',
-    avatar:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
-    role: 'customer',
-    status: 'active',
-    createdAt: '2024-01-08T03:00:00Z',
-    updatedAt: '2024-01-08T03:00:00Z',
-    lastLoginAt: '2024-01-20T08:20:00Z',
-    emailVerified: true,
-    phoneVerified: true,
-    totalOrders: 25,
-    totalSpent: 5670,
-    address: {
-      street: 'Cumhuriyet Caddesi No:78',
-      city: 'Ankara',
-      state: 'Ankara',
-      zipCode: '06000',
-      country: 'Türkiye',
-    },
-  },
-  {
-    id: '5',
-    email: 'customer5@example.com',
-    firstName: 'Fatma',
-    lastName: 'Özkan',
-    phone: '+90 555 963 8527',
-    role: 'customer',
-    status: 'inactive',
-    createdAt: '2024-01-07T02:00:00Z',
-    updatedAt: '2024-01-07T02:00:00Z',
-    lastLoginAt: '2024-01-15T14:30:00Z',
-    emailVerified: true,
-    phoneVerified: false,
-    totalOrders: 3,
-    totalSpent: 890,
-  },
-];
+import type { User, UserFilters as UserFiltersType, UserStats } from '@/types/users';
 
 export default function UsersPage() {
   const router = useRouter();
-  const [users, setUsers] = useState<User[]>(mockUsers);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>(mockUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [filters, setFilters] = useState<UserFiltersType>({});
   const [deletingUser, setDeletingUser] = useState<User | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState<UserStats | null>(null);
+  const { showSuccess, showError, showLoading, dismiss } = useToast();
+
+  // Load users from API
+  useEffect(() => {
+    void loadUsers();
+    void loadStats();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      setIsLoading(true);
+      const response = await UsersService.getUsers({
+        page: 1,
+        limit: 100, // Get all users for now
+        ...filters,
+      });
+      setUsers(response.data);
+      setFilteredUsers(response.data);
+    } catch (error) {
+      console.error('Failed to load users:', error);
+      showError({
+        message: 'Failed to load users',
+        description: 'Please try again later.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      const response = await UsersService.getUserStats();
+      setStats(response);
+    } catch (error) {
+      console.error('Failed to load user stats:', error);
+    }
+  };
 
   // Filter users
   useEffect(() => {
@@ -146,14 +75,9 @@ export default function UsersPage() {
       );
     }
 
-    // Role filter
-    if (filters.role) {
-      filtered = filtered.filter(user => user.role === filters.role);
-    }
-
     // Status filter
-    if (filters.status) {
-      filtered = filtered.filter(user => user.status === filters.status);
+    if (filters.isActive !== undefined) {
+      filtered = filtered.filter(user => user.isActive === filters.isActive);
     }
 
     // Sort
@@ -174,18 +98,6 @@ export default function UsersPage() {
           case 'createdAt':
             aValue = new Date(a.createdAt).getTime();
             bValue = new Date(b.createdAt).getTime();
-            break;
-          case 'lastLoginAt':
-            aValue = a.lastLoginAt ? new Date(a.lastLoginAt).getTime() : 0;
-            bValue = b.lastLoginAt ? new Date(b.lastLoginAt).getTime() : 0;
-            break;
-          case 'totalOrders':
-            aValue = a.totalOrders;
-            bValue = b.totalOrders;
-            break;
-          case 'totalSpent':
-            aValue = a.totalSpent;
-            bValue = b.totalSpent;
             break;
           default:
             return 0;
@@ -209,15 +121,62 @@ export default function UsersPage() {
     setDeletingUser(user);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!deletingUser) return;
 
+    let loadingToastId: string | number | undefined;
+
     try {
-      // In real app: await UsersService.deleteUser(deletingUser.id)
-      setUsers(prev => prev.filter(u => u.id !== deletingUser.id));
+      loadingToastId = showLoading({
+        message: 'Deleting user...',
+        description: 'Please wait while we delete the user',
+      });
+
+      await UsersService.deleteUser(deletingUser._id);
+      setUsers(prev => prev.filter(u => u._id !== deletingUser._id));
       setDeletingUser(undefined);
+
+      showSuccess({
+        message: 'User deleted successfully!',
+        description: `"${deletingUser.firstName} ${deletingUser.lastName}" has been removed.`,
+      });
     } catch (error) {
       console.error('Failed to delete user:', error);
+      showError({
+        message: 'Failed to delete user',
+        description: 'Please try again later.',
+      });
+    } finally {
+      if (loadingToastId) dismiss(loadingToastId);
+    }
+  };
+
+  const handleToggleStatus = async (user: User) => {
+    let loadingToastId: string | number | undefined;
+
+    try {
+      loadingToastId = showLoading({
+        message: 'Updating status...',
+        description: 'Please wait while we update the user status',
+      });
+
+      const updatedUser = await UsersService.toggleUserStatus(user._id);
+      setUsers(prev =>
+        prev.map(u => (u._id === user._id ? updatedUser : u))
+      );
+
+      showSuccess({
+        message: 'Status updated successfully!',
+        description: `"${updatedUser.firstName} ${updatedUser.lastName}" is now ${updatedUser.isActive ? 'active' : 'inactive'}.`,
+      });
+    } catch (error) {
+      console.error('Failed to toggle user status:', error);
+      showError({
+        message: 'Failed to update status',
+        description: 'Please try again later.',
+      });
+    } finally {
+      if (loadingToastId) dismiss(loadingToastId);
     }
   };
 
@@ -229,27 +188,13 @@ export default function UsersPage() {
       placeholder: 'Search users...',
     },
     {
-      key: 'role',
-      label: 'Role',
-      type: 'select' as const,
-      options: [
-        { value: 'all', label: 'All Roles' },
-        { value: 'customer', label: 'Customer' },
-        { value: 'vendor', label: 'Vendor' },
-        { value: 'admin', label: 'Admin' },
-        { value: 'moderator', label: 'Moderator' },
-      ],
-    },
-    {
-      key: 'status',
+      key: 'isActive',
       label: 'Status',
       type: 'select' as const,
       options: [
-        { value: 'all', label: 'All Status' },
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' },
-        { value: 'pending', label: 'Pending' },
-        { value: 'suspended', label: 'Suspended' },
+        { value: 'all', label: 'All Users' },
+        { value: 'active', label: 'Active Only' },
+        { value: 'inactive', label: 'Inactive Only' },
       ],
     },
     {
@@ -262,9 +207,6 @@ export default function UsersPage() {
         { value: 'name', label: 'Name' },
         { value: 'email', label: 'Email' },
         { value: 'createdAt', label: 'Created Date' },
-        { value: 'lastLoginAt', label: 'Last Login' },
-        { value: 'totalOrders', label: 'Orders' },
-        { value: 'totalSpent', label: 'Total Spent' },
       ],
     },
     {
@@ -296,7 +238,7 @@ export default function UsersPage() {
       />
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg border">
           <div className="flex items-center gap-2">
             <UsersIcon className="h-5 w-5 text-blue-600" />
@@ -304,7 +246,7 @@ export default function UsersPage() {
               Total Users
             </span>
           </div>
-          <div className="text-2xl font-bold mt-1">{users.length}</div>
+          <div className="text-2xl font-bold mt-1">{stats?.total || users.length}</div>
         </div>
         <div className="bg-white p-4 rounded-lg border">
           <div className="flex items-center gap-2">
@@ -314,29 +256,18 @@ export default function UsersPage() {
             </span>
           </div>
           <div className="text-2xl font-bold mt-1">
-            {users.filter(u => u.status === 'active').length}
+            {stats?.active || users.filter(u => u.isActive).length}
           </div>
         </div>
         <div className="bg-white p-4 rounded-lg border">
           <div className="flex items-center gap-2">
             <UsersIcon className="h-5 w-5 text-orange-600" />
             <span className="text-sm font-medium text-gray-600">
-              Customers
+              Inactive Users
             </span>
           </div>
           <div className="text-2xl font-bold mt-1">
-            {users.filter(u => u.role === 'customer').length}
-          </div>
-        </div>
-        <div className="bg-white p-4 rounded-lg border">
-          <div className="flex items-center gap-2">
-            <UsersIcon className="h-5 w-5 text-purple-600" />
-            <span className="text-sm font-medium text-gray-600">
-              Vendors
-            </span>
-          </div>
-          <div className="text-2xl font-bold mt-1">
-            {users.filter(u => u.role === 'vendor').length}
+            {stats?.inactive || users.filter(u => !u.isActive).length}
           </div>
         </div>
       </div>
@@ -350,7 +281,11 @@ export default function UsersPage() {
       />
 
       {/* Users Grid */}
-      {filteredUsers.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Loading users...</p>
+        </div>
+      ) : filteredUsers.length === 0 ? (
         <div className="text-center py-12">
           <UsersIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-muted-foreground">No users found</p>
@@ -358,7 +293,14 @@ export default function UsersPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredUsers.map(user => (
-            <UserCard key={user.id} user={user} onDelete={handleDelete} />
+            <UserCard 
+              key={user._id} 
+              user={user} 
+              onDelete={handleDelete}
+              onToggleStatus={(user) => {
+                void handleToggleStatus(user);
+              }}
+            />
           ))}
         </div>
       )}
@@ -379,7 +321,12 @@ export default function UsersPage() {
               >
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={handleDeleteConfirm}>
+              <Button 
+                variant="destructive" 
+                onClick={() => {
+                  void handleDeleteConfirm();
+                }}
+              >
                 Delete
               </Button>
             </div>

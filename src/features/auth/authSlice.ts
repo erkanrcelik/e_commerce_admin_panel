@@ -8,7 +8,6 @@ import type {
   AuthState,
   ForgotPasswordFormData,
   LoginFormData,
-  RegisterFormData,
   ResetPasswordFormData,
   User,
 } from '@/types';
@@ -52,40 +51,6 @@ export const loginUser = createAsyncThunk<
     return rejectWithValue({
       message: 'Network error occurred',
       code: 'NETWORK_ERROR',
-    });
-  }
-});
-
-/**
- * Register user async thunk
- * @param userData - User registration data
- */
-export const registerUser = createAsyncThunk<
-  AuthResponse,
-  RegisterFormData,
-  { rejectValue: AuthError }
->('auth/registerUser', async (userData, { rejectWithValue }) => {
-  try {
-    return await AuthService.register(userData);
-  } catch (error: unknown) {
-    console.error('Registration error:', error);
-
-    // Handle axios error response
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as {
-        response?: { data?: { message?: string; code?: string } };
-      };
-      if (axiosError.response?.data) {
-        return rejectWithValue({
-          message: axiosError.response.data.message || 'Registration failed',
-          code: axiosError.response.data.code || 'REGISTRATION_ERROR',
-        });
-      }
-    }
-
-    return rejectWithValue({
-      message: 'Registration failed',
-      code: 'REGISTRATION_ERROR',
     });
   }
 });
@@ -292,22 +257,6 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.status = 'unauthenticated';
         state.error = action.payload?.message || 'Login failed';
-      });
-
-    // Register user cases
-    builder
-      .addCase(registerUser.pending, state => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.status = 'authenticated';
-        state.user = action.payload.user;
-        state.error = null;
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.status = 'unauthenticated';
-        state.error = action.payload?.message || 'Registration failed';
       });
 
     // Logout user cases

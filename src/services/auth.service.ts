@@ -8,8 +8,7 @@ import type {
   AuthResponse,
   ForgotPasswordFormData,
   LoginFormData,
-  RegisterFormData,
-  ResetPasswordFormData,
+  ResetPasswordFormData
 } from '@/types/auth';
 
 /**
@@ -40,31 +39,7 @@ export class AuthService {
       throw error;
     }
   }
-
-  /**
-   * Register new user
-   */
-  static async register(userData: RegisterFormData): Promise<AuthResponse> {
-    try {
-      const response = await api.post<AuthResponse>('/auth/register', {
-        ...userData,
-        platform: 'admin'
-      });
-      const { accessToken, refreshToken } = response.data;
-
-      // Store tokens in cookies
-      setAuthToken(accessToken);
-      if (refreshToken) {
-        setRefreshToken(refreshToken);
-      }
-
-      return response.data;
-    } catch (error) {
-      console.error('Register API error:', error);
-      throw error;
-    }
-  }
-
+  
   /**
    * Send forgot password email
    */

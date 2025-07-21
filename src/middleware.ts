@@ -16,7 +16,7 @@ const PROTECTED_ROUTES = [
 /**
  * Routes that should redirect authenticated users away
  */
-const AUTH_ROUTES = ['/login', '/register', '/forgot-password'];
+const AUTH_ROUTES = ['/login', '/forgot-password'];
 
 /**
  * Authentication middleware

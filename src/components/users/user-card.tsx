@@ -1,22 +1,22 @@
 'use client';
 
 import {
-  Edit,
-  Trash2,
-  MoreVertical,
-  Eye,
-  User as UserIcon,
+    Edit,
+    Eye,
+    MoreVertical,
+    Trash2,
+    User as UserIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
 import type { User } from '@/types/users';
@@ -24,17 +24,18 @@ import type { User } from '@/types/users';
 interface UserCardProps {
   user: User;
   onDelete: (user: User) => void;
+  onToggleStatus: (user: User) => void;
 }
 
-export function UserCard({ user, onDelete }: UserCardProps) {
+export function UserCard({ user, onDelete, onToggleStatus }: UserCardProps) {
   const router = useRouter();
 
   const handleViewDetails = () => {
-    router.push(`/users/${user.id}`);
+    router.push(`/users/${user._id}`);
   };
 
   const handleEdit = () => {
-    router.push(`/users/${user.id}/edit`);
+    router.push(`/users/${user._id}/edit`);
   };
 
   const formatDate = (dateString: string) => {
@@ -43,13 +44,6 @@ export function UserCard({ user, onDelete }: UserCardProps) {
       month: 'short',
       day: 'numeric',
     });
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY',
-    }).format(amount);
   };
 
   const roleColors = {
@@ -62,8 +56,6 @@ export function UserCard({ user, onDelete }: UserCardProps) {
   const statusColors = {
     active: 'bg-green-100 text-green-800',
     inactive: 'bg-gray-100 text-gray-800',
-    suspended: 'bg-red-100 text-red-800',
-    pending: 'bg-yellow-100 text-yellow-800',
   };
 
   return (
@@ -72,15 +64,7 @@ export function UserCard({ user, onDelete }: UserCardProps) {
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="relative h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={`${user.firstName} ${user.lastName}`}
-                  className="w-full h-full object-cover rounded-full"
-                />
-              ) : (
-                <UserIcon className="h-6 w-6 text-white" />
-              )}
+              <UserIcon className="h-6 w-6 text-white" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-lg">
@@ -104,6 +88,10 @@ export function UserCard({ user, onDelete }: UserCardProps) {
                 <Edit className="h-4 w-4 mr-2" />
                 Edit User
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onToggleStatus(user)}>
+                <Eye className="h-4 w-4 mr-2" />
+                {user.isActive ? 'Deactivate' : 'Activate'}
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => onDelete(user)}
                 className="text-destructive"
@@ -121,9 +109,9 @@ export function UserCard({ user, onDelete }: UserCardProps) {
           {/* Status and Role */}
           <div className="flex items-center gap-2">
             <Badge
-              className={statusColors[user.status as keyof typeof statusColors]}
+              className={statusColors[user.isActive ? 'active' : 'inactive']}
             >
-              {user.status}
+              {user.isActive ? 'Active' : 'Inactive'}
             </Badge>
             <Badge className={roleColors[user.role as keyof typeof roleColors]}>
               {user.role}
@@ -132,29 +120,31 @@ export function UserCard({ user, onDelete }: UserCardProps) {
 
           {/* Contact Info */}
           <div className="space-y-1 text-sm">
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">Phone:</span>
-              <span>{user.phone}</span>
-            </div>
+            {user.phoneNumber && (
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">Phone:</span>
+                <span>{user.phoneNumber}</span>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">Member since:</span>
               <span>{formatDate(user.createdAt)}</span>
             </div>
+            <div className="flex items-center gap-2">
+              <span className="text-muted-foreground">Email verified:</span>
+              <span>{user.isEmailVerified ? 'Yes' : 'No'}</span>
+            </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 gap-4 pt-2">
-            <div className="text-center">
-              <div className="text-lg font-semibold">{user.totalOrders}</div>
-              <div className="text-xs text-muted-foreground">Orders</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold">
-                {formatCurrency(user.totalSpent)}
+          {/* Addresses */}
+          {user.addresses && user.addresses.length > 0 && (
+            <div className="space-y-1 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-muted-foreground">Addresses:</span>
+                <span>{user.addresses.length}</span>
               </div>
-              <div className="text-xs text-muted-foreground">Total Spent</div>
             </div>
-          </div>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -12,8 +12,8 @@ import { clearError, resetPassword } from '@/features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useToast } from '@/hooks/use-toast';
 import {
-    resetPasswordSchema,
-    type ResetPasswordFormData,
+  resetPasswordSchema,
+  type ResetPasswordFormData,
 } from '@/utils/validation';
 
 import { AuthLayout } from '@/components/layout';

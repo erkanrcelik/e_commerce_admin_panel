@@ -1,107 +1,102 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
-  ArrowLeft,
-  Edit,
-  Trash2,
-  Mail,
-  Phone,
-  Clock,
-  MapPin,
+    ArrowLeft,
+    Clock,
+    Edit,
+    Mail,
+    MapPin,
+    Phone
 } from 'lucide-react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar';
+import { Badge } from '@/components/ui/badge';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
 } from '@/components/ui/sidebar';
+import { useToast } from '@/hooks/use-toast';
+import { UsersService } from '@/services/users.service';
 
-import type { UserDetails } from '@/types/users';
-
-// Mock user details
-const mockUserDetails: UserDetails = {
-  id: '1',
-  email: 'customer@example.com',
-  firstName: 'Mehmet',
-  lastName: 'Kaya',
-  phone: '+90 555 456 7890',
-  avatar:
-    'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
-  role: 'customer',
-  status: 'active',
-  createdAt: '2024-01-13T08:00:00Z',
-  updatedAt: '2024-01-13T08:00:00Z',
-  lastLoginAt: '2024-01-20T11:20:00Z',
-  emailVerified: true,
-  phoneVerified: true,
-  totalOrders: 12,
-  totalSpent: 3450,
-  address: {
-    street: 'Atatürk Caddesi No:123',
-    city: 'İstanbul',
-    state: 'İstanbul',
-    zipCode: '34000',
-    country: 'Türkiye',
-  },
-  orders: [
-    {
-      id: '1',
-      orderNumber: 'ORD-001',
-      status: 'delivered',
-      total: 1250,
-      items: 3,
-      createdAt: '2024-01-15T10:00:00Z',
-      updatedAt: '2024-01-18T14:30:00Z',
-    },
-    {
-      id: '2',
-      orderNumber: 'ORD-002',
-      status: 'shipped',
-      total: 890,
-      items: 2,
-      createdAt: '2024-01-12T09:00:00Z',
-      updatedAt: '2024-01-16T11:20:00Z',
-    },
-  ],
-  recentActivity: [
-    {
-      type: 'login',
-      description: 'User logged in',
-      timestamp: '2024-01-20T14:30:00Z',
-    },
-    {
-      type: 'order',
-      description: 'Placed order #ORD-001',
-      timestamp: '2024-01-15T10:00:00Z',
-    },
-    {
-      type: 'profile_update',
-      description: 'Updated profile information',
-      timestamp: '2024-01-10T16:45:00Z',
-    },
-  ],
-};
+import type { User, UserOrder } from '@/types/users';
 
 type UserDetailPageProps = { params: Promise<{ id: string }> };
 
-export default async function UserDetailPage({ params }: UserDetailPageProps) {
-  const { id } = await params;
+export default function UserDetailPage({ params }: UserDetailPageProps) {
+  const [id, setId] = useState<string>('');
+  const [user, setUser] = useState<User | null>(null);
+  const [orders, setOrders] = useState<UserOrder[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { showError } = useToast();
+
+  useEffect(() => {
+    const loadParams = async () => {
+      const { id: userId } = await params;
+      setId(userId);
+      void loadUserData(userId);
+    };
+    void loadParams();
+  }, [params]);
+
+  const loadUserData = async (userId: string) => {
+    try {
+      setIsLoading(true);
+      const [userData, userOrders] = await Promise.all([
+        UsersService.getUser(userId),
+        UsersService.getUserOrders(userId),
+      ]);
+      setUser(userData);
+      setOrders(userOrders);
+    } catch (error) {
+      console.error('Failed to load user data:', error);
+      showError({
+        message: 'Failed to load user data',
+        description: 'Please try again later.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">Loading user details...</p>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
+  }
+
+  if (!user) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex items-center justify-center h-64">
+            <p className="text-muted-foreground">User not found</p>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -133,30 +128,23 @@ export default async function UserDetailPage({ params }: UserDetailPageProps) {
         </header>
 
         <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
-          <UserDetailContent userId={id} user={mockUserDetails} />
+          <UserDetailContent userId={id} user={user} orders={orders} />
         </div>
       </SidebarInset>
     </SidebarProvider>
   );
 }
 
-// Client component for the content
 function UserDetailContent({
   userId,
   user,
+  orders,
 }: {
   userId: string;
-  user: UserDetails;
+  user: User;
+  orders: UserOrder[];
 }) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, [userId]);
 
   const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -179,59 +167,56 @@ function UserDetailContent({
     }).format(amount);
   };
 
-  const roleColors = {
-    admin: 'bg-red-100 text-red-800',
-    vendor: 'bg-blue-100 text-blue-800',
-    customer: 'bg-green-100 text-green-800',
-    moderator: 'bg-purple-100 text-purple-800',
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'shipped':
+        return 'bg-blue-100 text-blue-800';
+      case 'processing':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'pending':
+        return 'bg-gray-100 text-gray-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
 
-  const statusColors = {
-    active: 'bg-green-100 text-green-800',
-    inactive: 'bg-gray-100 text-gray-800',
-    suspended: 'bg-red-100 text-red-800',
-    pending: 'bg-yellow-100 text-yellow-800',
+  const getPaymentStatusColor = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'failed':
+        return 'bg-red-100 text-red-800';
+      case 'refunded':
+        return 'bg-blue-100 text-blue-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
   };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">Loading user details...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-muted-foreground">User not found</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <>
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => window.history.back()}
+            onClick={() => router.push('/users')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Back to Users
           </Button>
           <div>
             <h1 className="text-2xl font-semibold">
               {user.firstName} {user.lastName}
             </h1>
-            <p className="text-muted-foreground">User details and activity</p>
+            <p className="text-muted-foreground">{user.email}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -243,243 +228,176 @@ function UserDetailContent({
             <Edit className="h-4 w-4 mr-2" />
             Edit User
           </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              // TODO: Implement delete functionality
-              console.log('Delete user:', userId);
-            }}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete
-          </Button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* User Information */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Basic Information */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Profile Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
+              <CardTitle>Profile Information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
-                <div className="relative h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                  {user.avatar ? (
-                    <Image
-                      src={user.avatar}
-                      alt={`${user.firstName} ${user.lastName}`}
-                      fill
-                      className="object-cover rounded-full"
-                    />
-                  ) : (
-                    <span className="text-white text-lg font-semibold">
-                      {getInitials(user.firstName, user.lastName)}
-                    </span>
-                  )}
+                <div className="h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-semibold text-lg">
+                  {getInitials(user.firstName, user.lastName)}
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">
+                  <h3 className="font-semibold">
                     {user.firstName} {user.lastName}
                   </h3>
-                  <p className="text-muted-foreground">{user.email}</p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge
-                      className={
-                        roleColors[user.role as keyof typeof roleColors]
-                      }
-                    >
-                      {user.role}
-                    </Badge>
-                    <Badge
-                      className={
-                        statusColors[user.status as keyof typeof statusColors]
-                      }
-                    >
-                      {user.status}
-                    </Badge>
-                  </div>
+                  <p className="text-sm text-muted-foreground">{user.email}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Email:</span>
-                    <span>{user.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Phone:</span>
-                    <span>{user.phone}</span>
-                  </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">{user.email}</span>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Member since:</span>
-                    <span>{formatDate(user.createdAt)}</span>
+                {user.phoneNumber && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{user.phoneNumber}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Last login:</span>
-                    <span>
-                      {user.lastLoginAt
-                        ? formatDate(user.lastLoginAt)
-                        : 'Never'}
-                    </span>
-                  </div>
+                )}
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">
+                    Member since {formatDate(user.createdAt)}
+                  </span>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Role</span>
+                  <Badge variant="secondary">{user.role}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Status</span>
+                  <Badge
+                    className={
+                      user.isActive
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }
+                  >
+                    {user.isActive ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Email Verified</span>
+                  <Badge
+                    className={
+                      user.isEmailVerified
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }
+                  >
+                    {user.isEmailVerified ? 'Verified' : 'Not Verified'}
+                  </Badge>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Address Information */}
-          {user.address && (
+          {/* Addresses */}
+          {user.addresses && user.addresses.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Address Information</CardTitle>
+                <CardTitle>Addresses</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="text-sm">{user.address.street}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {user.address.city}, {user.address.state}{' '}
-                      {user.address.zipCode}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {user.address.country}
-                    </p>
-                  </div>
+                <div className="space-y-3">
+                  {user.addresses.map((address, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div className="text-sm">
+                        <p>{address.street}</p>
+                        <p className="text-muted-foreground">
+                          {address.city}, {address.state} {address.postalCode}
+                        </p>
+                        <p className="text-muted-foreground">{address.country}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           )}
+        </div>
 
-          {/* Statistics */}
+        {/* Orders */}
+        <div className="lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle>Statistics</CardTitle>
+              <CardTitle>Order History ({orders.length})</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{user.totalOrders}</div>
-                  <div className="text-sm text-muted-foreground">
-                    Total Orders
-                  </div>
+              {orders.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No orders found</p>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(user.totalSpent)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Total Spent
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {user.emailVerified ? 'Yes' : 'No'}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Email Verified
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Orders */}
-          {user.orders && user.orders.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Orders</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {user.orders.slice(0, 5).map(order => (
+              ) : (
+                <div className="space-y-4">
+                  {orders.map((order) => (
                     <div
-                      key={order.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
+                      key={order.orderId}
+                      className="border rounded-lg p-4 space-y-3"
                     >
-                      <div>
-                        <p className="font-medium">{order.orderNumber}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {formatDate(order.createdAt)}
-                        </p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium">Order #{order.orderId}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {formatDate(order.createdAt)}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-semibold">
+                            {formatCurrency(order.totalAmount)}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge className={getStatusColor(order.status)}>
+                              {order.status}
+                            </Badge>
+                            <Badge className={getPaymentStatusColor(order.paymentStatus)}>
+                              {order.paymentStatus}
+                            </Badge>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {formatCurrency(order.total)}
-                        </p>
-                        <Badge variant="outline" className="text-xs">
-                          {order.status}
-                        </Badge>
-                      </div>
+
+                      {order.items.length > 0 && (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">Items:</p>
+                          <div className="space-y-1">
+                            {order.items.map((item, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center justify-between text-sm"
+                              >
+                                <span>{item.productName}</span>
+                                <span>
+                                  {item.quantity}x {formatCurrency(item.price)}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          {/* Verification Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Verification Status</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Email Verification</span>
-                <Badge variant={user.emailVerified ? 'default' : 'secondary'}>
-                  {user.emailVerified ? 'Verified' : 'Not Verified'}
-                </Badge>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">Phone Verification</span>
-                <Badge variant={user.phoneVerified ? 'default' : 'secondary'}>
-                  {user.phoneVerified ? 'Verified' : 'Not Verified'}
-                </Badge>
-              </div>
+              )}
             </CardContent>
           </Card>
-
-          {/* Recent Activity */}
-          {user.recentActivity && user.recentActivity.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {user.recentActivity.slice(0, 5).map((activity, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">
-                          {activity.description}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(activity.timestamp)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

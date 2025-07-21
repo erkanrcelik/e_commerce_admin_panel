@@ -20,10 +20,10 @@ interface UserFiltersProps {
 }
 
 export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
-  const handleFilterChange = (key: keyof UserFiltersType, value: string) => {
+  const handleFilterChange = (key: keyof UserFiltersType, value: string | boolean | undefined) => {
     onFiltersChange({
       ...filters,
-      [key]: value || undefined,
+      [key]: value === '' || value === false ? undefined : value,
     });
   };
 
@@ -52,34 +52,22 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
 
         <div className="flex items-center gap-2">
           <Select
-            value={filters.role || 'all'}
-            onValueChange={value => handleFilterChange('role', value === 'all' ? '' : value)}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="customer">Customer</SelectItem>
-              <SelectItem value="vendor">Vendor</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-              <SelectItem value="moderator">Moderator</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={filters.status || 'all'}
-            onValueChange={value => handleFilterChange('status', value === 'all' ? '' : value)}
+            value={filters.isActive === undefined ? 'all' : filters.isActive ? 'active' : 'inactive'}
+            onValueChange={value => {
+              if (value === 'all') {
+                handleFilterChange('isActive', undefined);
+              } else {
+                handleFilterChange('isActive', value === 'active');
+              }
+            }}
           >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="suspended">Suspended</SelectItem>
+              <SelectItem value="all">All Users</SelectItem>
+              <SelectItem value="active">Active Only</SelectItem>
+              <SelectItem value="inactive">Inactive Only</SelectItem>
             </SelectContent>
           </Select>
 
@@ -95,9 +83,6 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
               <SelectItem value="name">Name</SelectItem>
               <SelectItem value="email">Email</SelectItem>
               <SelectItem value="createdAt">Created Date</SelectItem>
-              <SelectItem value="lastLoginAt">Last Login</SelectItem>
-              <SelectItem value="totalOrders">Orders</SelectItem>
-              <SelectItem value="totalSpent">Total Spent</SelectItem>
             </SelectContent>
           </Select>
 

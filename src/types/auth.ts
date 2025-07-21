@@ -41,17 +41,6 @@ export interface LoginFormData {
 }
 
 /**
- * Registration form data structure
- */
-export interface RegisterFormData {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  acceptTerms: boolean;
-}
-
-/**
  * Password reset request form data
  */
 export interface ForgotPasswordFormData {

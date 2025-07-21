@@ -142,10 +142,9 @@ api.interceptors.response.use(
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
 
     // Handle 401 Unauthorized - Token expired or invalid
-    // Skip token refresh for auth endpoints (login, register, etc.)
+    // Skip token refresh for auth endpoints (login, etc.)
     if (error.response?.status === 401 && originalRequest) {
       const isAuthEndpoint = originalRequest.url?.includes('/auth/login') || 
-                            originalRequest.url?.includes('/auth/register') ||
                             originalRequest.url?.includes('/auth/forgot-password') ||
                             originalRequest.url?.includes('/auth/reset-password');
       

@@ -142,13 +142,6 @@ export function VerifyEmailForm() {
             >
               Go to Sign In
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => router.push('/register')}
-              className="w-full"
-            >
-              Create New Account
-            </Button>
           </div>
         </div>
       </AuthLayout>

@@ -104,23 +104,10 @@ export function LoginForm() {
     }
   };
 
-  const footerContent = (
-    <>
-      Don&apos;t have an account?{' '}
-      <Link
-        href="/register"
-        className="underline underline-offset-4 hover:text-indigo-600 dark:hover:text-indigo-400"
-      >
-        Sign up
-      </Link>
-    </>
-  );
-
   return (
     <AuthLayout
       title="Welcome back"
       subtitle="Sign in to your account to continue"
-      footerContent={footerContent}
     >
       <form
         onSubmit={e => {

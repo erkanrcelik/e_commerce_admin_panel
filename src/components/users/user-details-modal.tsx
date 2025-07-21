@@ -1,20 +1,20 @@
 'use client';
 
-import { Mail, Phone, MapPin, Calendar } from 'lucide-react';
+import { Calendar, Mail, MapPin, Phone } from 'lucide-react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
 
-import type { UserDetails } from '@/types/users';
+import type { User } from '@/types/users';
 
 interface UserDetailsModalProps {
-  user: UserDetails | null;
+  user: User | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -36,13 +36,6 @@ export function UserDetailsModal({
     });
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('tr-TR', {
-      style: 'currency',
-      currency: 'TRY',
-    }).format(amount);
-  };
-
   const roleColors = {
     admin: 'bg-red-100 text-red-800',
     vendor: 'bg-blue-100 text-blue-800',
@@ -53,8 +46,6 @@ export function UserDetailsModal({
   const statusColors = {
     active: 'bg-green-100 text-green-800',
     inactive: 'bg-gray-100 text-gray-800',
-    suspended: 'bg-red-100 text-red-800',
-    pending: 'bg-yellow-100 text-yellow-800',
   };
 
   return (
@@ -73,18 +64,10 @@ export function UserDetailsModal({
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
                 <div className="relative h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                  {user.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={`${user.firstName} ${user.lastName}`}
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <div className="text-white text-lg font-semibold">
-                      {user.firstName.charAt(0)}
-                      {user.lastName.charAt(0)}
-                    </div>
-                  )}
+                  <div className="text-white text-lg font-semibold">
+                    {user.firstName.charAt(0)}
+                    {user.lastName.charAt(0)}
+                  </div>
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold">
@@ -101,10 +84,10 @@ export function UserDetailsModal({
                     </Badge>
                     <Badge
                       className={
-                        statusColors[user.status as keyof typeof statusColors]
+                        statusColors[user.isActive ? 'active' : 'inactive']
                       }
                     >
-                      {user.status}
+                      {user.isActive ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
                 </div>
@@ -117,11 +100,13 @@ export function UserDetailsModal({
                     <span className="font-medium">Email:</span>
                     <span>{user.email}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Phone:</span>
-                    <span>{user.phone}</span>
-                  </div>
+                  {user.phoneNumber && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span className="font-medium">Phone:</span>
+                      <span>{user.phoneNumber}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
@@ -131,12 +116,8 @@ export function UserDetailsModal({
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Last login:</span>
-                    <span>
-                      {user.lastLoginAt
-                        ? formatDate(user.lastLoginAt)
-                        : 'Never'}
-                    </span>
+                    <span className="font-medium">Email verified:</span>
+                    <span>{user.isEmailVerified ? 'Yes' : 'No'}</span>
                   </div>
                 </div>
               </div>
@@ -144,88 +125,24 @@ export function UserDetailsModal({
           </Card>
 
           {/* Address Information */}
-          {user.address && (
+          {user.addresses && user.addresses.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle>Address Information</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="text-sm">{user.address.street}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {user.address.city}, {user.address.state}{' '}
-                      {user.address.zipCode}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {user.address.country}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Statistics */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Statistics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{user.totalOrders}</div>
-                  <div className="text-sm text-muted-foreground">
-                    Total Orders
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(user.totalSpent)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Total Spent
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {user.emailVerified ? 'Yes' : 'No'}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Email Verified
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Recent Orders */}
-          {user.orders && user.orders.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Orders</CardTitle>
+                <CardTitle>Addresses</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {user.orders.slice(0, 5).map(order => (
-                    <div
-                      key={order.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium">{order.orderNumber}</p>
+                  {user.addresses.map((address, index) => (
+                    <div key={index} className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                      <div className="space-y-1">
+                        <p className="text-sm">{address.street}</p>
                         <p className="text-sm text-muted-foreground">
-                          {formatDate(order.createdAt)}
+                          {address.city}, {address.state} {address.postalCode}
                         </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {formatCurrency(order.total)}
+                        <p className="text-sm text-muted-foreground">
+                          {address.country}
                         </p>
-                        <Badge variant="outline" className="text-xs">
-                          {order.status}
-                        </Badge>
                       </div>
                     </div>
                   ))}
