@@ -1,59 +1,107 @@
 import api from '@/lib/axios';
-import type {
-    CategoriesResponse,
-    Category,
-    CreateCategoryRequest,
-    ToggleStatusResponse,
-    UpdateCategoryRequest,
-} from '@/types/admin-categories';
-import type { ApiResponse } from '@/types/admin-dashboard';
 
-// Admin Categories Service
-export const adminCategoriesService = {
+import type {
+  Category,
+  CategoryFilters,
+  CreateCategoryData,
+  UpdateCategoryData,
+} from '@/types/categories';
+
+/**
+ * Categories service for admin operations
+ */
+export class CategoriesService {
+  private static readonly BASE_URL = '/admin/categories';
+
   /**
    * Get all categories with pagination and filters
    */
-  getAll: (params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    isActive?: boolean;
-  }): Promise<ApiResponse<CategoriesResponse>> => {
-    return api.get('/admin/categories', { params });
-  },
+  static async getCategories(
+    filters: CategoryFilters = {}
+  ): Promise<{ data: Category[]; total: number; page: number; limit: number; totalPages: number }> {
+    const params = new URLSearchParams();
+
+    // Add pagination params
+    if (filters.page) params.append('page', filters.page.toString());
+    if (filters.limit) params.append('limit', filters.limit.toString());
+
+    // Add search param
+    if (filters.search) params.append('search', filters.search);
+
+    // Add status filter
+    if (filters.isActive !== undefined) {
+      params.append('isActive', filters.isActive.toString());
+    }
+
+    const response = await api.get<{ data: Category[]; total: number; page: number; limit: number; totalPages: number }>(
+      `${this.BASE_URL}?${params.toString()}`
+    );
+
+    return response.data;
+  }
 
   /**
    * Get category by ID
    */
-  getById: (id: string): Promise<ApiResponse<Category>> => {
-    return api.get(`/admin/categories/${id}`);
-  },
+  static async getCategory(id: string): Promise<Category> {
+    const response = await api.get<Category>(
+      `${this.BASE_URL}/${id}`
+    );
+    return response.data;
+  }
 
   /**
    * Create new category
    */
-  create: (data: CreateCategoryRequest): Promise<ApiResponse<Category>> => {
-    return api.post('/admin/categories', data);
-  },
+  static async createCategory(data: CreateCategoryData): Promise<Category> {
+    const response = await api.post<Category>(
+      this.BASE_URL,
+      data
+    );
+    return response.data;
+  }
 
   /**
    * Update category
    */
-  update: (id: string, data: UpdateCategoryRequest): Promise<ApiResponse<Category>> => {
-    return api.put(`/admin/categories/${id}`, data);
-  },
+  static async updateCategory(
+    id: string,
+    data: UpdateCategoryData
+  ): Promise<Category> {
+    const response = await api.put<Category>(
+      `${this.BASE_URL}/${id}`,
+      data
+    );
+    return response.data;
+  }
+
+  /**
+   * Toggle category status (active/inactive)
+   */
+  static async toggleCategoryStatus(id: string): Promise<Category> {
+    const response = await api.put<Category>(
+      `${this.BASE_URL}/${id}/toggle-status`
+    );
+    return response.data;
+  }
 
   /**
    * Delete category
    */
-  delete: (id: string): Promise<ApiResponse<{ message: string }>> => {
-    return api.delete(`/admin/categories/${id}`);
-  },
+  static async deleteCategory(id: string): Promise<{ message: string }> {
+    const response = await api.delete<{ message: string }>(
+      `${this.BASE_URL}/${id}`
+    );
+    return response.data;
+  }
 
   /**
-   * Toggle category status
+   * Get category statistics
    */
-  toggleStatus: (id: string): Promise<ApiResponse<ToggleStatusResponse>> => {
-    return api.put(`/admin/categories/${id}/toggle-status`);
-  },
-};
+  static async getCategoryStats(): Promise<{ total: number; active: number; inactive: number }> {
+    const response = await api.get<{ total: number; active: number; inactive: number }>(
+      `${this.BASE_URL}/stats/overview`
+    );
+    return response.data;
+  }
+}

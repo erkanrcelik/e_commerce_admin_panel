@@ -10,23 +10,12 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 
+import { sidebarConfig } from './sidebar-config';
 import { SidebarHeader } from './sidebar-header';
 import { SidebarNav } from './sidebar-nav';
 import { SidebarUser } from './sidebar-user';
-import { sidebarConfig } from './sidebar-config';
 
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  onLogout?: () => void;
-  onProfile?: () => void;
-  onSettings?: () => void;
-}
-
-export function AppSidebar({
-  onLogout,
-  onProfile,
-  onSettings,
-  ...props
-}: AppSidebarProps) {
+export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeaderUI>
@@ -36,12 +25,7 @@ export function AppSidebar({
         <SidebarNav items={sidebarConfig.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <SidebarUser
-          user={sidebarConfig.user}
-          onLogout={onLogout}
-          onProfile={onProfile}
-          onSettings={onSettings}
-        />
+        <SidebarUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

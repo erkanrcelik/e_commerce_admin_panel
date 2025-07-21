@@ -31,7 +31,7 @@ interface CategoryFormProps {
   category?: Category;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateCategoryData | UpdateCategoryData) => Promise<void>;
+  onSubmit: (data: CreateCategoryData | UpdateCategoryData) => void;
   isLoading?: boolean;
 }
 
@@ -52,11 +52,11 @@ export function CategoryForm({
     reset,
   } = useForm<CreateCategoryData | UpdateCategoryData>();
 
-  const handleFormSubmit = async (
+  const handleFormSubmit = (
     data: CreateCategoryData | UpdateCategoryData
   ) => {
     try {
-      await onSubmit(data);
+      onSubmit(data);
       reset();
       onClose();
     } catch (error) {

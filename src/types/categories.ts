@@ -1,5 +1,5 @@
 export interface Category {
-  id: string;
+  _id: string;
   name: string;
   description: string;
   image: string;
@@ -12,7 +12,8 @@ export interface Category {
 export interface CreateCategoryData {
   name: string;
   description: string;
-  image: string;
+  image?: string;
+  isActive?: boolean;
 }
 
 export interface UpdateCategoryData {
@@ -23,6 +24,8 @@ export interface UpdateCategoryData {
 }
 
 export interface CategoryFilters extends Record<string, string | boolean | number | undefined> {
+  page?: number;
+  limit?: number;
   search?: string;
   isActive?: boolean;
   sortBy?: 'name' | 'createdAt' | 'productCount';
@@ -30,8 +33,15 @@ export interface CategoryFilters extends Record<string, string | boolean | numbe
 }
 
 export interface CategoryListResponse {
-  categories: Category[];
+  data: Category[];
   total: number;
   page: number;
   limit: number;
+  totalPages: number;
+}
+
+export interface CategoryStats {
+  total: number;
+  active: number;
+  inactive: number;
 }

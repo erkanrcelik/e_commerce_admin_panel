@@ -8,6 +8,8 @@ import { FilterBar } from '@/components/layout/filter-bar';
 import { PageHeader } from '@/components/layout/page-header';
 import { PageLayout } from '@/components/layout/page-layout';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { CategoriesService } from '@/services/categories.service';
 
 import type {
   Category,
@@ -16,119 +18,42 @@ import type {
   UpdateCategoryData,
 } from '@/types/categories';
 
-// Mock data for development
-const mockCategories: Category[] = [
-  {
-    id: '1',
-    name: 'Electronics',
-    description:
-      'Latest electronic devices and gadgets including smartphones, laptops, tablets, and accessories.',
-    image:
-      'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&h=300&fit=crop',
-    isActive: true,
-    createdAt: '2024-01-15T10:00:00Z',
-    updatedAt: '2024-01-15T10:00:00Z',
-    productCount: 1250,
-  },
-  {
-    id: '2',
-    name: 'Clothing',
-    description:
-      'Fashion and apparel for men, women, and children including casual, formal, and sportswear.',
-    image:
-      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop',
-    isActive: true,
-    createdAt: '2024-01-14T09:00:00Z',
-    updatedAt: '2024-01-14T09:00:00Z',
-    productCount: 890,
-  },
-  {
-    id: '3',
-    name: 'Home and Garden',
-    description:
-      'Everything for your home and garden including furniture, decor, tools, and outdoor equipment.',
-    image:
-      'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop',
-    isActive: true,
-    createdAt: '2024-01-13T08:00:00Z',
-    updatedAt: '2024-01-13T08:00:00Z',
-    productCount: 567,
-  },
-  {
-    id: '4',
-    name: 'Sports',
-    description:
-      'Sports equipment, athletic wear, and fitness gear for all types of sports and activities.',
-    image:
-      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop',
-    isActive: true,
-    createdAt: '2024-01-12T07:00:00Z',
-    updatedAt: '2024-01-12T07:00:00Z',
-    productCount: 423,
-  },
-  {
-    id: '5',
-    name: 'Books',
-    description:
-      "Books across all genres including fiction, non-fiction, academic, and children's literature.",
-    image:
-      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=300&fit=crop',
-    isActive: true,
-    createdAt: '2024-01-11T06:00:00Z',
-    updatedAt: '2024-01-11T06:00:00Z',
-    productCount: 2340,
-  },
-  {
-    id: '6',
-    name: 'Health and Beauty',
-    description:
-      'Health products, beauty supplies, skincare, makeup, and personal care items.',
-    image:
-      'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400&h=300&fit=crop',
-    isActive: true,
-    createdAt: '2024-01-10T05:00:00Z',
-    updatedAt: '2024-01-10T05:00:00Z',
-    productCount: 678,
-  },
-  {
-    id: '7',
-    name: 'Toys',
-    description:
-      'Toys and games for children of all ages including educational, outdoor, and electronic toys.',
-    image:
-      'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=300&fit=crop',
-    isActive: false,
-    createdAt: '2024-01-09T04:00:00Z',
-    updatedAt: '2024-01-09T04:00:00Z',
-    productCount: 345,
-  },
-  {
-    id: '8',
-    name: 'Food',
-    description:
-      'Food and beverages including groceries, snacks, drinks, and specialty food items.',
-    image:
-      'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=400&h=300&fit=crop',
-    isActive: true,
-    createdAt: '2024-01-08T03:00:00Z',
-    updatedAt: '2024-01-08T03:00:00Z',
-    productCount: 1567,
-  },
-];
-
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>(mockCategories);
-  const [filteredCategories, setFilteredCategories] =
-    useState<Category[]>(mockCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [filters, setFilters] = useState<CategoryFiltersType>({});
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<
-    Category | undefined
-  >();
-  const [deletingCategory, setDeletingCategory] = useState<
-    Category | undefined
-  >();
+  const [editingCategory, setEditingCategory] = useState<Category | undefined>();
+  const [deletingCategory, setDeletingCategory] = useState<Category | undefined>();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { showSuccess, showError, showLoading, dismiss } = useToast();
+
+  // Load categories from API
+  useEffect(() => {
+    void loadCategories();
+  }, []);
+
+  const loadCategories = async () => {
+    try {
+      setIsLoading(true);
+      const response = await CategoriesService.getCategories({
+        page: 1,
+        limit: 100, // Get all categories for now
+        ...filters,
+      });
+      setCategories(response.data);
+      setFilteredCategories(response.data);
+    } catch (error) {
+      console.error('Failed to load categories:', error);
+      showError({
+        message: 'Failed to load categories',
+        description: 'Please try again later.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Filter categories
   useEffect(() => {
@@ -184,74 +109,126 @@ export default function CategoriesPage() {
     setFilteredCategories(filtered);
   }, [categories, filters]);
 
-  const handleCreateCategory = (data: CreateCategoryData) => {
+  const handleCreateCategory = async (data: CreateCategoryData) => {
+    let loadingToastId: string | number | undefined;
+
     try {
       setIsSubmitting(true);
-      // In real app: await CategoriesService.createCategory(data)
-      const newCategory: Category = {
-        id: Date.now().toString(),
-        ...data,
-        isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        productCount: 0,
-      };
+      loadingToastId = showLoading({
+        message: 'Creating category...',
+        description: 'Please wait while we create your category',
+      });
+
+      const newCategory = await CategoriesService.createCategory(data);
       setCategories(prev => [newCategory, ...prev]);
+
+      showSuccess({
+        message: 'Category created successfully!',
+        description: `"${newCategory.name}" has been added to your categories.`,
+      });
     } catch (error) {
       console.error('Failed to create category:', error);
+      showError({
+        message: 'Failed to create category',
+        description: 'Please check your input and try again.',
+      });
       throw error;
     } finally {
       setIsSubmitting(false);
+      if (loadingToastId) dismiss(loadingToastId);
     }
   };
 
-  const handleUpdateCategory = (data: UpdateCategoryData) => {
+  const handleUpdateCategory = async (data: UpdateCategoryData) => {
     if (!editingCategory) return;
+
+    let loadingToastId: string | number | undefined;
 
     try {
       setIsSubmitting(true);
-      // In real app: await CategoriesService.updateCategory(editingCategory.id, data)
-      const updatedCategory: Category = {
-        ...editingCategory,
-        ...data,
-        updatedAt: new Date().toISOString(),
-      };
+      loadingToastId = showLoading({
+        message: 'Updating category...',
+        description: 'Please wait while we update your category',
+      });
+
+      const updatedCategory = await CategoriesService.updateCategory(editingCategory._id, data);
       setCategories(prev =>
-        prev.map(cat => (cat.id === editingCategory.id ? updatedCategory : cat))
+        prev.map(cat => (cat._id === editingCategory._id ? updatedCategory : cat))
       );
+
+      showSuccess({
+        message: 'Category updated successfully!',
+        description: `"${updatedCategory.name}" has been updated.`,
+      });
     } catch (error) {
       console.error('Failed to update category:', error);
+      showError({
+        message: 'Failed to update category',
+        description: 'Please check your input and try again.',
+      });
       throw error;
     } finally {
       setIsSubmitting(false);
+      if (loadingToastId) dismiss(loadingToastId);
     }
   };
 
-  const handleDeleteCategory = () => {
+  const handleDeleteCategory = async () => {
     if (!deletingCategory) return;
 
+    let loadingToastId: string | number | undefined;
+
     try {
-      // In real app: await CategoriesService.deleteCategory(deletingCategory.id)
-      setCategories(prev => prev.filter(cat => cat.id !== deletingCategory.id));
+      loadingToastId = showLoading({
+        message: 'Deleting category...',
+        description: 'Please wait while we delete your category',
+      });
+
+      await CategoriesService.deleteCategory(deletingCategory._id);
+      setCategories(prev => prev.filter(cat => cat._id !== deletingCategory._id));
       setDeletingCategory(undefined);
+
+      showSuccess({
+        message: 'Category deleted successfully!',
+        description: `"${deletingCategory.name}" has been removed from your categories.`,
+      });
     } catch (error) {
       console.error('Failed to delete category:', error);
+      showError({
+        message: 'Failed to delete category',
+        description: 'Please try again later.',
+      });
+    } finally {
+      if (loadingToastId) dismiss(loadingToastId);
     }
   };
 
-  const handleToggleStatus = (category: Category) => {
+  const handleToggleStatus = async (category: Category) => {
+    let loadingToastId: string | number | undefined;
+
     try {
-      // In real app: await CategoriesService.toggleCategoryStatus(category.id)
-      const updatedCategory: Category = {
-        ...category,
-        isActive: !category.isActive,
-        updatedAt: new Date().toISOString(),
-      };
+      loadingToastId = showLoading({
+        message: 'Updating status...',
+        description: 'Please wait while we update the category status',
+      });
+
+      const updatedCategory = await CategoriesService.toggleCategoryStatus(category._id);
       setCategories(prev =>
-        prev.map(cat => (cat.id === category.id ? updatedCategory : cat))
+        prev.map(cat => (cat._id === category._id ? updatedCategory : cat))
       );
+
+      showSuccess({
+        message: 'Status updated successfully!',
+        description: `"${updatedCategory.name}" is now ${updatedCategory.isActive ? 'active' : 'inactive'}.`,
+      });
     } catch (error) {
       console.error('Failed to toggle category status:', error);
+      showError({
+        message: 'Failed to update status',
+        description: 'Please try again later.',
+      });
+    } finally {
+      if (loadingToastId) dismiss(loadingToastId);
     }
   };
 
@@ -264,15 +241,14 @@ export default function CategoriesPage() {
     setDeletingCategory(category);
   };
 
-  const handleFormSubmit = async (
+  const handleFormSubmit = (
     data: CreateCategoryData | UpdateCategoryData
-  ) => {
+  ): void => {
     if (editingCategory) {
-      handleUpdateCategory(data as UpdateCategoryData);
+      void handleUpdateCategory(data as UpdateCategoryData);
     } else {
-      handleCreateCategory(data as CreateCategoryData);
+      void handleCreateCategory(data as CreateCategoryData);
     }
-    return Promise.resolve();
   };
 
   const handleFormClose = () => {
@@ -346,7 +322,11 @@ export default function CategoriesPage() {
       />
 
       {/* Categories Grid */}
-      {filteredCategories.length === 0 ? (
+      {isLoading ? (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">Loading categories...</p>
+        </div>
+      ) : filteredCategories.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-muted-foreground">No categories found</p>
         </div>
@@ -354,11 +334,15 @@ export default function CategoriesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredCategories.map(category => (
             <CategoryCard
-              key={category.id}
+              key={category._id}
               category={category}
               onEdit={handleEdit}
               onDelete={handleDelete}
-              onToggleStatus={handleToggleStatus}
+              onToggleStatus={() => {
+                if (category) {
+                  void handleToggleStatus(category);
+                }
+              }}
             />
           ))}
         </div>
@@ -369,7 +353,9 @@ export default function CategoriesPage() {
         category={editingCategory}
         isOpen={isFormOpen}
         onClose={handleFormClose}
-        onSubmit={handleFormSubmit}
+        onSubmit={(data) => {
+          void handleFormSubmit(data);
+        }}
         isLoading={isSubmitting}
       />
 
@@ -389,7 +375,12 @@ export default function CategoriesPage() {
               >
                 Cancel
               </Button>
-              <Button variant="destructive" onClick={handleDeleteCategory}>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  void handleDeleteCategory();
+                }}
+              >
                 Delete
               </Button>
             </div>

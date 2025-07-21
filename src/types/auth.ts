@@ -13,11 +13,13 @@ export type AuthStatus =
 export interface User {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  role: 'admin' | 'customer' | 'vendor';
   isEmailVerified: boolean;
   avatar?: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 /**
@@ -77,7 +79,7 @@ export interface EmailVerificationData {
  */
 export interface AuthResponse {
   user: User;
-  token: string;
+  accessToken: string;
   refreshToken?: string;
   message?: string;
 }

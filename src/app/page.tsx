@@ -1,7 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import { AppSidebar } from '@/components/sidebar/app-sidebar';
 import {
   Breadcrumb,
@@ -17,82 +15,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { logoutUser } from '@/features/auth/authSlice';
-import { useAppDispatch } from '@/hooks/redux';
-import { useToast } from '@/hooks/use-toast';
 
 export default function Home() {
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { showSuccess, showLoading, dismiss } = useToast();
-
-  const handleLogout = () => {
-    void (async () => {
-      let loadingToastId: string | number | undefined;
-
-      try {
-        // Show loading toast
-        loadingToastId = showLoading({
-          message: 'Signing out...',
-          description: 'Please wait',
-        });
-
-        // Dispatch logout action
-        await dispatch(logoutUser());
-
-        // Dismiss loading toast
-        if (loadingToastId) dismiss(loadingToastId);
-
-        // Show success message
-        showSuccess({
-          message: 'Successfully signed out',
-          description: 'You have been safely logged out',
-          duration: 2000,
-        });
-
-        // Redirect to login page
-        setTimeout(() => {
-          router.push('/login');
-        }, 1000);
-      } catch (error) {
-        // Dismiss loading toast if still showing
-        if (loadingToastId) dismiss(loadingToastId);
-
-        console.error('Logout error:', error);
-        
-        // Even if there's an error, we should still logout locally
-        // This handles cases where the backend is not available
-        showSuccess({
-          message: 'Signed out',
-          description: 'Local session terminated',
-          duration: 2000,
-        });
-
-        // Redirect to login page
-        setTimeout(() => {
-          router.push('/login');
-        }, 1000);
-      }
-    })();
-  };
-
-  const handleProfile = () => {
-    // Profil sayfasına yönlendirme
-    console.log('Profile clicked');
-  };
-
-  const handleSettings = () => {
-    // Ayarlar sayfasına yönlendirme
-    console.log('Settings clicked');
-  };
-
   return (
     <SidebarProvider>
-      <AppSidebar
-        onLogout={handleLogout}
-        onProfile={handleProfile}
-        onSettings={handleSettings}
-      />
+      <AppSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">

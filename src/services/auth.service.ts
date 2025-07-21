@@ -22,11 +22,14 @@ export class AuthService {
    */
   static async login(credentials: LoginFormData): Promise<AuthResponse> {
     try {
-      const response = await api.post<AuthResponse>('/auth/login', credentials);
-      const { token, refreshToken } = response.data;
+      const response = await api.post<AuthResponse>('/auth/login', {
+        ...credentials,
+        platform: 'admin'
+      });
+      const { accessToken, refreshToken } = response.data;
 
       // Store tokens in cookies
-      setAuthToken(token);
+      setAuthToken(accessToken);
       if (refreshToken) {
         setRefreshToken(refreshToken);
       }
@@ -43,11 +46,14 @@ export class AuthService {
    */
   static async register(userData: RegisterFormData): Promise<AuthResponse> {
     try {
-      const response = await api.post<AuthResponse>('/auth/register', userData);
-      const { token, refreshToken } = response.data;
+      const response = await api.post<AuthResponse>('/auth/register', {
+        ...userData,
+        platform: 'admin'
+      });
+      const { accessToken, refreshToken } = response.data;
 
       // Store tokens in cookies
-      setAuthToken(token);
+      setAuthToken(accessToken);
       if (refreshToken) {
         setRefreshToken(refreshToken);
       }
