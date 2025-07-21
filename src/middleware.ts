@@ -3,7 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Protected routes that require authentication
  */
-const PROTECTED_ROUTES = ['/dashboard', '/settings'];
+const PROTECTED_ROUTES = [
+  '/',
+  '/dashboard',
+  '/settings',
+  '/users',
+  '/categories',
+  '/vendors',
+  '/campaigns',
+];
 
 /**
  * Routes that should redirect authenticated users away
@@ -28,6 +36,11 @@ export function middleware(request: NextRequest) {
 
   // If user is not authenticated and trying to access protected route
   if (!isAuthenticated && isProtectedRoute) {
+    // Prevent redirect loop - if already on login page, don't redirect again
+    if (pathname === '/login') {
+      return NextResponse.next();
+    }
+    
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);

@@ -11,7 +11,7 @@ import type {
   RegisterFormData,
   ResetPasswordFormData,
   User,
-} from '../../types/auth';
+} from '@/types';
 
 /**
  * Initial authentication state
@@ -32,8 +32,7 @@ export const loginUser = createAsyncThunk<
   { rejectValue: AuthError }
 >('auth/loginUser', async (credentials, { rejectWithValue }) => {
   try {
-    const response = await AuthService.login(credentials);
-    return response;
+    return await AuthService.login(credentials);
   } catch (error: unknown) {
     console.error('Login error:', error);
 
@@ -67,8 +66,7 @@ export const registerUser = createAsyncThunk<
   { rejectValue: AuthError }
 >('auth/registerUser', async (userData, { rejectWithValue }) => {
   try {
-    const response = await AuthService.register(userData);
-    return response;
+    return await AuthService.register(userData);
   } catch (error: unknown) {
     console.error('Registration error:', error);
 
@@ -102,8 +100,7 @@ export const forgotPassword = createAsyncThunk<
   { rejectValue: AuthError }
 >('auth/forgotPassword', async (emailData, { rejectWithValue }) => {
   try {
-    const response = await AuthService.forgotPassword(emailData);
-    return response;
+    return await AuthService.forgotPassword(emailData);
   } catch (error: unknown) {
     console.error('Forgot password error:', error);
 
@@ -138,8 +135,7 @@ export const resetPassword = createAsyncThunk<
   { rejectValue: AuthError }
 >('auth/resetPassword', async (resetData, { rejectWithValue }) => {
   try {
-    const response = await AuthService.resetPassword(resetData);
-    return response;
+    return await AuthService.resetPassword(resetData);
   } catch (error: unknown) {
     console.error('Reset password error:', error);
 
@@ -173,8 +169,7 @@ export const verifyEmail = createAsyncThunk<
   { rejectValue: AuthError }
 >('auth/verifyEmail', async (token, { rejectWithValue }) => {
   try {
-    const response = await AuthService.verifyEmail(token);
-    return response;
+    return await AuthService.verifyEmail(token);
   } catch (error: unknown) {
     console.error('Email verification error:', error);
 
@@ -218,8 +213,7 @@ export const getUserProfile = createAsyncThunk<
   { rejectValue: AuthError }
 >('auth/getUserProfile', async (_, { rejectWithValue }) => {
   try {
-    const user = await AuthService.getProfile();
-    return user;
+    return await AuthService.getProfile();
   } catch (error: unknown) {
     console.error('Get profile error:', error);
 

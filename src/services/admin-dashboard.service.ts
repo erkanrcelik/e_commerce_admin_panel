@@ -1,10 +1,10 @@
 import api from '@/lib/axios';
 import type {
-    ApiResponse,
-    DashboardStatistics,
-    DashboardSummary,
-    PlatformTrends,
-    RecentActivity
+  ApiResponse,
+  DashboardStatistics,
+  DashboardSummary,
+  PlatformTrends,
+  RecentActivity
 } from '@/types/admin-dashboard';
 
 // Admin Dashboard Service

@@ -1,4 +1,5 @@
 import api, {
+  getAuthToken,
   removeAuthTokens,
   setAuthToken,
   setRefreshToken,
@@ -114,11 +115,16 @@ export class AuthService {
    */
   static async logout(): Promise<void> {
     try {
-      // Call logout endpoint to invalidate token on server
-      await api.post('/auth/logout');
+      // Check if we have a valid token before making the API call
+      const token = getAuthToken();
+      if (token && token !== 'undefined') {
+        // Call logout endpoint to invalidate token on server
+        await api.post('/auth/logout');
+      }
     } catch (error) {
       console.error('Logout API error:', error);
       // Continue with local logout even if API call fails
+      // This is important for offline scenarios or when backend is not available
     } finally {
       // Always remove tokens locally
       removeAuthTokens();

@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useToast } from '@/hooks/use-toast';
 import { registerSchema, type RegisterFormData } from '@/utils/validation';
 
-import { AuthLayout } from '../layout/auth-layout';
+import { AuthLayout } from '@/components/layout';
 
 /**
  * Registration form component
@@ -20,6 +21,7 @@ import { AuthLayout } from '../layout/auth-layout';
  */
 export function RegisterForm() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { status } = useAppSelector(state => state.auth);
   const { showSuccess, showError, showLoading, dismiss } = useToast();
   const isLoading = status === 'loading';
@@ -70,15 +72,20 @@ export function RegisterForm() {
           description: 'Welcome to our platform. You can now start shopping.',
           duration: 4000,
           action: {
-            label: 'Start Shopping',
+            label: 'Go to Dashboard',
             onClick: () => {
-              // Navigate to products or dashboard
-              // This will be implemented when we add navigation
-              // console.log('Navigate to products')
+              router.push('/');
             },
           },
         });
+        
+        // Reset form
         reset();
+        
+        // Redirect to dashboard after a short delay
+        setTimeout(() => {
+          router.push('/');
+        }, 2000);
       } else if (registerUser.rejected.match(result)) {
         // Error
         const errorMessage = result.payload?.message || 'Registration failed';
@@ -214,14 +221,14 @@ export function RegisterForm() {
           >
             I agree to the{' '}
             <Link
-              href="/terms"
+              href="/"
               className="underline underline-offset-2 hover:text-primary"
             >
               Terms of Service
             </Link>{' '}
             and{' '}
             <Link
-              href="/privacy"
+              href="/"
               className="underline underline-offset-2 hover:text-primary"
             >
               Privacy Policy

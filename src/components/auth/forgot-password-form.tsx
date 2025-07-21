@@ -12,11 +12,11 @@ import { clearError, forgotPassword } from '@/features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useToast } from '@/hooks/use-toast';
 import {
-  forgotPasswordSchema,
-  type ForgotPasswordFormData,
+    forgotPasswordSchema,
+    type ForgotPasswordFormData,
 } from '@/utils/validation';
 
-import { AuthLayout } from '../layout/auth-layout';
+import { AuthLayout } from '@/components/layout';
 
 /**
  * Forgot password form component
@@ -70,7 +70,7 @@ export function ForgotPasswordForm() {
         setIsSuccess(true);
         showSuccess({
           message: 'Reset instructions sent!',
-          description: `If an account with ${data.email} exists, we&apos;ve sent password reset instructions to your email.`,
+          description: `If an account with ${data.email} exists, we've sent password reset instructions to your email.`,
           duration: 6000,
           action: {
             label: 'Check Email',

@@ -2,6 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useToast } from '@/hooks/use-toast';
 import { loginSchema, type LoginFormData } from '@/utils/validation';
 
-import { AuthLayout } from '../layout/auth-layout';
+import { AuthLayout } from '@/components/layout';
 
 /**
  * Login form component
@@ -20,6 +21,7 @@ import { AuthLayout } from '../layout/auth-layout';
  */
 export function LoginForm() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { status } = useAppSelector(state => state.auth);
   const { showSuccess, showError, showLoading, dismiss } = useToast();
   const isLoading = status === 'loading';
@@ -68,7 +70,12 @@ export function LoginForm() {
           description: 'You have been successfully signed in',
           duration: 3000,
         });
+        
+        // Reset form
         reset();
+        
+        // Redirect to dashboard
+        router.push('/');
       } else if (loginUser.rejected.match(result)) {
         // Error
         const errorMessage = result.payload?.message || 'Login failed';

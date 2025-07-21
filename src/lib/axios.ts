@@ -120,7 +120,7 @@ export const isAuthenticated = (): boolean => {
 api.interceptors.request.use(
   config => {
     const token = getAuthToken();
-    if (token) {
+    if (token && token !== 'undefined') {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -142,7 +142,18 @@ api.interceptors.response.use(
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
 
     // Handle 401 Unauthorized - Token expired or invalid
+    // Skip token refresh for auth endpoints (login, register, etc.)
     if (error.response?.status === 401 && originalRequest) {
+      const isAuthEndpoint = originalRequest.url?.includes('/auth/login') || 
+                            originalRequest.url?.includes('/auth/register') ||
+                            originalRequest.url?.includes('/auth/forgot-password') ||
+                            originalRequest.url?.includes('/auth/reset-password');
+      
+      // If it's an auth endpoint, don't try to refresh token
+      if (isAuthEndpoint) {
+        return Promise.reject(error);
+      }
+
       const refreshToken = getRefreshToken();
 
       if (refreshToken && !originalRequest._retry) {
@@ -231,17 +242,23 @@ api.interceptors.response.use(
           });
       }
     } else if (error.request) {
-      // Network error
-      toast.error('Network Error', {
-        description: 'Please check your internet connection',
-        duration: 3000,
-      });
+      // Network error - don't show toast for logout requests
+      const isLogoutRequest = error.config?.url?.includes('/auth/logout');
+      if (!isLogoutRequest) {
+        toast.error('Network Error', {
+          description: 'Please check your internet connection',
+          duration: 3000,
+        });
+      }
     } else {
-          // Other error
-    toast.error('Error', {
-      description: (error as Error).message || 'An unexpected error occurred',
-      duration: 3000,
-    });
+      // Other error - don't show toast for logout requests
+      const isLogoutRequest = error.config?.url?.includes('/auth/logout');
+      if (!isLogoutRequest) {
+        toast.error('Error', {
+          description: (error as Error).message || 'An unexpected error occurred',
+          duration: 3000,
+        });
+      }
     }
 
     return Promise.reject(new Error((error as Error).message || 'Request failed'));

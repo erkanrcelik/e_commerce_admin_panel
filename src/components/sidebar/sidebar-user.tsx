@@ -108,32 +108,32 @@ export function SidebarUser({
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={handleProfile}>
                 <User className="mr-2 h-4 w-4" />
-                Profil
+                Profile
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleSettings}>
                 <Settings className="mr-2 h-4 w-4" />
-                Ayarlar
+                Settings
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <BadgeCheck className="mr-2 h-4 w-4" />
-                Hesap
+                Account
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CreditCard className="mr-2 h-4 w-4" />
-                Faturalandırma
+                Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Bell className="mr-2 h-4 w-4" />
-                Bildirimler
+                Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
-              Çıkış Yap
+              Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
