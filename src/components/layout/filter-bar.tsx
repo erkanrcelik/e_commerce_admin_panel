@@ -20,15 +20,15 @@ interface FilterOption {
 interface FilterField {
   key: string;
   label: string;
-  type: 'select' | 'search';
-  options?: FilterOption[];
+  type: 'search' | 'select';
   placeholder?: string;
+  options?: FilterOption[];
   width?: string;
 }
 
 interface FilterBarProps {
-  filters: Record<string, string | boolean | number | undefined>;
-  onFiltersChange: (filters: Record<string, string | boolean | number | undefined>) => void;
+  filters: Record<string, any>;
+  onFiltersChange: (filters: Record<string, any>) => void;
   fields: FilterField[];
   searchPlaceholder?: string;
   showClearButton?: boolean;
@@ -41,16 +41,10 @@ export function FilterBar({
   searchPlaceholder = 'Search...',
   showClearButton = true,
 }: FilterBarProps) {
-  const handleFilterChange = (key: string, value: string) => {
-    // Handle special values for "all" and "default"
-    let finalValue = value;
-    if (value === 'all' || value === 'default') {
-      finalValue = '';
-    }
-    
+  const handleFilterChange = (key: string, value: any) => {
     onFiltersChange({
       ...filters,
-      [key]: finalValue || undefined,
+      [key]: value === '' || value === 'all' ? undefined : value,
     });
   };
 
@@ -58,8 +52,13 @@ export function FilterBar({
     onFiltersChange({});
   };
 
-  const hasActiveFilters = Object.values(filters).some(
-    value => value !== undefined && value !== ''
+  const hasActiveFilters = Object.entries(filters).some(
+    ([key, value]) => 
+      value !== undefined && 
+      value !== '' && 
+      value !== 'all' &&
+      key !== 'page' && 
+      key !== 'limit'
   );
 
   const searchField = fields.find(field => field.type === 'search');
@@ -88,7 +87,7 @@ export function FilterBar({
           {selectFields.map(field => (
             <Select
               key={field.key}
-              value={String(filters[field.key] || (field.options?.[0]?.value || ''))}
+              value={String(filters[field.key] || (field.options?.[0]?.value || 'all'))}
               onValueChange={value => handleFilterChange(field.key, value)}
             >
               <SelectTrigger className={field.width || 'w-32'}>

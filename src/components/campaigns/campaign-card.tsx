@@ -1,66 +1,49 @@
 'use client';
 
 import {
-  Edit,
-  Trash2,
-  Eye,
-  MoreVertical,
-  Calendar,
-  Tag,
-  Copy,
+    Calendar,
+    Edit,
+    MoreVertical,
+    Tag,
+    Trash2
 } from 'lucide-react';
 import Image from 'next/image';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import type { Campaign } from '@/types/campaigns';
+import type { AdminCampaign, CampaignStatus, CampaignType } from '@/types/admin-campaigns';
 
 interface CampaignCardProps {
-  campaign: Campaign;
-  onEdit: (campaign: Campaign) => void;
-  onDelete: (campaign: Campaign) => void;
-  onViewDetails: (campaign: Campaign) => void;
-  onDuplicate: (campaign: Campaign) => void;
-  onStatusChange: (campaign: Campaign, status: string) => void;
+  campaign: AdminCampaign;
+  onEdit: (campaign: AdminCampaign) => void;
+  onDelete: (campaign: AdminCampaign) => void;
+  onStatusChange: (campaign: AdminCampaign, status: string) => void;
 }
 
-const statusColors = {
-  draft: 'bg-gray-100 text-gray-800',
+const statusColors: Record<CampaignStatus, string> = {
   active: 'bg-green-100 text-green-800',
-  paused: 'bg-yellow-100 text-yellow-800',
-  ended: 'bg-red-100 text-red-800',
+  inactive: 'bg-gray-100 text-gray-800',
+  expired: 'bg-red-100 text-red-800',
   scheduled: 'bg-blue-100 text-blue-800',
 };
 
-const typeColors = {
-  discount: 'bg-purple-100 text-purple-800',
-  free_shipping: 'bg-blue-100 text-blue-800',
-  buy_one_get_one: 'bg-orange-100 text-orange-800',
-  flash_sale: 'bg-red-100 text-red-800',
-  seasonal: 'bg-green-100 text-green-800',
-};
-
-const scopeColors = {
-  all_products: 'bg-indigo-100 text-indigo-800',
-  category: 'bg-pink-100 text-pink-800',
-  specific_products: 'bg-teal-100 text-teal-800',
-  vendor: 'bg-amber-100 text-amber-800',
+const typeColors: Record<CampaignType, string> = {
+  platform: 'bg-purple-100 text-purple-800',
+  seller: 'bg-orange-100 text-orange-800',
 };
 
 export function CampaignCard({
   campaign,
   onEdit,
   onDelete,
-  onViewDetails,
-  onDuplicate,
   onStatusChange,
 }: CampaignCardProps) {
   const formatDate = (dateString: string) => {
@@ -80,46 +63,30 @@ export function CampaignCard({
 
   const getDiscountText = () => {
     if (campaign.discountType === 'percentage') {
-      return `%${campaign.discountValue} İndirim`;
+      return `${campaign.discountValue}% Discount`;
     } else {
-      return `${formatCurrency(campaign.discountValue)} İndirim`;
+      return `${formatCurrency(campaign.discountValue)} Discount`;
     }
   };
 
   const getScopeText = () => {
-    switch (campaign.scope) {
-      case 'all_products':
-        return 'Tüm Ürünler';
-      case 'category':
-        return 'Kategori';
-      case 'specific_products':
-        return 'Belirli Ürünler';
-      case 'vendor':
-        return 'Satıcı';
-      default:
-        return campaign.scope;
+    if (campaign.products && campaign.products.length > 0) {
+      return `${campaign.products.length} Products`;
+    } else if (campaign.categories && campaign.categories.length > 0) {
+      return `${campaign.categories.length} Categories`;
     }
+    return 'All Products';
   };
 
-  const getTypeText = () => {
-    switch (campaign.type) {
-      case 'discount':
-        return 'İndirim';
-      case 'free_shipping':
-        return 'Ücretsiz Kargo';
-      case 'buy_one_get_one':
-        return '1 Al 1 Bedava';
-      case 'flash_sale':
-        return 'Flash Satış';
-      case 'seasonal':
-        return 'Sezonluk';
-      default:
-        return campaign.type;
+  const getCampaignTypeText = () => {
+    if (campaign.type === 'platform') {
+      return 'Platform Campaign';
     }
+    return 'Seller Campaign';
   };
 
   const isActive = campaign.status === 'active';
-  const isEnded = campaign.status === 'ended';
+  const isExpired = campaign.status === 'expired';
   const isScheduled = campaign.status === 'scheduled';
 
   return (
@@ -128,9 +95,9 @@ export function CampaignCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="relative h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-              {campaign.image ? (
+              {campaign.imageUrl ? (
                 <Image
-                  src={campaign.image}
+                  src={campaign.imageUrl}
                   alt={campaign.name}
                   fill
                   className="object-cover rounded-lg"
@@ -153,22 +120,11 @@ export function CampaignCard({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => onViewDetails(campaign)}>
-                <Eye className="h-4 w-4 mr-2" />
-                View Details
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onEdit(campaign)}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Campaign
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDuplicate(campaign)}>
-                <Copy className="h-4 w-4 mr-2" />
-                Duplicate
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => onDelete(campaign)}
-                className="text-destructive"
-              >
+              <DropdownMenuItem onClick={() => onDelete(campaign)}>
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete Campaign
               </DropdownMenuItem>
@@ -184,8 +140,8 @@ export function CampaignCard({
             <Badge className={statusColors[campaign.status]}>
               {campaign.status}
             </Badge>
-            <Badge className={typeColors[campaign.type]}>{getTypeText()}</Badge>
-            <Badge className={scopeColors[campaign.scope]}>
+            <Badge className={typeColors[campaign.type]}>{getCampaignTypeText()}</Badge>
+            <Badge variant="outline">
               {getScopeText()}
             </Badge>
           </div>
@@ -194,11 +150,6 @@ export function CampaignCard({
           <div className="flex items-center gap-2 text-sm">
             <Tag className="h-4 w-4 text-muted-foreground" />
             <span className="font-medium">{getDiscountText()}</span>
-            {campaign.minOrderAmount && (
-              <span className="text-muted-foreground">
-                • Min {formatCurrency(campaign.minOrderAmount)}
-              </span>
-            )}
           </div>
 
           {/* Date Range */}
@@ -210,46 +161,26 @@ export function CampaignCard({
                 {formatDate(campaign.endDate)}
               </span>
             </div>
-            {campaign.usageLimit && (
-              <div className="text-sm text-muted-foreground">
-                Kullanım: {campaign.usedCount}/{campaign.usageLimit}
-              </div>
-            )}
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-4 pt-2 border-t">
+          {/* Product/Category Info */}
+          <div className="grid grid-cols-2 gap-4 pt-2 border-t">
             <div className="text-center">
               <div className="text-lg font-semibold">
-                {campaign.totalOrders}
+                {campaign.products?.length || 0}
               </div>
-              <div className="text-xs text-muted-foreground">Orders</div>
+              <div className="text-xs text-muted-foreground">Products</div>
             </div>
             <div className="text-center">
               <div className="text-lg font-semibold">
-                {formatCurrency(campaign.totalRevenue)}
+                {campaign.categories?.length || 0}
               </div>
-              <div className="text-xs text-muted-foreground">Revenue</div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold">
-                {formatCurrency(campaign.averageOrderValue)}
-              </div>
-              <div className="text-xs text-muted-foreground">Avg Order</div>
+              <div className="text-xs text-muted-foreground">Categories</div>
             </div>
           </div>
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => onViewDetails(campaign)}
-              className="flex-1"
-            >
-              <Eye className="h-4 w-4 mr-2" />
-              Details
-            </Button>
             <Button
               size="sm"
               variant="outline"
@@ -262,13 +193,13 @@ export function CampaignCard({
           </div>
 
           {/* Status Actions */}
-          {!isEnded && (
+          {!isExpired && (
             <div className="flex gap-2">
               {isActive ? (
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => onStatusChange(campaign, 'paused')}
+                  onClick={() => onStatusChange(campaign, 'inactive')}
                   className="flex-1"
                 >
                   Pause

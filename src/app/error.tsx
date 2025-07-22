@@ -40,10 +40,10 @@ export default function Error({
           {/* Error Content */}
           <div className="space-y-3">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Bir Hata Oluştu
+              An Error Occurred
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin veya ana sayfaya dönün.
+              An unexpected error occurred. Please try again or return to the home page.
             </p>
           </div>
 
@@ -55,7 +55,7 @@ export default function Error({
               size="lg"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Tekrar Dene
+              Try Again
             </Button>
             <Button
               onClick={() => window.location.href = '/'}
@@ -64,7 +64,7 @@ export default function Error({
               size="lg"
             >
               <Home className="w-4 h-4 mr-2" />
-              Ana Sayfa
+              Home
             </Button>
           </div>
 
@@ -72,7 +72,7 @@ export default function Error({
           {process.env.NODE_ENV === 'development' && (
             <details className="w-full text-left">
               <summary className="text-xs text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300">
-                Hata Detayları
+                Error Details
               </summary>
               <pre className="mt-2 text-xs text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 p-3 rounded overflow-auto">
                 {error.message}

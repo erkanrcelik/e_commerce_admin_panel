@@ -1,35 +1,56 @@
 'use client';
 
-import { Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Edit, Eye, EyeOff, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
-import type { Category } from '@/types/categories';
+import type { AdminCategory } from '@/types/admin-categories';
 
 interface CategoryCardProps {
-  category: Category;
-  onEdit: (category: Category) => void;
-  onDelete: (category: Category) => void;
-  onToggleStatus: (category: Category) => void;
+  category: AdminCategory;
+  onEdit: (category: AdminCategory) => void;
+  onDelete: (category: AdminCategory) => void;
+  onToggleStatus: (category: AdminCategory) => void;
 }
 
+/**
+ * Category card component for displaying category information
+ * Supports admin category structure with imageUrl and proper Next.js image optimization
+ */
 export function CategoryCard({
   category,
   onEdit,
   onDelete,
   onToggleStatus,
 }: CategoryCardProps) {
+  /**
+   * Get the display image URL with fallback
+   */
+  const getImageUrl = () => {
+    // API'de image field'ı var, geriye uyumluluk için imageUrl de kontrol et
+    if (category.image) {
+      return category.image;
+    }
+    if (category.imageUrl) {
+      return category.imageUrl;
+    }
+    // Fallback to a placeholder image
+    return `https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=400&h=300&fit=crop`;
+  };
+
   return (
     <Card className="overflow-hidden">
       <div className="relative h-48 w-full">
         <Image
-          src={category.image}
+          src={getImageUrl()}
           alt={category.name}
           fill
           className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+          priority={false}
         />
         <div className="absolute inset-0 bg-black/20" />
         <div className="absolute top-2 right-2 flex gap-1">
@@ -38,6 +59,7 @@ export function CategoryCard({
             variant="secondary"
             onClick={() => onToggleStatus(category)}
             className="h-8 w-8 p-0"
+            title={category.isActive ? 'Deactivate category' : 'Activate category'}
           >
             {category.isActive ? (
               <Eye className="h-4 w-4" />
@@ -62,6 +84,7 @@ export function CategoryCard({
               variant="outline"
               onClick={() => onEdit(category)}
               className="h-8 w-8 p-0"
+              title="Edit category"
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -70,6 +93,7 @@ export function CategoryCard({
               variant="outline"
               onClick={() => onDelete(category)}
               className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+              title="Delete category"
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -83,7 +107,7 @@ export function CategoryCard({
             {category.isActive ? 'Active' : 'Inactive'}
           </Badge>
           <div className="text-xs text-muted-foreground">
-            {category.productCount || 0} products
+            Created: {new Date(category.createdAt).toLocaleDateString()}
           </div>
         </div>
       </CardContent>

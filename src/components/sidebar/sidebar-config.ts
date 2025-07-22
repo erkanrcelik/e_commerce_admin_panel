@@ -1,15 +1,19 @@
 import {
-  BarChart3,
-  Users,
-  Store,
-  Tag,
-  Megaphone,
-  Settings2,
+    BarChart3,
+    Megaphone,
+    Store,
+    Tag,
+    Users,
 } from 'lucide-react';
 
 import type { SidebarConfig } from './types';
 
-// E-ticaret admin paneli için sidebar konfigürasyonu
+/**
+ * E-commerce admin panel sidebar configuration
+ * 
+ * Defines the navigation structure and user information for the admin sidebar.
+ * Uses purple and blue color scheme to match the application design.
+ */
 export const sidebarConfig: SidebarConfig = {
   user: {
     name: 'Admin User',
@@ -24,29 +28,24 @@ export const sidebarConfig: SidebarConfig = {
       isActive: true,
     },
     {
-      title: 'Kategori Yönetimi',
+      title: 'Categories',
       url: '/categories',
       icon: Tag,
     },
     {
-      title: 'Kullanıcı Yönetimi',
+      title: 'Users',
       url: '/users',
       icon: Users,
     },
     {
-      title: 'Satıcı Yönetimi',
+      title: 'Vendors',
       url: '/vendors',
       icon: Store,
     },
     {
-      title: 'Kampanya Yönetimi',
+      title: 'Campaigns',
       url: '/campaigns',
       icon: Megaphone,
-    },
-    {
-      title: 'Ayarlar',
-      url: '/settings',
-      icon: Settings2,
     },
   ],
 };

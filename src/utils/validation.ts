@@ -26,6 +26,20 @@ export const forgotPasswordSchema = z.object({
 });
 
 /**
+ * Verify code form validation schema
+ */
+export const verifyCodeSchema = z.object({
+  code: z
+    .string()
+    .min(1, 'Verification code is required')
+    .length(4, 'Verification code must be 4 characters'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .email('Please enter a valid email address'),
+});
+
+/**
  * Reset password form validation schema
  */
 export const resetPasswordSchema = z
@@ -51,4 +65,5 @@ export const resetPasswordSchema = z
  */
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+export type VerifyCodeFormData = z.infer<typeof verifyCodeSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;

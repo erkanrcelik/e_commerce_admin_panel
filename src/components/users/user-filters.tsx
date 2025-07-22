@@ -5,14 +5,14 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 
-import type { UserFilters as UserFiltersType } from '@/types/users';
+import type { UserListQuery as UserFiltersType } from '@/types/admin-users';
 
 interface UserFiltersProps {
   filters: UserFiltersType;
@@ -73,7 +73,7 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
 
           <Select
             value={filters.sortBy || 'default'}
-            onValueChange={value => handleFilterChange('sortBy', value === 'default' ? '' : value)}
+            onValueChange={value => handleFilterChange('sortBy', value === 'default' ? undefined : value)}
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Sort by" />

@@ -42,10 +42,10 @@ export default function GlobalError({
               {/* Error Content */}
               <div className="space-y-3">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  Kritik Hata
+                  Critical Error
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  Uygulama başlatılırken bir hata oluştu. Lütfen sayfayı yenileyin.
+                  An error occurred while starting the application. Please refresh the page.
                 </p>
               </div>
 
@@ -57,7 +57,7 @@ export default function GlobalError({
                   size="lg"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
-                  Sayfayı Yenile
+                  Refresh Page
                 </Button>
                 <Button
                   onClick={() => window.location.href = '/'}
@@ -66,7 +66,7 @@ export default function GlobalError({
                   size="lg"
                 >
                   <Home className="w-4 h-4 mr-2" />
-                  Ana Sayfa
+                  Home
                 </Button>
               </div>
             </div>

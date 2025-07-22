@@ -11,10 +11,10 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 
-import type { User } from '@/types/users';
+import type { AdminUser } from '@/types/admin-users';
 
 interface UserDetailsModalProps {
-  user: User | null;
+  user: AdminUser | null;
   isOpen: boolean;
   onClose: () => void;
 }

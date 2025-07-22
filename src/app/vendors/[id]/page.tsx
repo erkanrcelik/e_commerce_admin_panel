@@ -1,622 +1,506 @@
 'use client';
 
+import { PageLayout } from '@/components/layout/page-layout';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AdminSellersService } from '@/services/admin-sellers.service';
+import type { AdminSeller } from '@/types/admin-sellers';
 import {
     ArrowLeft,
     Building,
-    Clock,
-    Edit,
-    FileText,
+    Calendar,
+    DollarSign,
+    Eye,
+    EyeOff,
+    Globe,
     Mail,
     MapPin,
+    Package,
     Phone,
     Star,
+    Store,
     Trash2,
+    User
 } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-import { AppSidebar } from '@/components/sidebar/app-sidebar';
-import { Badge } from '@/components/ui/badge';
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from '@/components/ui/breadcrumb';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import {
-    SidebarInset,
-    SidebarProvider,
-    SidebarTrigger,
-} from '@/components/ui/sidebar';
-
-import type { VendorDetails } from '@/types/vendors';
-
-// Mock vendor details
-const mockVendorDetails: VendorDetails = {
-  id: '1',
-  userId: '2',
-  businessName: 'TechMart Electronics',
-  contactPerson: 'Fatma Demir',
-  email: 'fatma@techmart.com',
-  phone: '+90 555 987 6543',
-  type: 'company',
-  status: 'active',
-  commissionRate: 15,
-  commissionType: 'percentage',
-  logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=150&h=150&fit=crop',
-  description:
-    'Leading electronics retailer with over 10 years of experience in consumer electronics.',
-  website: 'https://techmart.com',
-  taxNumber: '1234567890',
-  address: {
-    street: 'Teknoloji Caddesi No:45',
-    city: 'İstanbul',
-    state: 'İstanbul',
-    zipCode: '34000',
-    country: 'Türkiye',
-  },
-  bankInfo: {
-    bankName: 'Garanti BBVA',
-    accountNumber: '12345678',
-    iban: 'TR123456789012345678901234',
-  },
-  documents: [
-    {
-      id: '1',
-      type: 'business_license',
-      name: 'Business License.pdf',
-      url: '#',
-      uploadedAt: '2024-01-15T10:00:00Z',
-    },
-    {
-      id: '2',
-      type: 'tax_certificate',
-      name: 'Tax Certificate.pdf',
-      url: '#',
-      uploadedAt: '2024-01-15T10:00:00Z',
-    },
-  ],
-  createdAt: '2024-01-15T10:00:00Z',
-  updatedAt: '2024-01-15T10:00:00Z',
-  approvedAt: '2024-01-16T14:30:00Z',
-  approvedBy: 'admin',
-  totalProducts: 1250,
-  totalSales: 125000,
-  totalCommission: 18750,
-  rating: 4.8,
-  reviewCount: 156,
-  stats: {
-    totalProducts: 1250,
-    totalSales: 125000,
-    totalCommission: 18750,
-    totalOrders: 156,
-    activeProducts: 1200,
-    averageRating: 4.8,
-    reviewCount: 156,
-    monthlySales: [
-      {
-        month: 'January',
-        sales: 15000,
-        orders: 45,
-      },
-      {
-        month: 'February',
-        sales: 18000,
-        orders: 52,
-      },
-    ],
-    topProducts: [
-      {
-        id: '1',
-        name: 'iPhone 15 Pro',
-        sales: 45,
-        revenue: 67500,
-      },
-      {
-        id: '2',
-        name: 'Samsung Galaxy S24',
-        sales: 32,
-        revenue: 48000,
-      },
-    ],
-  },
-  recentOrders: [
-    {
-      id: '1',
-      orderNumber: 'ORD-001',
-      customerName: 'Ahmet Yılmaz',
-      status: 'delivered',
-      total: 1250,
-      createdAt: '2024-01-15T10:00:00Z',
-    },
-    {
-      id: '2',
-      orderNumber: 'ORD-002',
-      customerName: 'Zeynep Arslan',
-      status: 'shipped',
-      total: 890,
-      createdAt: '2024-01-12T09:00:00Z',
-    },
-  ],
-  recentReviews: [
-    {
-      id: '1',
-      rating: 5,
-      comment: 'Excellent service and fast delivery!',
-      customerName: 'Ahmet Yılmaz',
-      createdAt: '2024-01-20T14:30:00Z',
-    },
-    {
-      id: '2',
-      rating: 4,
-      comment: 'Good quality products, recommended.',
-      customerName: 'Zeynep Arslan',
-      createdAt: '2024-01-19T11:20:00Z',
-    },
-  ],
-};
-
-type VendorDetailPageProps = { params: Promise<{ id: string }> };
-
-export default async function VendorDetailPage({
-  params,
-}: VendorDetailPageProps) {
-  const { id } = await params;
-
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/vendors">Vendors</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Vendor Details</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-
-        <div className="flex flex-1 flex-col gap-6 p-4 pt-0">
-          <VendorDetailContent vendorId={id} vendor={mockVendorDetails} />
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
-  );
-}
-
-// Client component for the content
-function VendorDetailContent({
-  vendorId,
-  vendor,
-}: {
-  vendorId: string;
-  vendor: VendorDetails;
-}) {
+/**
+ * Vendor detail page
+ * Displays comprehensive vendor information and management options
+ */
+export default function VendorDetailPage() {
+  const params = useParams();
   const router = useRouter();
+  const [vendor, setVendor] = useState<AdminSeller | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
+  const vendorId = params.id as string;
+
+  /**
+   * Load vendor details
+   */
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, [vendorId]);
+    const loadVendor = async () => {
+      try {
+        setIsLoading(true);
+        const vendorData = await AdminSellersService.getSellerById(vendorId);
+        setVendor(vendorData);
+      } catch (error) {
+        console.error('Failed to load vendor:', error);
+        toast.error('Failed to load vendor details');
+        router.push('/vendors');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('tr-TR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+    if (vendorId) {
+      void loadVendor();
+    }
+  }, [vendorId, router]);
+
+  /**
+   * Handle toggle status
+   */
+  const handleToggleStatus = async () => {
+    if (!vendor) return;
+
+    try {
+      const updatedVendor = await AdminSellersService.toggleSellerStatus(vendor._id);
+      setVendor(updatedVendor);
+      toast.success(`Vendor ${updatedVendor.isActive ? 'activated' : 'deactivated'} successfully`);
+    } catch (error) {
+      console.error('Failed to toggle vendor status:', error);
+      toast.error('Failed to update vendor status');
+    }
   };
 
+  /**
+   * Handle delete vendor
+   */
+  const handleDeleteVendor = async () => {
+    if (!vendor) return;
+
+    try {
+      setIsDeleting(true);
+      await AdminSellersService.deleteSeller(vendor._id);
+      toast.success('Vendor deleted successfully');
+      router.push('/vendors');
+    } catch (error) {
+      console.error('Failed to delete vendor:', error);
+      toast.error('Failed to delete vendor');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  /**
+   * Format currency
+   */
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('tr-TR', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'TRY',
+      currency: 'USD',
     }).format(amount);
   };
 
-  const typeColors = {
-    company: 'bg-blue-100 text-blue-800',
-    individual: 'bg-green-100 text-green-800',
+  /**
+   * Format date
+   */
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   };
 
-  const statusColors = {
-    active: 'bg-green-100 text-green-800',
-    inactive: 'bg-gray-100 text-gray-800',
-    suspended: 'bg-red-100 text-red-800',
-    pending: 'bg-yellow-100 text-yellow-800',
-    approved: 'bg-green-100 text-green-800',
-    rejected: 'bg-red-100 text-red-800',
+  /**
+   * Get vendor avatar
+   */
+  const getVendorAvatar = (vendor: AdminSeller) => {
+    if (vendor.profile?.logo) {
+      return vendor.profile.logo;
+    }
+    const name = `${vendor.firstName} ${vendor.lastName}`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0d47a1&color=fff&size=120`;
   };
 
+  /**
+   * Loading state
+   */
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-muted-foreground">
-            Loading vendor details...
-          </p>
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/' },
+          { label: 'Vendors', href: '/vendors' },
+          { label: 'Loading...', isCurrent: true },
+        ]}
+      >
+        <div className="text-center py-12">
+          <div className="inline-flex items-center justify-center w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-muted-foreground">Loading vendor details...</p>
         </div>
-      </div>
+      </PageLayout>
     );
   }
 
+  /**
+   * Not found state
+   */
   if (!vendor) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <p className="text-muted-foreground">Vendor not found</p>
+      <PageLayout
+        breadcrumbs={[
+          { label: 'Dashboard', href: '/' },
+          { label: 'Vendors', href: '/vendors' },
+          { label: 'Not Found', isCurrent: true },
+        ]}
+      >
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+            <User className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-lg font-medium mb-2">Vendor not found</h3>
+          <p className="text-muted-foreground mb-4">
+            The vendor you're looking for doesn't exist or has been removed.
+          </p>
+          <Button onClick={() => router.push('/vendors')}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Vendors
+          </Button>
         </div>
-      </div>
+      </PageLayout>
     );
   }
 
   return (
-    <>
+    <PageLayout
+      breadcrumbs={[
+        { label: 'Dashboard', href: '/' },
+        { label: 'Vendors', href: '/vendors' },
+        { label: `${vendor.firstName} ${vendor.lastName}`, isCurrent: true },
+      ]}
+    >
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => window.history.back()}
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <div>
-            <h1 className="text-2xl font-semibold">{vendor.businessName}</h1>
-            <p className="text-muted-foreground">
-              Vendor details and performance
-            </p>
-          </div>
-        </div>
+      <div className="flex items-center justify-between mb-6">
+        <Button
+          variant="outline"
+          onClick={() => router.push('/vendors')}
+          className="mb-4"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Vendors
+        </Button>
+        
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            size="sm"
-            onClick={() => router.push(`/vendors/${vendorId}/edit`)}
+            onClick={handleToggleStatus}
+            disabled={isDeleting}
           >
-            <Edit className="h-4 w-4 mr-2" />
-            Edit Vendor
+            {vendor.isActive ? (
+              <>
+                <EyeOff className="w-4 h-4 mr-2" />
+                Deactivate
+              </>
+            ) : (
+              <>
+                <Eye className="w-4 h-4 mr-2" />
+                Activate
+              </>
+            )}
           </Button>
+          
           <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              // TODO: Implement delete functionality
-              console.log('Delete vendor:', vendorId);
-            }}
+            variant="destructive"
+            onClick={handleDeleteVendor}
+            disabled={isDeleting}
           >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete
+            <Trash2 className="w-4 h-4 mr-2" />
+            Delete Vendor
           </Button>
         </div>
       </div>
 
+      {/* Vendor Information */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Vendor Information */}
+        {/* Main Info */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Basic Information */}
+          {/* Basic Info Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Basic Information</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Vendor Information
+              </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="relative h-16 w-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                  {vendor.logo ? (
-                    <Image
-                      src={vendor.logo}
-                      alt={vendor.businessName}
-                      fill
-                      className="object-cover rounded-full"
-                    />
-                  ) : (
-                    <Building className="h-8 w-8 text-white" />
-                  )}
+              <div className="flex items-start gap-4">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0">
+                  <Image
+                    src={getVendorAvatar(vendor)}
+                    alt={`${vendor.firstName} ${vendor.lastName}`}
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                  />
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold">
-                    {vendor.businessName}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {vendor.contactPerson}
-                  </p>
-                  <div className="flex items-center gap-2 mt-2">
-                    <Badge
-                      className={
-                        typeColors[vendor.type as keyof typeof typeColors]
-                      }
-                    >
-                      {vendor.type}
+                
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold mb-1">
+                    {vendor.firstName} {vendor.lastName}
+                  </h2>
+                  <p className="text-muted-foreground mb-2">ID: {vendor._id}</p>
+                  
+                  <div className="flex items-center gap-4">
+                    <Badge variant={vendor.isActive ? 'default' : 'secondary'}>
+                      {vendor.isActive ? 'Active' : 'Inactive'}
                     </Badge>
-                    <Badge
-                      className={
-                        statusColors[vendor.status as keyof typeof statusColors]
-                      }
-                    >
-                      {vendor.status}
+                    <Badge variant={vendor.isApproved ? 'default' : 'secondary'}>
+                      {vendor.isApproved ? 'Approved' : 'Pending'}
                     </Badge>
+                    {vendor.isEmailVerified && (
+                      <Badge variant="outline">Email Verified</Badge>
+                    )}
                   </div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
+          {/* Store Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Store className="w-5 h-5" />
+                Store Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Email:</span>
-                    <span>{vendor.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Phone:</span>
-                    <span>{vendor.phone}</span>
-                  </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Company Name</label>
+                  <p className="font-medium">{vendor.companyName}</p>
                 </div>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Joined:</span>
-                    <span>{formatDate(vendor.createdAt)}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Star className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Rating:</span>
-                    <span>
-                      {vendor.rating}/5 ({vendor.reviewCount} reviews)
-                    </span>
-                  </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Business Type</label>
+                  <p className="font-medium capitalize">{vendor.profile?.businessType || 'Not specified'}</p>
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="text-sm font-medium text-muted-foreground">Description</label>
+                  <p className="text-sm">{vendor.profile?.description || 'No description provided'}</p>
                 </div>
               </div>
+            </CardContent>
+          </Card>
 
-              {vendor.description && (
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">
-                    {vendor.description}
-                  </p>
+          {/* Contact Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mail className="w-5 h-5" />
+                Contact Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Email</label>
+                    <p className="font-medium">{vendor.email}</p>
+                  </div>
                 </div>
-              )}
+                
+                {vendor.phoneNumber && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                      <p className="font-medium">{vendor.phoneNumber}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {vendor.profile?.contactEmail && vendor.profile.contactEmail !== vendor.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Contact Email</label>
+                      <p className="font-medium">{vendor.profile.contactEmail}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {vendor.profile?.contactPhone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Contact Phone</label>
+                      <p className="font-medium">{vendor.profile.contactPhone}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {vendor.profile?.website && (
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-muted-foreground" />
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Website</label>
+                      <p className="font-medium">{vendor.profile.website}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
           {/* Address Information */}
-          {vendor.address && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Address Information</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="text-sm">{vendor.address.street}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {vendor.address.city}, {vendor.address.state}{' '}
-                      {vendor.address.zipCode}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {vendor.address.country}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Statistics */}
           <Card>
             <CardHeader>
-              <CardTitle>Statistics</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                Address Information
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {vendor.totalProducts}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Total Products
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(vendor.totalSales)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Total Sales
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {formatCurrency(vendor.totalCommission)}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Total Commission
-                  </div>
-                </div>
+              <div className="space-y-2">
+                <p className="font-medium">{vendor.profile?.address || 'No address provided'}</p>
+                <p className="text-sm text-muted-foreground">
+                  {vendor.profile?.city && vendor.profile?.state && vendor.profile?.postalCode 
+                    ? `${vendor.profile.city}, ${vendor.profile.state} ${vendor.profile.postalCode}`
+                    : 'Location not specified'
+                  }
+                </p>
+                <p className="text-sm text-muted-foreground">{vendor.profile?.country || 'Country not specified'}</p>
               </div>
             </CardContent>
           </Card>
-
-          {/* Recent Orders */}
-          {vendor.recentOrders && vendor.recentOrders.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Orders</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {vendor.recentOrders.slice(0, 5).map(order => (
-                    <div
-                      key={order.id}
-                      className="flex items-center justify-between p-3 border rounded-lg"
-                    >
-                      <div>
-                        <p className="font-medium">{order.orderNumber}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {order.customerName} • {formatDate(order.createdAt)}
-                        </p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-medium">
-                          {formatCurrency(order.total)}
-                        </p>
-                        <Badge variant="outline" className="text-xs">
-                          {order.status}
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Commission Information */}
+          {/* Statistics */}
           <Card>
             <CardHeader>
-              <CardTitle>Commission Information</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="w-5 h-5" />
+                Statistics
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm">Commission Rate</span>
-                <span className="font-medium">{vendor.commissionRate}%</span>
+                <span className="text-sm text-muted-foreground">Total Sales</span>
+                <span className="font-medium">{formatCurrency(vendor.totalSales)}</span>
               </div>
+              
               <div className="flex items-center justify-between">
-                <span className="text-sm">Commission Type</span>
-                <span className="font-medium capitalize">
-                  {vendor.commissionType}
-                </span>
+                <span className="text-sm text-muted-foreground">Total Products</span>
+                <span className="font-medium">{vendor.totalProducts}</span>
               </div>
+              
               <div className="flex items-center justify-between">
-                <span className="text-sm">Total Commission</span>
-                <span className="font-medium">
-                  {formatCurrency(vendor.totalCommission)}
-                </span>
+                <span className="text-sm text-muted-foreground">Rating</span>
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  <span className="font-medium">{vendor.profile?.rating?.toFixed(1) || '0.0'}</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Reviews</span>
+                <span className="font-medium">{vendor.profile?.reviewCount || 0}</span>
               </div>
             </CardContent>
           </Card>
 
-          {/* Bank Information */}
-          {vendor.bankInfo && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Bank Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">
-                    {vendor.bankInfo.bankName}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Account: {vendor.bankInfo.accountNumber}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    IBAN: {vendor.bankInfo.iban}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          {/* Categories */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="w-5 h-5" />
+                Categories
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {vendor.profile?.categories && vendor.profile.categories.length > 0 ? (
+                  vendor.profile.categories.map((category, index) => (
+                    <Badge key={index} variant="outline">
+                      {category}
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No categories assigned</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Documents */}
-          {vendor.documents && vendor.documents.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Documents</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {vendor.documents.map(doc => (
-                    <div
-                      key={doc.id}
-                      className="flex items-center gap-3 p-2 border rounded"
-                    >
-                      <FileText className="h-4 w-4 text-muted-foreground" />
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{doc.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatDate(doc.uploadedAt)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+          {/* Account Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="w-5 h-5" />
+                Account Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Created</label>
+                  <p className="text-sm">{formatDate(vendor.createdAt)}</p>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Recent Reviews */}
-          {vendor.recentReviews && vendor.recentReviews.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Reviews</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {vendor.recentReviews.slice(0, 3).map(review => (
-                    <div key={review.id} className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-3 w-3 ${
-                                i < review.rating
-                                  ? 'text-yellow-400 fill-current'
-                                  : 'text-gray-300'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-xs text-muted-foreground">
-                          {review.customerName}
-                        </span>
-                      </div>
-                      <p className="text-sm">{review.comment}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDate(review.createdAt)}
-                      </p>
-                    </div>
-                  ))}
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-muted-foreground" />
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
+                  <p className="text-sm">{formatDate(vendor.updatedAt)}</p>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+              
+              {vendor.approvedAt && (
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Approved At</label>
+                    <p className="text-sm">{formatDate(vendor.approvedAt)}</p>
+                  </div>
+                </div>
+              )}
+              
+              {vendor.rejectedAt && (
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Rejected At</label>
+                    <p className="text-sm">{formatDate(vendor.rejectedAt)}</p>
+                  </div>
+                </div>
+              )}
+              
+              {vendor.rejectionReason && (
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Rejection Reason</label>
+                  <p className="text-sm text-red-600">{vendor.rejectionReason}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
-    </>
+    </PageLayout>
   );
-}
+} 

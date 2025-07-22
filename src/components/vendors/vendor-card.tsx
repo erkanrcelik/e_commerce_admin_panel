@@ -1,24 +1,24 @@
 'use client';
 
-import { Edit, Trash2, MoreVertical, Eye, Building } from 'lucide-react';
+import { Building, Edit, Eye, MoreVertical, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import type { Vendor } from '@/types/vendors';
+import type { AdminVendor } from '@/types/admin-vendors';
 
 interface VendorCardProps {
-  vendor: Vendor;
-  onEdit: (vendor: Vendor) => void;
-  onDelete: (vendor: Vendor) => void;
+  vendor: AdminVendor;
+  onEdit: (vendor: AdminVendor) => void;
+  onDelete: (vendor: AdminVendor) => void;
 }
 
 export function VendorCard({ vendor, onEdit, onDelete }: VendorCardProps) {

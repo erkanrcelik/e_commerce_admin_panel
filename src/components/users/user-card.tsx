@@ -1,11 +1,11 @@
 'use client';
 
 import {
-    Edit,
-    Eye,
-    MoreVertical,
-    Trash2,
-    User as UserIcon,
+  Edit,
+  Eye,
+  MoreVertical,
+  Trash2,
+  User as UserIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -13,18 +13,18 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-import type { User } from '@/types/users';
+  
+import type { AdminUser } from '@/types/admin-users';
 
 interface UserCardProps {
-  user: User;
-  onDelete: (user: User) => void;
-  onToggleStatus: (user: User) => void;
+  user: AdminUser;
+  onDelete: (user: AdminUser) => void;
+  onToggleStatus: (user: AdminUser) => void;
 }
 
 export function UserCard({ user, onDelete, onToggleStatus }: UserCardProps) {
@@ -39,7 +39,7 @@ export function UserCard({ user, onDelete, onToggleStatus }: UserCardProps) {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('tr-TR', {
+    return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -113,7 +113,7 @@ export function UserCard({ user, onDelete, onToggleStatus }: UserCardProps) {
             >
               {user.isActive ? 'Active' : 'Inactive'}
             </Badge>
-            <Badge className={roleColors[user.role as keyof typeof roleColors]}>
+            <Badge className={roleColors[user.role]}>
               {user.role}
             </Badge>
           </div>

@@ -14,30 +14,33 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'playableFactory - Digital Experiences',
+  title: 'PlayableFactory Admin Panel',
   description:
-    'Create innovative and engaging digital solutions with exceptional quality and cutting-edge technology.',
+    'Comprehensive admin panel for managing e-commerce platform operations, users, vendors, campaigns, and system analytics.',
   keywords: [
-    'digital experiences',
-    'innovative solutions',
-    'technology',
-    'premium digital',
-    'playable',
+    'admin panel',
+    'e-commerce management',
+    'user management',
+    'vendor management',
+    'campaign management',
+    'analytics dashboard',
+    'playable factory',
+    'admin dashboard',
   ],
-  authors: [{ name: 'playableFactory Team' }],
-  robots: 'index, follow',
+  authors: [{ name: 'PlayableFactory Admin Team' }],
+  robots: 'noindex, nofollow',
   openGraph: {
-    title: 'playableFactory - Digital Experiences',
+    title: 'PlayableFactory Admin Panel',
     description:
-      'Create innovative and engaging digital solutions with exceptional quality and cutting-edge technology.',
+      'Comprehensive admin panel for managing e-commerce platform operations, users, vendors, campaigns, and system analytics.',
     type: 'website',
-    siteName: 'playableFactory',
+    siteName: 'PlayableFactory Admin',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'playableFactory - Digital Experiences',
+    title: 'PlayableFactory Admin Panel',
     description:
-      'Create innovative and engaging digital solutions with exceptional quality and cutting-edge technology.',
+      'Comprehensive admin panel for managing e-commerce platform operations, users, vendors, campaigns, and system analytics.',
   },
 };
 

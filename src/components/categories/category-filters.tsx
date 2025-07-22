@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Filter, SortAsc, SortDesc } from 'lucide-react';
+import { Filter, RotateCcw, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,108 +12,170 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-import type { CategoryFilters } from '@/types/categories';
+import type { CategoryListQuery } from '@/types/admin-categories';
 
 interface CategoryFiltersProps {
-  filters: CategoryFilters;
-  onFiltersChange: (filters: CategoryFilters) => void;
+  filters: CategoryListQuery;
+  onFiltersChange: (filters: CategoryListQuery) => void;
+  onReset: () => void;
 }
 
 export function CategoryFilters({
   filters,
   onFiltersChange,
+  onReset,
 }: CategoryFiltersProps) {
-  const handleSearchChange = (value: string) => {
-    onFiltersChange({ ...filters, search: value || undefined });
+  const handleFilterChange = (key: keyof CategoryListQuery, value: string | boolean | undefined) => {
+    onFiltersChange({
+      ...filters,
+      [key]: value === 'all' || value === '' ? undefined : value,
+    });
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFilterChange('search', e.target.value);
   };
 
   const handleStatusChange = (value: string) => {
-    const isActive =
-      value === 'active' ? true : value === 'inactive' ? false : undefined;
-    onFiltersChange({ ...filters, isActive });
+    if (value === 'all') {
+      handleFilterChange('isActive', undefined);
+    } else {
+      handleFilterChange('isActive', value === 'active');
+    }
   };
 
   const handleSortByChange = (value: string) => {
-    onFiltersChange({
-      ...filters,
-      sortBy: value as CategoryFilters['sortBy'],
-    });
-  };
-
-  const handleSortOrderChange = (value: string) => {
-    onFiltersChange({
-      ...filters,
-      sortOrder: value as CategoryFilters['sortOrder'],
-    });
+    handleFilterChange('sortBy', value);
   };
 
   const clearFilters = () => {
-    onFiltersChange({});
+    onReset();
   };
 
+  const hasActiveFilters = Object.entries(filters).some(
+    ([key, value]) => 
+      value !== undefined && 
+      value !== '' && 
+      value !== 'all' &&
+      key !== 'page' && 
+      key !== 'limit'
+  );
+
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      {/* Search Input */}
-      <div className="relative flex-1 max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search categories..."
-          value={filters.search || ''}
-          onChange={e => handleSearchChange(e.target.value)}
-          className="pl-9"
-        />
+    <div className="flex items-center gap-4">
+      {/* Desktop Filters */}
+      <div className="hidden md:flex items-center gap-4 flex-1">
+        {/* Search */}
+        <div className="flex-1 max-w-sm">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search categories..."
+              value={filters.search || ''}
+              onChange={handleSearchChange}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
+        {/* Status Filter */}
+        <div className="flex items-center gap-2">
+          <Label className="text-sm font-medium">Status</Label>
+          <Select
+            value={filters.isActive === undefined ? 'all' : filters.isActive ? 'active' : 'inactive'}
+            onValueChange={handleStatusChange}
+          >
+            <SelectTrigger className="w-32">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              <SelectItem value="active">Active Only</SelectItem>
+              <SelectItem value="inactive">Inactive Only</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Sort By */}
+        <div className="flex items-center gap-2">
+          <Label className="text-sm font-medium">Sort By</Label>
+          <Select
+            value={String(filters.sortBy || 'name')}
+            onValueChange={handleSortByChange}
+          >
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="name">Name</SelectItem>
+              <SelectItem value="createdAt">Date Created</SelectItem>
+              <SelectItem value="productCount">Product Count</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Clear Filters */}
+        {hasActiveFilters && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearFilters}
+          >
+            Clear Filters
+          </Button>
+        )}
       </div>
 
-      {/* Filters */}
-      <div className="flex items-center gap-2">
-        {/* Sort Order Toggle */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            const newOrder = filters.sortOrder === 'asc' ? 'desc' : 'asc';
-            handleSortOrderChange(newOrder);
-          }}
-        >
-          {filters.sortOrder === 'desc' ? (
-            <SortDesc className="h-4 w-4" />
-          ) : (
-            <SortAsc className="h-4 w-4" />
-          )}
-        </Button>
-
-        {/* Advanced Filters */}
+      {/* Mobile Filters */}
+      <div className="md:hidden">
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
               Filters
+              {hasActiveFilters && (
+                <span className="ml-2 h-2 w-2 rounded-full bg-primary" />
+              )}
             </Button>
           </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Filter Categories</SheetTitle>
-            </SheetHeader>
-            <div className="space-y-4 mt-6">
-              {/* Status Filter */}
+          <SheetContent side="right" className="w-80">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Filters</h3>
+                {hasActiveFilters && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearFilters}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" />
+                    Reset
+                  </Button>
+                )}
+              </div>
+
+              {/* Search */}
+              <div className="space-y-2">
+                <Label>Search</Label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search categories..."
+                    value={filters.search || ''}
+                    onChange={handleSearchChange}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Status */}
               <div className="space-y-2">
                 <Label>Status</Label>
                 <Select
-                  value={
-                    filters.isActive === true
-                      ? 'active'
-                      : filters.isActive === false
-                        ? 'inactive'
-                        : 'all'
-                  }
+                  value={filters.isActive === undefined ? 'all' : filters.isActive ? 'active' : 'inactive'}
                   onValueChange={handleStatusChange}
                 >
                   <SelectTrigger>
@@ -131,7 +193,7 @@ export function CategoryFilters({
               <div className="space-y-2">
                 <Label>Sort By</Label>
                 <Select
-                  value={filters.sortBy || 'name'}
+                  value={String(filters.sortBy || 'name')}
                   onValueChange={handleSortByChange}
                 >
                   <SelectTrigger>

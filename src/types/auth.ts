@@ -15,7 +15,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'customer' | 'vendor';
+  role: 'admin' | 'customer' | 'vendor' | 'seller';
   isEmailVerified: boolean;
   avatar?: string;
   createdAt?: string;
@@ -41,9 +41,29 @@ export interface LoginFormData {
 }
 
 /**
+ * Register form data structure
+ */
+export interface RegisterFormData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  role?: 'admin' | 'seller' | 'customer';
+}
+
+/**
  * Password reset request form data
  */
 export interface ForgotPasswordFormData {
+  email: string;
+}
+
+/**
+ * Verify code form data
+ */
+export interface VerifyCodeFormData {
+  code: string;
   email: string;
 }
 

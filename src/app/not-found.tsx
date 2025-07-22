@@ -5,9 +5,11 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 
 /**
- * Not Found Page
+ * Not Found Page Component
  * 
  * Modern 404 page with clean design and helpful navigation.
+ * Uses purple and blue gradient design to match the application theme.
+ * Provides navigation options to return to home or search for products.
  */
 export default function NotFound() {
   return (
@@ -27,10 +29,10 @@ export default function NotFound() {
           {/* Content */}
           <div className="space-y-3">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Sayfa Bulunamadı
+              Page Not Found
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              Aradığınız sayfa mevcut değil veya taşınmış olabilir.
+              The page you are looking for does not exist or has been moved.
             </p>
           </div>
 
@@ -39,13 +41,13 @@ export default function NotFound() {
             <Link href="/" className="flex-1">
               <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg" size="lg">
                 <Home className="w-4 h-4 mr-2" />
-                Ana Sayfa
+                Home
               </Button>
             </Link>
             <Link href="/search" className="flex-1">
               <Button variant="outline" className="w-full border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700" size="lg">
                 <Search className="w-4 h-4 mr-2" />
-                Ürün Ara
+                Search Products
               </Button>
             </Link>
           </div>
@@ -53,22 +55,22 @@ export default function NotFound() {
           {/* Quick Links */}
           <div className="w-full pt-4 border-t border-gray-200 dark:border-gray-700">
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
-              Popüler Kategoriler:
+              Popular Categories:
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Link href="/categories/electronics">
                 <Button variant="ghost" size="sm" className="text-xs">
-                  Elektronik
+                  Electronics
                 </Button>
               </Link>
               <Link href="/categories/smartphones">
                 <Button variant="ghost" size="sm" className="text-xs">
-                  Telefonlar
+                  Smartphones
                 </Button>
               </Link>
               <Link href="/categories/laptops">
                 <Button variant="ghost" size="sm" className="text-xs">
-                  Laptoplar
+                  Laptops
                 </Button>
               </Link>
             </div>

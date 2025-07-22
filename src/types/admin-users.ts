@@ -1,71 +1,95 @@
-// Admin Users Types
+/**
+ * Admin user interface for user management
+ */
 export interface AdminUser {
   _id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'seller' | 'customer';
+  phoneNumber?: string;
+  role: 'admin' | 'vendor' | 'customer' | 'moderator';
   isActive: boolean;
   isEmailVerified: boolean;
-  createdAt: string;
-  sellerProfile?: {
-    storeName: string;
-    isApproved: boolean;
-  };
-}
-
-export interface AdminUserDetail extends AdminUser {
-  phoneNumber?: string;
-  addresses: Array<{
+  avatar?: string;
+  addresses?: Array<{
     street: string;
     city: string;
     state: string;
-    country: string;
     postalCode: string;
+    country: string;
+    isDefault: boolean;
   }>;
-  sellerProfile?: {
-    storeName: string;
-    storeDescription?: string;
-    isApproved: boolean;
-    contactEmail?: string;
-    contactPhone?: string;
-  };
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface UpdateUserRequest {
-  role?: 'admin' | 'seller' | 'customer';
-  isActive?: boolean;
-  firstName?: string; // 2-50 karakter
-  lastName?: string; // 2-50 karakter
-  phoneNumber?: string;
-}
-
-export interface UpdateUserResponse {
-  _id: string;
+/**
+ * Create user request interface
+ */
+export interface CreateUserRequest {
   email: string;
+  password: string;
   firstName: string;
   lastName: string;
-  role: string;
-  isActive: boolean;
-  updatedAt: string;
+  phoneNumber?: string;
+  role: 'admin' | 'vendor' | 'customer' | 'moderator';
 }
 
-export interface ToggleUserStatusResponse {
-  _id: string;
-  email: string;
-  isActive: boolean;
-  updatedAt: string;
+/**
+ * Update user request interface
+ */
+export interface UpdateUserRequest {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  role?: 'admin' | 'vendor' | 'customer' | 'moderator';
+  isActive?: boolean;
 }
 
-export interface ChangeRoleRequest {
-  role: 'admin' | 'seller' | 'customer';
+/**
+ * User list query interface
+ */
+export interface UserListQuery {
+  page?: number;
+  limit?: number;
+  search?: string;
+  role?: string;
+  isActive?: boolean;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
 }
 
-export interface ChangeRoleResponse {
-  _id: string;
-  email: string;
-  role: string;
-  updatedAt: string;
+/**
+ * User list response interface
+ */
+export interface UserListResponse {
+  users: AdminUser[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
-export type AdminUsersResponse = import('./admin-dashboard').PaginatedResponse<AdminUser>; 
+/**
+ * User API response interface
+ */
+export interface UserApiResponse {
+  success: boolean;
+  message: string;
+  data?: AdminUser;
+}
+
+/**
+ * User statistics interface
+ */
+export interface UserStats {
+  total: number;
+  active: number;
+  inactive: number;
+  byRole: {
+    admin: number;
+    vendor: number;
+    customer: number;
+    moderator: number;
+  };
+} 

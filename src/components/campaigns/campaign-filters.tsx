@@ -1,152 +1,97 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { Filter, RotateCcw, Search } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
-import type { CampaignFilters as CampaignFiltersType } from '@/types/campaigns';
+import type { CampaignListQuery } from '@/types/admin-campaigns';
 
 interface CampaignFiltersProps {
-  filters: CampaignFiltersType;
-  onFiltersChange: (filters: CampaignFiltersType) => void;
+  filters: CampaignListQuery;
+  onFiltersChange: (filters: CampaignListQuery) => void;
+  onReset: () => void;
 }
 
 export function CampaignFilters({
   filters,
   onFiltersChange,
+  onReset,
 }: CampaignFiltersProps) {
-  const handleFilterChange = (
-    key: keyof CampaignFiltersType,
-    value: string
-  ) => {
+  const handleFilterChange = (key: keyof CampaignListQuery, value: string | boolean | undefined) => {
     onFiltersChange({
       ...filters,
-      [key]: value || undefined,
+      [key]: value === 'all' || value === '' ? undefined : value,
     });
   };
 
-  const clearFilters = () => {
-    onFiltersChange({});
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFilterChange('search', e.target.value);
   };
 
-  const hasActiveFilters = Object.values(filters).some(
-    value => value !== undefined && value !== ''
+  const hasActiveFilters = Object.entries(filters).some(
+    ([key, value]) => 
+      value !== undefined && 
+      value !== '' && 
+      value !== 'all' &&
+      key !== 'page' && 
+      key !== 'limit'
   );
 
   return (
-    <div className="bg-white p-4 rounded-lg border">
-      <div className="flex items-center gap-4">
-        <div className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search campaigns..."
-              value={filters.search || ''}
-              onChange={e => handleFilterChange('search', e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Select
-            value={filters.status || 'all'}
-            onValueChange={value => handleFilterChange('status', value === 'all' ? '' : value)}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="ended">Ended</SelectItem>
-              <SelectItem value="scheduled">Scheduled</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={filters.type || 'all'}
-            onValueChange={value => handleFilterChange('type', value === 'all' ? '' : value)}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="discount">Discount</SelectItem>
-              <SelectItem value="flash_sale">Flash Sale</SelectItem>
-              <SelectItem value="free_shipping">Free Shipping</SelectItem>
-              <SelectItem value="buy_one_get_one">Buy One Get One</SelectItem>
-              <SelectItem value="seasonal">Seasonal</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={filters.scope || 'all'}
-            onValueChange={value => handleFilterChange('scope', value === 'all' ? '' : value)}
-          >
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Scope" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Scopes</SelectItem>
-              <SelectItem value="all_products">All Products</SelectItem>
-              <SelectItem value="category">Category</SelectItem>
-              <SelectItem value="specific_products">
-                Specific Products
-              </SelectItem>
-              <SelectItem value="vendor">Vendor</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={filters.sortBy || 'default'}
-            onValueChange={value => handleFilterChange('sortBy', value === 'default' ? '' : value)}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="default">Default</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="createdAt">Created Date</SelectItem>
-              <SelectItem value="startDate">Start Date</SelectItem>
-              <SelectItem value="endDate">End Date</SelectItem>
-              <SelectItem value="totalRevenue">Revenue</SelectItem>
-              <SelectItem value="totalOrders">Orders</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={filters.sortOrder || 'desc'}
-            onValueChange={value => handleFilterChange('sortOrder', value)}
-          >
-            <SelectTrigger className="w-24">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="desc">Desc</SelectItem>
-              <SelectItem value="asc">Asc</SelectItem>
-            </SelectContent>
-          </Select>
-
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Filter className="h-4 w-4" />
+          <h3 className="font-semibold">Filter Campaigns</h3>
           {hasActiveFilters && (
-            <Button variant="outline" size="sm" onClick={clearFilters}>
-              Clear
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onReset}
+              className="ml-auto text-muted-foreground hover:text-foreground"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Reset Filters
             </Button>
           )}
         </div>
-      </div>
-    </div>
+
+        <div className="grid grid-cols-1 gap-4">
+          {/* Search */}
+          <div className="space-y-2">
+            <Label htmlFor="search">Search Campaigns</Label>
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                id="search"
+                placeholder="Search by name or description..."
+                value={filters.search || ''}
+                onChange={handleSearchChange}
+                className="pl-8"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Active Filters Summary */}
+        {hasActiveFilters && (
+          <div className="mt-4 p-3 bg-muted rounded-lg">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium">Active filters:</span>{' '}
+              {Object.entries(filters)
+                .filter(([, value]) => value !== undefined && value !== '' && value !== 'all')
+                .map(([key, value]) => {
+                  if (key === 'search') return `Search: "${value as string}"`;
+                  return `${key}: ${value as string}`;
+                })
+                .join(', ')}
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

@@ -1,5 +1,6 @@
 import api, {
   getAuthToken,
+  getRefreshToken,
   removeAuthTokens,
   setAuthToken,
   setRefreshToken,
@@ -8,7 +9,8 @@ import type {
   AuthResponse,
   ForgotPasswordFormData,
   LoginFormData,
-  ResetPasswordFormData
+  ResetPasswordFormData,
+  VerifyCodeFormData
 } from '@/types/auth';
 
 /**
@@ -16,6 +18,26 @@ import type {
  * Handles all authentication-related API calls
  */
 export class AuthService {
+  /**
+   * Register new user
+   */
+  static async register(userData: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string;
+    role?: string;
+  }): Promise<{ message: string }> {
+    try {
+      const response = await api.post<{ message: string }>('/auth/register', userData);
+      return response.data;
+    } catch (error) {
+      console.error('Register API error:', error);
+      throw error;
+    }
+  }
+
   /**
    * Login user with email and password
    */
@@ -25,13 +47,21 @@ export class AuthService {
         ...credentials,
         platform: 'admin'
       });
+      
+      console.log('Login response:', response.data);
+      
       const { accessToken, refreshToken } = response.data;
+
+      console.log('Access token:', accessToken);
+      console.log('Refresh token:', refreshToken);
 
       // Store tokens in cookies
       setAuthToken(accessToken);
       if (refreshToken) {
         setRefreshToken(refreshToken);
       }
+
+      console.log('Tokens stored in cookies');
 
       return response.data;
     } catch (error) {
@@ -54,6 +84,24 @@ export class AuthService {
       return response.data;
     } catch (error) {
       console.error('Forgot password API error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Verify reset code
+   */
+  static async verifyResetCode(
+    codeData: VerifyCodeFormData
+  ): Promise<{ message: string; token: string }> {
+    try {
+      const response = await api.post<{ message: string; token: string }>(
+        '/auth/verify-reset-code',
+        codeData
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Verify reset code API error:', error);
       throw error;
     }
   }
@@ -113,68 +161,65 @@ export class AuthService {
   }
 
   /**
-   * Get current user profile
+   * Refresh access token
    */
-  static async getProfile(): Promise<AuthResponse['user']> {
+  static async refreshToken(): Promise<AuthResponse> {
     try {
-      const response = await api.get<{ user: AuthResponse['user'] }>(
-        '/auth/profile'
-      );
-      return response.data.user;
-    } catch (error) {
-      console.error('Get profile API error:', error);
-      throw error;
-    }
-  }
+      const refreshToken = getRefreshToken();
+      if (!refreshToken) {
+        throw new Error('No refresh token available');
+      }
 
-  /**
-   * Update user profile
-   */
-  static async updateProfile(profileData: {
-    name?: string;
-    email?: string;
-  }): Promise<AuthResponse['user']> {
-    try {
-      const response = await api.put<{ user: AuthResponse['user'] }>(
-        '/auth/profile',
-        profileData
-      );
-      return response.data.user;
-    } catch (error) {
-      console.error('Update profile API error:', error);
-      throw error;
-    }
-  }
+      const response = await api.post<AuthResponse>('/auth/refresh', {
+        refreshToken,
+      });
 
-  /**
-   * Change password
-   */
-  static async changePassword(passwordData: {
-    currentPassword: string;
-    newPassword: string;
-    confirmPassword: string;
-  }): Promise<{ message: string }> {
-    try {
-      const response = await api.put<{ message: string }>(
-        '/auth/change-password',
-        passwordData
-      );
+      const { accessToken, refreshToken: newRefreshToken } = response.data;
+
+      // Store new tokens
+      setAuthToken(accessToken);
+      if (newRefreshToken) {
+        setRefreshToken(newRefreshToken);
+      }
+
       return response.data;
     } catch (error) {
-      console.error('Change password API error:', error);
+      console.error('Refresh token API error:', error);
       throw error;
     }
   }
 
   /**
-   * Get current authenticated user
+   * Get user info
    */
-  static async getCurrentUser(): Promise<AuthResponse> {
+  static async getUserInfo(): Promise<{
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber?: string;
+    role: string;
+    isEmailVerified: boolean;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }> {
     try {
-      const response = await api.get<AuthResponse>('/auth/me');
+      const response = await api.get<{
+        id: string;
+        email: string;
+        firstName: string;
+        lastName: string;
+        phoneNumber?: string;
+        role: string;
+        isEmailVerified: boolean;
+        isActive: boolean;
+        createdAt: string;
+        updatedAt: string;
+      }>('/auth/user-info');
       return response.data;
     } catch (error) {
-      console.error('Get current user API error:', error);
+      console.error('Get user info API error:', error);
       throw error;
     }
   }
@@ -182,10 +227,11 @@ export class AuthService {
   /**
    * Resend email verification
    */
-  static async resendVerification(): Promise<{ message: string }> {
+  static async resendVerification(email: string): Promise<{ message: string }> {
     try {
       const response = await api.post<{ message: string }>(
-        '/auth/resend-verification'
+        '/auth/resend-verification',
+        { email }
       );
       return response.data;
     } catch (error) {

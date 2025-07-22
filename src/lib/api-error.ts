@@ -28,7 +28,7 @@ export function handleApiError(error: unknown): ApiErrorResponse {
   if (error instanceof TypeError && error.message.includes('fetch')) {
     return {
       type: 'network',
-      message: 'İnternet bağlantınızı kontrol edin ve tekrar deneyin.',
+      message: 'Please check your internet connection and try again.',
       retry: true,
     };
   }
@@ -41,14 +41,14 @@ export function handleApiError(error: unknown): ApiErrorResponse {
       case 404:
         return {
           type: 'not_found',
-          message: 'Aradığınız içerik bulunamadı.',
+          message: 'The requested content was not found.',
           redirect: '/404',
         };
       case 401:
       case 403:
         return {
           type: 'auth',
-          message: 'Bu işlem için yetkiniz bulunmuyor.',
+          message: 'You do not have permission for this operation.',
           redirect: '/auth/login',
         };
       case 500:
@@ -56,13 +56,13 @@ export function handleApiError(error: unknown): ApiErrorResponse {
       case 503:
         return {
           type: 'server',
-          message: 'Sunucu hatası oluştu. Lütfen daha sonra tekrar deneyin.',
+          message: 'Server error occurred. Please try again later.',
           retry: true,
         };
       default:
         return {
           type: 'unknown',
-          message: 'Bir hata oluştu. Lütfen tekrar deneyin.',
+          message: 'An error occurred. Please try again.',
           retry: true,
         };
     }
@@ -72,7 +72,7 @@ export function handleApiError(error: unknown): ApiErrorResponse {
   if (error instanceof Error) {
     return {
       type: 'unknown',
-      message: error.message || 'Beklenmeyen bir hata oluştu.',
+      message: error.message || 'An unexpected error occurred.',
       retry: true,
     };
   }
@@ -80,7 +80,7 @@ export function handleApiError(error: unknown): ApiErrorResponse {
   // Default error
   return {
     type: 'unknown',
-    message: 'Bir hata oluştu. Lütfen tekrar deneyin.',
+    message: 'An error occurred. Please try again.',
     retry: true,
   };
 }
