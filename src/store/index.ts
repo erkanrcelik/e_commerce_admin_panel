@@ -5,7 +5,7 @@ import authSlice from '@/features/auth/authSlice';
 
 /**
  * Redux store configuration
- * 
+ *
  * Centralized state management for the admin panel application.
  * Combines auth and app slices with proper middleware configuration.
  */

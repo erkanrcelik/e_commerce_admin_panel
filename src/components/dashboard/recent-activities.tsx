@@ -5,12 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { DashboardActivities } from '@/types/admin-dashboard';
-import {
-  Package,
-  ShoppingCart,
-  Tag,
-  User
-} from 'lucide-react';
+import { Package, ShoppingCart, Tag, User } from 'lucide-react';
 
 interface RecentActivitiesProps {
   activities: DashboardActivities | null;
@@ -19,14 +14,17 @@ interface RecentActivitiesProps {
 
 /**
  * Recent Activities Component
- * 
+ *
  * Displays recent activities across different categories (users, orders, products, campaigns)
  * in a tabbed interface. Shows loading states and handles empty data gracefully.
- * 
+ *
  * @param activities - Dashboard activities data or null
  * @param isLoading - Whether to show loading skeleton (default: false)
  */
-export function RecentActivities({ activities, isLoading = false }: RecentActivitiesProps) {
+export function RecentActivities({
+  activities,
+  isLoading = false,
+}: RecentActivitiesProps) {
   /**
    * Formats date strings to a readable format
    * @param dateString - ISO date string
@@ -103,9 +101,11 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
 
           <TabsContent value="users" className="space-y-4 mt-4">
             {activities.newUsers.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No new user registrations</p>
+              <p className="text-muted-foreground text-sm">
+                No new user registrations
+              </p>
             ) : (
-              activities.newUsers.map((user) => (
+              activities.newUsers.map(user => (
                 <div key={user._id} className="flex items-center space-x-4">
                   <div className="p-2 bg-blue-100 rounded-full">
                     <User className="h-4 w-4 text-blue-600" />
@@ -115,10 +115,15 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
                       {user.firstName} {user.lastName}
                     </p>
                     <div className="flex items-center gap-2">
-                      <p className="text-xs text-muted-foreground">{user.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {user.email}
+                      </p>
                       <Badge variant="outline" className="text-xs">
-                        {user.role === 'customer' ? 'Customer' : 
-                         user.role === 'seller' ? 'Seller' : 'Admin'}
+                        {user.role === 'customer'
+                          ? 'Customer'
+                          : user.role === 'seller'
+                            ? 'Seller'
+                            : 'Admin'}
                       </Badge>
                     </div>
                   </div>
@@ -134,7 +139,7 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
             {activities.recentOrders.length === 0 ? (
               <p className="text-muted-foreground text-sm">No new orders</p>
             ) : (
-              activities.recentOrders.map((order) => (
+              activities.recentOrders.map(order => (
                 <div key={order._id} className="flex items-center space-x-4">
                   <div className="p-2 bg-green-100 rounded-full">
                     <ShoppingCart className="h-4 w-4 text-green-600" />
@@ -143,20 +148,30 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
                     <p className="text-sm font-medium">{order.customerName}</p>
                     <div className="flex items-center gap-2">
                       <p className="text-xs text-muted-foreground">
-                        {order.itemCount} items • {formatCurrency(order.totalPrice)}
+                        {order.itemCount} items •{' '}
+                        {formatCurrency(order.totalPrice)}
                       </p>
-                      <Badge 
+                      <Badge
                         variant={
-                          order.status === 'delivered' ? 'default' :
-                          order.status === 'processing' ? 'secondary' :
-                          order.status === 'pending' ? 'outline' : 'destructive'
+                          order.status === 'delivered'
+                            ? 'default'
+                            : order.status === 'processing'
+                              ? 'secondary'
+                              : order.status === 'pending'
+                                ? 'outline'
+                                : 'destructive'
                         }
                         className="text-xs"
                       >
-                        {order.status === 'pending' ? 'Pending' :
-                         order.status === 'processing' ? 'Processing' :
-                         order.status === 'shipped' ? 'Shipped' :
-                         order.status === 'delivered' ? 'Delivered' : 'Cancelled'}
+                        {order.status === 'pending'
+                          ? 'Pending'
+                          : order.status === 'processing'
+                            ? 'Processing'
+                            : order.status === 'shipped'
+                              ? 'Shipped'
+                              : order.status === 'delivered'
+                                ? 'Delivered'
+                                : 'Cancelled'}
                       </Badge>
                     </div>
                   </div>
@@ -170,9 +185,11 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
 
           <TabsContent value="products" className="space-y-4 mt-4">
             {activities.newProducts.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No new products added</p>
+              <p className="text-muted-foreground text-sm">
+                No new products added
+              </p>
             ) : (
-              activities.newProducts.map((product) => (
+              activities.newProducts.map(product => (
                 <div key={product._id} className="flex items-center space-x-4">
                   <div className="p-2 bg-purple-100 rounded-full">
                     <Package className="h-4 w-4 text-purple-600" />
@@ -198,9 +215,11 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
 
           <TabsContent value="campaigns" className="space-y-4 mt-4">
             {activities.newCampaigns.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No new campaigns created</p>
+              <p className="text-muted-foreground text-sm">
+                No new campaigns created
+              </p>
             ) : (
-              activities.newCampaigns.map((campaign) => (
+              activities.newCampaigns.map(campaign => (
                 <div key={campaign._id} className="flex items-center space-x-4">
                   <div className="p-2 bg-orange-100 rounded-full">
                     <Tag className="h-4 w-4 text-orange-600" />
@@ -212,8 +231,10 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
                         {campaign.discountValue}% discount
                         {campaign.sellerName && ` • ${campaign.sellerName}`}
                       </p>
-                      <Badge 
-                        variant={campaign.type === 'platform' ? 'default' : 'secondary'}
+                      <Badge
+                        variant={
+                          campaign.type === 'platform' ? 'default' : 'secondary'
+                        }
                         className="text-xs"
                       >
                         {campaign.type === 'platform' ? 'Platform' : 'Seller'}
@@ -231,4 +252,4 @@ export function RecentActivities({ activities, isLoading = false }: RecentActivi
       </CardContent>
     </Card>
   );
-} 
+}

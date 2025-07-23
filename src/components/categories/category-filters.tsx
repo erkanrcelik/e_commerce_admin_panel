@@ -27,7 +27,10 @@ export function CategoryFilters({
   onFiltersChange,
   onReset,
 }: CategoryFiltersProps) {
-  const handleFilterChange = (key: keyof CategoryListQuery, value: string | boolean | undefined) => {
+  const handleFilterChange = (
+    key: keyof CategoryListQuery,
+    value: string | boolean | undefined
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value === 'all' || value === '' ? undefined : value,
@@ -55,11 +58,11 @@ export function CategoryFilters({
   };
 
   const hasActiveFilters = Object.entries(filters).some(
-    ([key, value]) => 
-      value !== undefined && 
-      value !== '' && 
+    ([key, value]) =>
+      value !== undefined &&
+      value !== '' &&
       value !== 'all' &&
-      key !== 'page' && 
+      key !== 'page' &&
       key !== 'limit'
   );
 
@@ -84,7 +87,13 @@ export function CategoryFilters({
         <div className="flex items-center gap-2">
           <Label className="text-sm font-medium">Status</Label>
           <Select
-            value={filters.isActive === undefined ? 'all' : filters.isActive ? 'active' : 'inactive'}
+            value={
+              filters.isActive === undefined
+                ? 'all'
+                : filters.isActive
+                  ? 'active'
+                  : 'inactive'
+            }
             onValueChange={handleStatusChange}
           >
             <SelectTrigger className="w-32">
@@ -118,11 +127,7 @@ export function CategoryFilters({
 
         {/* Clear Filters */}
         {hasActiveFilters && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearFilters}
-          >
+          <Button variant="outline" size="sm" onClick={clearFilters}>
             Clear Filters
           </Button>
         )}
@@ -175,7 +180,13 @@ export function CategoryFilters({
               <div className="space-y-2">
                 <Label>Status</Label>
                 <Select
-                  value={filters.isActive === undefined ? 'all' : filters.isActive ? 'active' : 'inactive'}
+                  value={
+                    filters.isActive === undefined
+                      ? 'all'
+                      : filters.isActive
+                        ? 'active'
+                        : 'inactive'
+                  }
                   onValueChange={handleStatusChange}
                 >
                   <SelectTrigger>

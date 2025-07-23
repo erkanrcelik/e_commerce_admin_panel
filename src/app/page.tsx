@@ -1,6 +1,10 @@
 'use client';
 
-import { KPICard, RecentActivities, SystemHealth } from '@/components/dashboard';
+import {
+  KPICard,
+  RecentActivities,
+  SystemHealth,
+} from '@/components/dashboard';
 import { AppSidebar } from '@/components/sidebar/app-sidebar';
 import {
   Breadcrumb,
@@ -24,15 +28,15 @@ import {
   Star,
   Tag,
   TrendingUp,
-  Users
+  Users,
 } from 'lucide-react';
 
 /**
  * Dashboard Page Component
- * 
+ *
  * Main dashboard page displaying key performance indicators, recent activities,
  * system health, and top categories. Uses purple and blue color scheme.
- * 
+ *
  * Features:
  * - KPI cards showing users, orders, revenue, and products
  * - Secondary metrics for customers, sellers, campaigns, and ratings
@@ -42,7 +46,8 @@ import {
  * - Error handling and loading states
  */
 export default function Home() {
-  const { stats, activities, health, isLoading, hasError, refetch } = useDashboard();
+  const { stats, activities, health, isLoading, hasError, refetch } =
+    useDashboard();
 
   /**
    * Formats currency values for display
@@ -111,8 +116,11 @@ export default function Home() {
               subtitle={`This month +${stats?.users.newThisMonth || 0} new registrations`}
               icon={<Users className="h-4 w-4" />}
               trend={{
-                value: calculateGrowthPercentage(stats?.users.newThisMonth || 0, 50),
-                isPositive: (stats?.users.newThisMonth || 0) > 50
+                value: calculateGrowthPercentage(
+                  stats?.users.newThisMonth || 0,
+                  50
+                ),
+                isPositive: (stats?.users.newThisMonth || 0) > 50,
               }}
               isLoading={isLoading}
             />
@@ -123,8 +131,11 @@ export default function Home() {
               subtitle={`Today ${stats?.orders.todayOrders || 0} orders`}
               icon={<ShoppingCart className="h-4 w-4" />}
               trend={{
-                value: calculateGrowthPercentage(stats?.orders.thisMonthOrders || 0, 400),
-                isPositive: (stats?.orders.thisMonthOrders || 0) > 400
+                value: calculateGrowthPercentage(
+                  stats?.orders.thisMonthOrders || 0,
+                  400
+                ),
+                isPositive: (stats?.orders.thisMonthOrders || 0) > 400,
               }}
               isLoading={isLoading}
             />
@@ -136,8 +147,11 @@ export default function Home() {
               icon={<TrendingUp className="h-4 w-4" />}
               format="currency"
               trend={{
-                value: calculateGrowthPercentage(stats?.orders.thisMonthRevenue || 0, 40000),
-                isPositive: (stats?.orders.thisMonthRevenue || 0) > 40000
+                value: calculateGrowthPercentage(
+                  stats?.orders.thisMonthRevenue || 0,
+                  40000
+                ),
+                isPositive: (stats?.orders.thisMonthRevenue || 0) > 40000,
               }}
               isLoading={isLoading}
             />
@@ -148,8 +162,11 @@ export default function Home() {
               subtitle={`${stats?.products.total || 0} total products`}
               icon={<Package className="h-4 w-4" />}
               trend={{
-                value: calculateGrowthPercentage(stats?.products.newThisMonth || 0, 200),
-                isPositive: (stats?.products.newThisMonth || 0) > 200
+                value: calculateGrowthPercentage(
+                  stats?.products.newThisMonth || 0,
+                  200
+                ),
+                isPositive: (stats?.products.newThisMonth || 0) > 200,
               }}
               isLoading={isLoading}
             />
@@ -194,43 +211,54 @@ export default function Home() {
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Activities */}
-            <RecentActivities
-              activities={activities}
-              isLoading={isLoading}
-            />
+            <RecentActivities activities={activities} isLoading={isLoading} />
 
             {/* System Health */}
-            <SystemHealth
-              health={health}
-              isLoading={isLoading}
-            />
+            <SystemHealth health={health} isLoading={isLoading} />
           </div>
 
           {/* Top Categories */}
-          {stats?.products.topCategories && stats.products.topCategories.length > 0 && (
-            <div className="bg-card rounded-xl border p-6">
-              <h3 className="text-lg font-semibold mb-4">Top Categories</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {stats.products.topCategories.slice(0, 3).map((category, index) => (
-                  <div key={category.categoryId} className="p-4 bg-muted rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">{category.categoryName}</h4>
-                      <span className="text-sm text-muted-foreground">#{index + 1}</span>
-                    </div>
-                    <p className="text-2xl font-bold">{category.productCount}</p>
-                    <p className="text-sm text-muted-foreground">products</p>
-                  </div>
-                ))}
+          {stats?.products.topCategories &&
+            stats.products.topCategories.length > 0 && (
+              <div className="bg-card rounded-xl border p-6">
+                <h3 className="text-lg font-semibold mb-4">Top Categories</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {stats.products.topCategories
+                    .slice(0, 3)
+                    .map((category, index) => (
+                      <div
+                        key={category.categoryId}
+                        className="p-4 bg-muted rounded-lg"
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium">
+                            {category.categoryName}
+                          </h4>
+                          <span className="text-sm text-muted-foreground">
+                            #{index + 1}
+                          </span>
+                        </div>
+                        <p className="text-2xl font-bold">
+                          {category.productCount}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          products
+                        </p>
+                      </div>
+                    ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Error State */}
           {hasError && !isLoading && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-6 text-center">
-              <p className="text-destructive font-medium mb-2">Error loading data</p>
+              <p className="text-destructive font-medium mb-2">
+                Error loading data
+              </p>
               <p className="text-muted-foreground text-sm mb-4">
-                There was a problem loading the dashboard data. Please try again.
+                There was a problem loading the dashboard data. Please try
+                again.
               </p>
               <Button variant="outline" onClick={refetch}>
                 Try Again

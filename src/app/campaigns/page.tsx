@@ -4,12 +4,16 @@ import {
   CampaignCard,
   CampaignDeleteDialog,
   CampaignFilters,
-  CampaignForm
+  CampaignForm,
 } from '@/components/campaigns';
 import { PageLayout } from '@/components/layout/page-layout';
 import { useCampaigns } from '@/hooks/use-campaigns';
 import { AdminCampaignsService } from '@/services/admin-campaigns.service';
-import type { AdminCampaign, CreatePlatformCampaignRequest, UpdateCampaignRequest } from '@/types/admin-campaigns';
+import type {
+  AdminCampaign,
+  CreatePlatformCampaignRequest,
+  UpdateCampaignRequest,
+} from '@/types/admin-campaigns';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -19,7 +23,9 @@ import { toast } from 'sonner';
  */
 export default function CampaignsPage() {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingCampaign, setEditingCampaign] = useState<AdminCampaign | null>(null);
+  const [editingCampaign, setEditingCampaign] = useState<AdminCampaign | null>(
+    null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -66,7 +72,9 @@ export default function CampaignsPage() {
   /**
    * Handle form submission for create or edit
    */
-  const handleFormSubmit = async (data: CreatePlatformCampaignRequest | UpdateCampaignRequest) => {
+  const handleFormSubmit = async (
+    data: CreatePlatformCampaignRequest | UpdateCampaignRequest
+  ) => {
     let loadingToastId: string | number | undefined;
 
     try {
@@ -77,11 +85,16 @@ export default function CampaignsPage() {
 
       if (editingCampaign) {
         // Update existing campaign
-        await AdminCampaignsService.updateCampaign(editingCampaign._id, data as UpdateCampaignRequest);
+        await AdminCampaignsService.updateCampaign(
+          editingCampaign._id,
+          data as UpdateCampaignRequest
+        );
         toast.success('Campaign updated successfully!');
       } else {
         // Create new platform campaign
-        await AdminCampaignsService.createPlatformCampaign(data as CreatePlatformCampaignRequest);
+        await AdminCampaignsService.createPlatformCampaign(
+          data as CreatePlatformCampaignRequest
+        );
         toast.success('Campaign created successfully!');
       }
 
@@ -97,8 +110,8 @@ export default function CampaignsPage() {
     } catch (error) {
       console.error('Campaign operation failed:', error);
       toast.error(
-        editingCampaign 
-          ? 'Failed to update campaign' 
+        editingCampaign
+          ? 'Failed to update campaign'
           : 'Failed to create campaign'
       );
     } finally {
@@ -152,7 +165,9 @@ export default function CampaignsPage() {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Campaign Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Campaign Management
+          </h1>
           <p className="text-muted-foreground">
             Manage platform and seller campaigns, discounts, and promotions
           </p>
@@ -172,7 +187,9 @@ export default function CampaignsPage() {
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 text-sm font-medium">🎯</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Total Campaigns</span>
+            <span className="text-sm font-medium text-gray-600">
+              Total Campaigns
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">{stats.total}</div>
         </div>
@@ -182,7 +199,9 @@ export default function CampaignsPage() {
             <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
               <span className="text-green-600 text-sm font-medium">✅</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Active Campaigns</span>
+            <span className="text-sm font-medium text-gray-600">
+              Active Campaigns
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">{stats.active}</div>
         </div>
@@ -192,7 +211,9 @@ export default function CampaignsPage() {
             <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
               <span className="text-purple-600 text-sm font-medium">🏢</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Platform Campaigns</span>
+            <span className="text-sm font-medium text-gray-600">
+              Platform Campaigns
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">{stats.platform}</div>
         </div>
@@ -202,7 +223,9 @@ export default function CampaignsPage() {
             <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
               <span className="text-orange-600 text-sm font-medium">⚠️</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Expiring Soon</span>
+            <span className="text-sm font-medium text-gray-600">
+              Expiring Soon
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">{stats.expiringSoon}</div>
         </div>
@@ -228,12 +251,14 @@ export default function CampaignsPage() {
             <div className="text-6xl mb-4">🎯</div>
             <h3 className="text-lg font-semibold mb-2">No campaigns found</h3>
             <p className="text-muted-foreground mb-4">
-              {Object.keys(filters).length > 0 
-                ? "Try adjusting your filters to see more campaigns."
-                : "Get started by creating your first campaign."}
+              {Object.keys(filters).length > 0
+                ? 'Try adjusting your filters to see more campaigns.'
+                : 'Get started by creating your first campaign.'}
             </p>
             <button
-              onClick={() => { handleCreateCampaign(); }}
+              onClick={() => {
+                handleCreateCampaign();
+              }}
               className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2"
             >
               Create Campaign
@@ -241,13 +266,19 @@ export default function CampaignsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {campaigns.map((campaign) => (
+            {campaigns.map(campaign => (
               <CampaignCard
                 key={campaign._id}
                 campaign={campaign}
-                onEdit={(campaign) => { void handleEditCampaign(campaign); }}
-                onDelete={(campaign) => { void handleDeleteCampaign(campaign); }}
-                onStatusChange={(campaign) => { void handleStatusToggle(campaign); }}
+                onEdit={campaign => {
+                  void handleEditCampaign(campaign);
+                }}
+                onDelete={campaign => {
+                  void handleDeleteCampaign(campaign);
+                }}
+                onStatusChange={campaign => {
+                  void handleStatusToggle(campaign);
+                }}
               />
             ))}
           </div>
@@ -258,16 +289,24 @@ export default function CampaignsPage() {
       <CampaignDeleteDialog
         campaign={deletingCampaign || null}
         isOpen={!!deletingCampaign}
-        onClose={() => { handleCloseDeleteDialog(); }}
-        onConfirm={() => { void handleConfirmDelete(); }}
+        onClose={() => {
+          handleCloseDeleteDialog();
+        }}
+        onConfirm={() => {
+          void handleConfirmDelete();
+        }}
         isLoading={false}
       />
 
       {/* Create Campaign Form */}
       <CampaignForm
         isOpen={showCreateForm}
-        onClose={() => { handleCloseCreateForm(); }}
-        onSubmit={(data) => { void handleFormSubmit(data); }}
+        onClose={() => {
+          handleCloseCreateForm();
+        }}
+        onSubmit={data => {
+          void handleFormSubmit(data);
+        }}
         isLoading={isSubmitting}
       />
 
@@ -275,8 +314,12 @@ export default function CampaignsPage() {
       <CampaignForm
         campaign={editingCampaign || undefined}
         isOpen={!!editingCampaign}
-        onClose={() => { handleCloseEditForm(); }}
-        onSubmit={(data) => { void handleFormSubmit(data); }}
+        onClose={() => {
+          handleCloseEditForm();
+        }}
+        onSubmit={data => {
+          void handleFormSubmit(data);
+        }}
         isLoading={isSubmitting}
       />
     </PageLayout>

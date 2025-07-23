@@ -4,7 +4,11 @@
  * Raw activity item from API
  */
 export interface RawActivityItem {
-  type: 'user_registration' | 'product_added' | 'campaign_created' | 'order_placed';
+  type:
+    | 'user_registration'
+    | 'product_added'
+    | 'campaign_created'
+    | 'order_placed';
   title: string;
   description: string;
   createdAt: string;
@@ -311,4 +315,4 @@ export interface DashboardSummary {
   statistics: DashboardStatistics;
   recentActivity: RecentActivity;
   trends: PlatformTrends;
-} 
+}

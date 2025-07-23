@@ -11,4 +11,3 @@ export { VendorsTable } from './vendors-table';
 // Legacy components (keeping for compatibility)
 export { VendorDetailsModal } from './vendor-details-modal';
 export { VendorFilters } from './vendor-filters';
-

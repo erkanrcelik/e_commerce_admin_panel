@@ -3,15 +3,23 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import type { AdminCampaign } from '@/types/admin-campaigns';
-import { Calendar, Edit, Eye, EyeOff, Target, Trash2, TrendingUp } from 'lucide-react';
+import {
+  Calendar,
+  Edit,
+  Eye,
+  EyeOff,
+  Target,
+  Trash2,
+  TrendingUp,
+} from 'lucide-react';
 
 interface CampaignsTableProps {
   campaigns: AdminCampaign[];
@@ -129,7 +137,10 @@ export function CampaignsTable({
                 <div className="flex items-center gap-2">
                   <Target className="w-4 h-4 text-muted-foreground" />
                   <span className="font-medium">
-                    {formatDiscount(campaign.discountType, campaign.discountValue)}
+                    {formatDiscount(
+                      campaign.discountType,
+                      campaign.discountValue
+                    )}
                   </span>
                 </div>
               </TableCell>
@@ -137,7 +148,8 @@ export function CampaignsTable({
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="w-4 h-4" />
                   <span>
-                    {formatDate(campaign.startDate)} - {formatDate(campaign.endDate)}
+                    {formatDate(campaign.startDate)} -{' '}
+                    {formatDate(campaign.endDate)}
                   </span>
                 </div>
               </TableCell>
@@ -153,7 +165,11 @@ export function CampaignsTable({
                     variant="outline"
                     onClick={() => onToggleStatus(campaign)}
                     className="h-8 w-8 p-0"
-                    title={campaign.isActive ? 'Deactivate campaign' : 'Activate campaign'}
+                    title={
+                      campaign.isActive
+                        ? 'Deactivate campaign'
+                        : 'Activate campaign'
+                    }
                   >
                     {campaign.isActive ? (
                       <EyeOff className="h-4 w-4" />
@@ -187,4 +203,4 @@ export function CampaignsTable({
       </Table>
     </div>
   );
-} 
+}

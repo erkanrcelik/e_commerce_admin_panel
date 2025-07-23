@@ -20,7 +20,7 @@ const AUTH_ROUTES = [
   '/forgot-password',
   '/reset-password',
   '/verify-email',
-  '/verify-code' // Added
+  '/verify-code', // Added
 ];
 
 /**
@@ -42,7 +42,13 @@ export function middleware(request: NextRequest) {
   // If user is not authenticated and trying to access protected route
   if (!isAuthenticated && isProtectedRoute) {
     // Prevent redirect loop - if already on login page, don't redirect again
-    if (pathname === '/login' || pathname === '/forgot-password' || pathname === '/reset-password' || pathname === '/verify-email' || pathname === '/verify-code') {
+    if (
+      pathname === '/login' ||
+      pathname === '/forgot-password' ||
+      pathname === '/reset-password' ||
+      pathname === '/verify-email' ||
+      pathname === '/verify-code'
+    ) {
       return NextResponse.next();
     }
 

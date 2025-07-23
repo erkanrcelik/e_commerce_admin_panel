@@ -3,12 +3,12 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import type { AdminVendor } from '@/types/admin-vendors';
 import { Eye, EyeOff, Mail, Phone, Store, Trash2, User } from 'lucide-react';
@@ -39,8 +39,6 @@ export function VendorsTable({
   const getStatusVariant = (isActive: boolean) => {
     return isActive ? 'default' : 'secondary';
   };
-
-
 
   /**
    * Get vendor logo or fallback
@@ -118,7 +116,6 @@ export function VendorsTable({
         </TableHeader>
         <TableBody>
           {vendors.map(vendor => {
-            
             return (
               <TableRow key={vendor._id}>
                 <TableCell>
@@ -144,9 +141,13 @@ export function VendorsTable({
                 </TableCell>
                 <TableCell>
                   <div className="space-y-1">
-                    <p className="font-medium">{vendor.profile?.storeName || vendor.companyName}</p>
+                    <p className="font-medium">
+                      {vendor.profile?.storeName || vendor.companyName}
+                    </p>
                     <p className="text-sm text-muted-foreground line-clamp-1">
-                      {vendor.profile?.description || vendor.profile?.storeDescription || 'No description'}
+                      {vendor.profile?.description ||
+                        vendor.profile?.storeDescription ||
+                        'No description'}
                     </p>
                   </div>
                 </TableCell>
@@ -192,7 +193,11 @@ export function VendorsTable({
                       variant="outline"
                       onClick={() => onToggleStatus(vendor)}
                       className="h-8 w-8 p-0"
-                      title={vendor.isActive ? 'Deactivate vendor' : 'Activate vendor'}
+                      title={
+                        vendor.isActive
+                          ? 'Deactivate vendor'
+                          : 'Activate vendor'
+                      }
                     >
                       {vendor.isActive ? (
                         <EyeOff className="h-4 w-4" />
@@ -218,4 +223,4 @@ export function VendorsTable({
       </Table>
     </div>
   );
-} 
+}

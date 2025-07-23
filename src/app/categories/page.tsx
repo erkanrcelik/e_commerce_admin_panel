@@ -23,7 +23,7 @@ import type {
  */
 export default function CategoriesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  
+
   const {
     categories,
     filters,
@@ -80,7 +80,11 @@ export default function CategoriesPage() {
     void (async () => {
       try {
         if (editingCategory) {
-          await updateCategory(data as UpdateCategoryRequest, imageFile, shouldRemoveImage);
+          await updateCategory(
+            data as UpdateCategoryRequest,
+            imageFile,
+            shouldRemoveImage
+          );
         } else {
           await createCategory(data as CreateCategoryRequest, imageFile);
         }
@@ -125,10 +129,7 @@ export default function CategoriesPage() {
       <CategoriesHeader onAddCategory={handleAddCategory} />
 
       {/* Filters */}
-      <CategoriesFilters
-        filters={filters}
-        onFiltersChange={setFilters}
-      />
+      <CategoriesFilters filters={filters} onFiltersChange={setFilters} />
 
       {/* Categories Grid */}
       <CategoriesGrid

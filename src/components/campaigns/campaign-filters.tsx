@@ -20,7 +20,10 @@ export function CampaignFilters({
   onFiltersChange,
   onReset,
 }: CampaignFiltersProps) {
-  const handleFilterChange = (key: keyof CampaignListQuery, value: string | boolean | undefined) => {
+  const handleFilterChange = (
+    key: keyof CampaignListQuery,
+    value: string | boolean | undefined
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value === 'all' || value === '' ? undefined : value,
@@ -32,11 +35,11 @@ export function CampaignFilters({
   };
 
   const hasActiveFilters = Object.entries(filters).some(
-    ([key, value]) => 
-      value !== undefined && 
-      value !== '' && 
+    ([key, value]) =>
+      value !== undefined &&
+      value !== '' &&
       value !== 'all' &&
-      key !== 'page' && 
+      key !== 'page' &&
       key !== 'limit'
   );
 
@@ -82,7 +85,10 @@ export function CampaignFilters({
             <p className="text-sm text-muted-foreground">
               <span className="font-medium">Active filters:</span>{' '}
               {Object.entries(filters)
-                .filter(([, value]) => value !== undefined && value !== '' && value !== 'all')
+                .filter(
+                  ([, value]) =>
+                    value !== undefined && value !== '' && value !== 'all'
+                )
                 .map(([key, value]) => {
                   if (key === 'search') return `Search: "${value as string}"`;
                   return `${key}: ${value as string}`;

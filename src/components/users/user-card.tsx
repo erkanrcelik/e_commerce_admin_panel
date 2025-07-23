@@ -18,7 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-  
+
 import type { AdminUser } from '@/types/admin-users';
 
 interface UserCardProps {
@@ -113,9 +113,7 @@ export function UserCard({ user, onDelete, onToggleStatus }: UserCardProps) {
             >
               {user.isActive ? 'Active' : 'Inactive'}
             </Badge>
-            <Badge className={roleColors[user.role]}>
-              {user.role}
-            </Badge>
+            <Badge className={roleColors[user.role]}>{user.role}</Badge>
           </div>
 
           {/* Contact Info */}

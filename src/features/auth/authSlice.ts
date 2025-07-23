@@ -1,6 +1,10 @@
-import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction,
+} from '@reduxjs/toolkit';
 
-import { parseApiErrorMessage } from '@/lib/api-error';
+import { parseApiErrorMessage, type ApiErrorData } from '@/lib/api-error';
 import { AuthService } from '@/services/auth.service';
 
 import type {
@@ -11,7 +15,7 @@ import type {
   LoginFormData,
   RegisterFormData,
   ResetPasswordFormData,
-  User
+  User,
 } from '@/types';
 
 /**
@@ -40,7 +44,7 @@ export const loginUser = createAsyncThunk<
     // Handle axios error response
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as {
-        response?: { data?: any };
+        response?: { data?: ApiErrorData };
       };
       if (axiosError.response?.data) {
         const errorMessage = parseApiErrorMessage(axiosError.response.data);
@@ -75,7 +79,7 @@ export const registerUser = createAsyncThunk<
     // Handle axios error response
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as {
-        response?: { data?: any };
+        response?: { data?: ApiErrorData };
       };
       if (axiosError.response?.data) {
         const errorMessage = parseApiErrorMessage(axiosError.response.data);
@@ -127,8 +131,6 @@ export const forgotPassword = createAsyncThunk<
     });
   }
 });
-
-
 
 /**
  * Reset password async thunk
@@ -185,7 +187,8 @@ export const verifyEmail = createAsyncThunk<
       };
       if (axiosError.response?.data) {
         return rejectWithValue({
-          message: axiosError.response.data.message || 'Email verification failed',
+          message:
+            axiosError.response.data.message || 'Email verification failed',
           code: axiosError.response.data.code || 'EMAIL_VERIFICATION_ERROR',
         });
       }
@@ -219,7 +222,9 @@ export const resendVerification = createAsyncThunk<
       };
       if (axiosError.response?.data) {
         return rejectWithValue({
-          message: axiosError.response.data.message || 'Failed to resend verification email',
+          message:
+            axiosError.response.data.message ||
+            'Failed to resend verification email',
           code: axiosError.response.data.code || 'RESEND_VERIFICATION_ERROR',
         });
       }
@@ -252,7 +257,7 @@ export const getUserProfile = createAsyncThunk<
 >('auth/getUserProfile', async (_, { rejectWithValue }) => {
   try {
     const userInfo = await AuthService.getUserInfo();
-    
+
     // Transform the API response to match User interface
     const user: User = {
       id: userInfo.id,
@@ -266,7 +271,7 @@ export const getUserProfile = createAsyncThunk<
       createdAt: userInfo.createdAt,
       updatedAt: userInfo.updatedAt,
     };
-    
+
     return user;
   } catch (error: unknown) {
     console.error('Get profile error:', error);
@@ -387,7 +392,7 @@ const authSlice = createSlice({
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state) => {
+      .addCase(registerUser.fulfilled, state => {
         state.status = 'authenticated';
         state.user = null; // Registration doesn't return a user object directly
         state.error = null;
@@ -425,7 +430,8 @@ const authSlice = createSlice({
       .addCase(getUserProfile.rejected, (state, action) => {
         state.status = 'unauthenticated';
         state.user = null;
-        state.error = (action.payload as AuthError)?.message || 'Failed to get profile';
+        state.error =
+          (action.payload as AuthError)?.message || 'Failed to get profile';
       });
 
     // Refresh token cases
@@ -445,7 +451,8 @@ const authSlice = createSlice({
       .addCase(refreshToken.rejected, (state, action) => {
         state.status = 'unauthenticated';
         state.user = null;
-        state.error = (action.payload as AuthError)?.message || 'Token refresh failed';
+        state.error =
+          (action.payload as AuthError)?.message || 'Token refresh failed';
       });
 
     // Forgot password cases
@@ -460,10 +467,10 @@ const authSlice = createSlice({
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.status = 'idle';
-        state.error = (action.payload as AuthError)?.message || 'Failed to send reset email';
+        state.error =
+          (action.payload as AuthError)?.message ||
+          'Failed to send reset email';
       });
-
-
 
     // Reset password cases
     builder
@@ -477,7 +484,8 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.status = 'idle';
-        state.error = (action.payload as AuthError)?.message || 'Password reset failed';
+        state.error =
+          (action.payload as AuthError)?.message || 'Password reset failed';
       });
 
     // Verify email cases
@@ -496,7 +504,8 @@ const authSlice = createSlice({
       })
       .addCase(verifyEmail.rejected, (state, action) => {
         state.status = 'idle';
-        state.error = (action.payload as AuthError)?.message || 'Email verification failed';
+        state.error =
+          (action.payload as AuthError)?.message || 'Email verification failed';
       });
 
     // Resend verification cases
@@ -511,7 +520,9 @@ const authSlice = createSlice({
       })
       .addCase(resendVerification.rejected, (state, action) => {
         state.status = 'idle';
-        state.error = (action.payload as AuthError)?.message || 'Failed to resend verification email';
+        state.error =
+          (action.payload as AuthError)?.message ||
+          'Failed to resend verification email';
       });
   },
 });

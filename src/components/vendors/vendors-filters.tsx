@@ -12,8 +12,8 @@ interface VendorsFiltersProps {
  * Filters component for vendors page
  * Handles search, status, and approval filtering for vendors
  */
-export function VendorsFilters({ 
-  filters, 
+export function VendorsFilters({
+  filters,
   onFiltersChange,
 }: VendorsFiltersProps) {
   /**
@@ -56,4 +56,4 @@ export function VendorsFilters({
       searchPlaceholder="Search vendors..."
     />
   );
-} 
+}

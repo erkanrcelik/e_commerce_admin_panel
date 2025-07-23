@@ -5,11 +5,11 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 
 interface FilterOption {
@@ -28,7 +28,9 @@ interface FilterField {
 
 interface FilterBarProps {
   filters: Record<string, string | number | boolean | undefined>;
-  onFiltersChange: (filters: Record<string, string | number | boolean | undefined>) => void;
+  onFiltersChange: (
+    filters: Record<string, string | number | boolean | undefined>
+  ) => void;
   fields: FilterField[];
   searchPlaceholder?: string;
   showClearButton?: boolean;
@@ -41,7 +43,10 @@ export function FilterBar({
   searchPlaceholder = 'Search...',
   showClearButton = true,
 }: FilterBarProps) {
-  const handleFilterChange = (key: string, value: string | number | boolean | undefined) => {
+  const handleFilterChange = (
+    key: string,
+    value: string | number | boolean | undefined
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value === '' || value === 'all' ? undefined : value,
@@ -53,11 +58,11 @@ export function FilterBar({
   };
 
   const hasActiveFilters = Object.entries(filters).some(
-    ([key, value]) => 
-      value !== undefined && 
-      value !== '' && 
+    ([key, value]) =>
+      value !== undefined &&
+      value !== '' &&
       value !== 'all' &&
-      key !== 'page' && 
+      key !== 'page' &&
       key !== 'limit'
   );
 
@@ -75,7 +80,9 @@ export function FilterBar({
               <Input
                 placeholder={searchField.placeholder || searchPlaceholder}
                 value={String(filters[searchField.key] || '')}
-                onChange={e => handleFilterChange(searchField.key, e.target.value)}
+                onChange={e =>
+                  handleFilterChange(searchField.key, e.target.value)
+                }
                 className="pl-10"
               />
             </div>
@@ -87,7 +94,9 @@ export function FilterBar({
           {selectFields.map(field => (
             <Select
               key={field.key}
-              value={String(filters[field.key] || (field.options?.[0]?.value || 'all'))}
+              value={String(
+                filters[field.key] || field.options?.[0]?.value || 'all'
+              )}
               onValueChange={value => handleFilterChange(field.key, value)}
             >
               <SelectTrigger className={field.width || 'w-32'}>
@@ -112,4 +121,4 @@ export function FilterBar({
       </div>
     </div>
   );
-} 
+}

@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 
-import { getUserProfile, initializeAuth, refreshToken } from '@/features/auth/authSlice';
+import {
+  getUserProfile,
+  initializeAuth,
+  refreshToken,
+} from '@/features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { getAuthToken, getRefreshToken } from '@/lib/axios';
 

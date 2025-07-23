@@ -1,6 +1,15 @@
 'use client';
 
-import { Building, Calendar, Check, Mail, MapPin, Phone, Star, X } from 'lucide-react';
+import {
+  Building,
+  Calendar,
+  Check,
+  Mail,
+  MapPin,
+  Phone,
+  Star,
+  X,
+} from 'lucide-react';
 import Image from 'next/image';
 
 import { Badge } from '@/components/ui/badge';
@@ -97,7 +106,7 @@ export function VendorDetailsModal({
               <p className="text-lg text-muted-foreground mb-2">
                 {vendor.firstName} {vendor.lastName}
               </p>
-              
+
               <div className="flex items-center gap-2 mb-3">
                 <Badge variant={getStatusVariant(vendor.isActive)}>
                   {vendor.isActive ? 'Active' : 'Inactive'}
@@ -140,14 +149,15 @@ export function VendorDetailsModal({
                   </div>
                 )}
               </div>
-              
+
               {vendor.profile?.address && (
                 <div className="flex items-start gap-2">
                   <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                   <div>
                     <div>{vendor.profile.address}</div>
                     <div className="text-sm text-muted-foreground">
-                      {vendor.profile.city}, {vendor.profile.state} {vendor.profile.postalCode}
+                      {vendor.profile.city}, {vendor.profile.state}{' '}
+                      {vendor.profile.postalCode}
                     </div>
                     <div className="text-sm text-muted-foreground">
                       {vendor.profile.country}
@@ -167,12 +177,16 @@ export function VendorDetailsModal({
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-medium mb-1">Store Name</h4>
-                    <p className="text-muted-foreground">{vendor.profile.storeName}</p>
+                    <p className="text-muted-foreground">
+                      {vendor.profile.storeName}
+                    </p>
                   </div>
-                  
+
                   <div>
                     <h4 className="font-medium mb-1">Description</h4>
-                    <p className="text-muted-foreground">{vendor.profile.description}</p>
+                    <p className="text-muted-foreground">
+                      {vendor.profile.description}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -182,38 +196,43 @@ export function VendorDetailsModal({
                         {vendor.profile.businessType}
                       </Badge>
                     </div>
-                    
+
                     <div>
                       <h4 className="font-medium mb-1">Rating</h4>
                       <div className="flex items-center gap-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="font-medium">
-                          {vendor.profile.rating ? vendor.profile.rating.toFixed(1) : 'N/A'}
+                          {vendor.profile.rating
+                            ? vendor.profile.rating.toFixed(1)
+                            : 'N/A'}
                         </span>
                         <span className="text-sm text-muted-foreground">
                           ({vendor.profile.reviewCount} reviews)
                         </span>
                       </div>
                     </div>
-                    
+
                     <div>
                       <h4 className="font-medium mb-1">Products</h4>
-                      <span className="font-medium">{vendor.profile.productCount || 0}</span>
+                      <span className="font-medium">
+                        {vendor.profile.productCount || 0}
+                      </span>
                     </div>
                   </div>
 
-                  {vendor.profile.categories && vendor.profile.categories.length > 0 && (
-                    <div>
-                      <h4 className="font-medium mb-2">Categories</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {vendor.profile.categories.map((category, index) => (
-                          <Badge key={index} variant="outline">
-                            {category}
-                          </Badge>
-                        ))}
+                  {vendor.profile.categories &&
+                    vendor.profile.categories.length > 0 && (
+                      <div>
+                        <h4 className="font-medium mb-2">Categories</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {vendor.profile.categories.map((category, index) => (
+                            <Badge key={index} variant="outline">
+                              {category}
+                            </Badge>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               </div>
             </>
@@ -226,7 +245,9 @@ export function VendorDetailsModal({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="text-center p-4 bg-muted rounded-lg">
                 <div className="text-2xl font-bold">{vendor.totalProducts}</div>
-                <div className="text-sm text-muted-foreground">Total Products</div>
+                <div className="text-sm text-muted-foreground">
+                  Total Products
+                </div>
               </div>
               <div className="text-center p-4 bg-muted rounded-lg">
                 <div className="text-2xl font-bold">
@@ -242,7 +263,9 @@ export function VendorDetailsModal({
             <>
               <Separator />
               <div>
-                <h3 className="text-lg font-semibold mb-3 text-destructive">Rejection Reason</h3>
+                <h3 className="text-lg font-semibold mb-3 text-destructive">
+                  Rejection Reason
+                </h3>
                 <p className="text-muted-foreground bg-destructive/10 p-3 rounded-lg">
                   {vendor.rejectionReason}
                 </p>
@@ -272,7 +295,7 @@ export function VendorDetailsModal({
               </Button>
             )}
           </div>
-          
+
           <div className="flex gap-2">
             <Button onClick={() => onEdit(vendor)} variant="outline">
               Edit Vendor

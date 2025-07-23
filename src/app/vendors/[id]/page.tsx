@@ -7,21 +7,21 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AdminSellersService } from '@/services/admin-sellers.service';
 import type { AdminSeller } from '@/types/admin-sellers';
 import {
-    ArrowLeft,
-    Building,
-    Calendar,
-    DollarSign,
-    Eye,
-    EyeOff,
-    Globe,
-    Mail,
-    MapPin,
-    Package,
-    Phone,
-    Star,
-    Store,
-    Trash2,
-    User
+  ArrowLeft,
+  Building,
+  Calendar,
+  DollarSign,
+  Eye,
+  EyeOff,
+  Globe,
+  Mail,
+  MapPin,
+  Package,
+  Phone,
+  Star,
+  Store,
+  Trash2,
+  User,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
@@ -71,9 +71,13 @@ export default function VendorDetailPage() {
     if (!vendor) return;
 
     try {
-      const updatedVendor = await AdminSellersService.toggleSellerStatus(vendor._id);
+      const updatedVendor = await AdminSellersService.toggleSellerStatus(
+        vendor._id
+      );
       setVendor(updatedVendor);
-      toast.success(`Vendor ${updatedVendor.isActive ? 'activated' : 'deactivated'} successfully`);
+      toast.success(
+        `Vendor ${updatedVendor.isActive ? 'activated' : 'deactivated'} successfully`
+      );
     } catch (error) {
       console.error('Failed to toggle vendor status:', error);
       toast.error('Failed to update vendor status');
@@ -198,11 +202,13 @@ export default function VendorDetailPage() {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Vendors
         </Button>
-        
+
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={() => { void handleToggleStatus(); }}
+            onClick={() => {
+              void handleToggleStatus();
+            }}
             disabled={isDeleting}
           >
             {vendor.isActive ? (
@@ -217,10 +223,12 @@ export default function VendorDetailPage() {
               </>
             )}
           </Button>
-          
+
           <Button
             variant="destructive"
-            onClick={() => { void handleDeleteVendor(); }}
+            onClick={() => {
+              void handleDeleteVendor();
+            }}
             disabled={isDeleting}
           >
             <Trash2 className="w-4 h-4 mr-2" />
@@ -252,18 +260,20 @@ export default function VendorDetailPage() {
                     sizes="80px"
                   />
                 </div>
-                
+
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold mb-1">
                     {vendor.firstName} {vendor.lastName}
                   </h2>
                   <p className="text-muted-foreground mb-2">ID: {vendor._id}</p>
-                  
+
                   <div className="flex items-center gap-4">
                     <Badge variant={vendor.isActive ? 'default' : 'secondary'}>
                       {vendor.isActive ? 'Active' : 'Inactive'}
                     </Badge>
-                    <Badge variant={vendor.isApproved ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={vendor.isApproved ? 'default' : 'secondary'}
+                    >
                       {vendor.isApproved ? 'Approved' : 'Pending'}
                     </Badge>
                     {vendor.isEmailVerified && (
@@ -286,18 +296,28 @@ export default function VendorDetailPage() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Company Name</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Company Name
+                  </label>
                   <p className="font-medium">{vendor.companyName}</p>
                 </div>
-                
+
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Business Type</label>
-                  <p className="font-medium capitalize">{vendor.profile?.businessType || 'Not specified'}</p>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Business Type
+                  </label>
+                  <p className="font-medium capitalize">
+                    {vendor.profile?.businessType || 'Not specified'}
+                  </p>
                 </div>
-                
+
                 <div className="md:col-span-2">
-                  <label className="text-sm font-medium text-muted-foreground">Description</label>
-                  <p className="text-sm">{vendor.profile?.description || 'No description provided'}</p>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Description
+                  </label>
+                  <p className="text-sm">
+                    {vendor.profile?.description || 'No description provided'}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -316,46 +336,61 @@ export default function VendorDetailPage() {
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-muted-foreground" />
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Email</label>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Email
+                    </label>
                     <p className="font-medium">{vendor.email}</p>
                   </div>
                 </div>
-                
+
                 {vendor.phoneNumber && (
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-muted-foreground" />
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Phone</label>
+                      <label className="text-sm font-medium text-muted-foreground">
+                        Phone
+                      </label>
                       <p className="font-medium">{vendor.phoneNumber}</p>
                     </div>
                   </div>
                 )}
-                
-                {vendor.profile?.contactEmail && vendor.profile.contactEmail !== vendor.email && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    <div>
-                      <label className="text-sm font-medium text-muted-foreground">Contact Email</label>
-                      <p className="font-medium">{vendor.profile.contactEmail}</p>
+
+                {vendor.profile?.contactEmail &&
+                  vendor.profile.contactEmail !== vendor.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-muted-foreground" />
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground">
+                          Contact Email
+                        </label>
+                        <p className="font-medium">
+                          {vendor.profile.contactEmail}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                )}
-                
+                  )}
+
                 {vendor.profile?.contactPhone && (
                   <div className="flex items-center gap-2">
                     <Phone className="w-4 h-4 text-muted-foreground" />
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Contact Phone</label>
-                      <p className="font-medium">{vendor.profile.contactPhone}</p>
+                      <label className="text-sm font-medium text-muted-foreground">
+                        Contact Phone
+                      </label>
+                      <p className="font-medium">
+                        {vendor.profile.contactPhone}
+                      </p>
                     </div>
                   </div>
                 )}
-                
+
                 {vendor.profile?.website && (
                   <div className="flex items-center gap-2">
                     <Globe className="w-4 h-4 text-muted-foreground" />
                     <div>
-                      <label className="text-sm font-medium text-muted-foreground">Website</label>
+                      <label className="text-sm font-medium text-muted-foreground">
+                        Website
+                      </label>
                       <p className="font-medium">{vendor.profile.website}</p>
                     </div>
                   </div>
@@ -374,14 +409,19 @@ export default function VendorDetailPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                <p className="font-medium">{vendor.profile?.address || 'No address provided'}</p>
-                <p className="text-sm text-muted-foreground">
-                  {vendor.profile?.city && vendor.profile?.state && vendor.profile?.postalCode 
-                    ? `${vendor.profile.city}, ${vendor.profile.state} ${vendor.profile.postalCode}`
-                    : 'Location not specified'
-                  }
+                <p className="font-medium">
+                  {vendor.profile?.address || 'No address provided'}
                 </p>
-                <p className="text-sm text-muted-foreground">{vendor.profile?.country || 'Country not specified'}</p>
+                <p className="text-sm text-muted-foreground">
+                  {vendor.profile?.city &&
+                  vendor.profile?.state &&
+                  vendor.profile?.postalCode
+                    ? `${vendor.profile.city}, ${vendor.profile.state} ${vendor.profile.postalCode}`
+                    : 'Location not specified'}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {vendor.profile?.country || 'Country not specified'}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -399,26 +439,36 @@ export default function VendorDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Sales</span>
-                <span className="font-medium">{formatCurrency(vendor.totalSales)}</span>
+                <span className="text-sm text-muted-foreground">
+                  Total Sales
+                </span>
+                <span className="font-medium">
+                  {formatCurrency(vendor.totalSales)}
+                </span>
               </div>
-              
+
               <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">Total Products</span>
+                <span className="text-sm text-muted-foreground">
+                  Total Products
+                </span>
                 <span className="font-medium">{vendor.totalProducts}</span>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Rating</span>
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                  <span className="font-medium">{vendor.profile?.rating?.toFixed(1) || '0.0'}</span>
+                  <span className="font-medium">
+                    {vendor.profile?.rating?.toFixed(1) || '0.0'}
+                  </span>
                 </div>
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Reviews</span>
-                <span className="font-medium">{vendor.profile?.reviewCount || 0}</span>
+                <span className="font-medium">
+                  {vendor.profile?.reviewCount || 0}
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -433,14 +483,17 @@ export default function VendorDetailPage() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {vendor.profile?.categories && vendor.profile.categories.length > 0 ? (
+                {vendor.profile?.categories &&
+                vendor.profile.categories.length > 0 ? (
                   vendor.profile.categories.map((category, index) => (
                     <Badge key={index} variant="outline">
                       {category}
                     </Badge>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No categories assigned</p>
+                  <p className="text-sm text-muted-foreground">
+                    No categories assigned
+                  </p>
                 )}
               </div>
             </CardContent>
@@ -458,43 +511,55 @@ export default function VendorDetailPage() {
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Created</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Created
+                  </label>
                   <p className="text-sm">{formatDate(vendor.createdAt)}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-muted-foreground" />
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Last Updated
+                  </label>
                   <p className="text-sm">{formatDate(vendor.updatedAt)}</p>
                 </div>
               </div>
-              
+
               {vendor.approvedAt && (
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Approved At</label>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Approved At
+                    </label>
                     <p className="text-sm">{formatDate(vendor.approvedAt)}</p>
                   </div>
                 </div>
               )}
-              
+
               {vendor.rejectedAt && (
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-muted-foreground" />
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Rejected At</label>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Rejected At
+                    </label>
                     <p className="text-sm">{formatDate(vendor.rejectedAt)}</p>
                   </div>
                 </div>
               )}
-              
+
               {vendor.rejectionReason && (
                 <div>
-                  <label className="text-sm font-medium text-muted-foreground">Rejection Reason</label>
-                  <p className="text-sm text-red-600">{vendor.rejectionReason}</p>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Rejection Reason
+                  </label>
+                  <p className="text-sm text-red-600">
+                    {vendor.rejectionReason}
+                  </p>
                 </div>
               )}
             </CardContent>
@@ -503,4 +568,4 @@ export default function VendorDetailPage() {
       </div>
     </PageLayout>
   );
-} 
+}

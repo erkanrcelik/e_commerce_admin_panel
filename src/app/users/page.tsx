@@ -82,7 +82,9 @@ export default function UsersPage() {
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 text-sm font-medium">👥</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Total Customers</span>
+            <span className="text-sm font-medium text-gray-600">
+              Total Customers
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">{stats.total}</div>
         </div>
@@ -102,7 +104,9 @@ export default function UsersPage() {
             <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
               <span className="text-orange-600 text-sm font-medium">💰</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Total Revenue</span>
+            <span className="text-sm font-medium text-gray-600">
+              Total Revenue
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">
             ${(stats.totalRevenue || 0).toLocaleString()}
@@ -114,7 +118,9 @@ export default function UsersPage() {
             <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
               <span className="text-purple-600 text-sm font-medium">📊</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Avg Order Value</span>
+            <span className="text-sm font-medium text-gray-600">
+              Avg Order Value
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">
             ${(stats.averageOrderValue || 0).toLocaleString()}

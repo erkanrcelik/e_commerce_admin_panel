@@ -30,7 +30,7 @@ export function CategoryCard({
    * Get the display image URL with fallback
    */
   const getImageUrl = () => {
-    // API'de image field'ı var, geriye uyumluluk için imageUrl de kontrol et
+    // API has image field, check imageUrl for backward compatibility
     if (category.image) {
       return category.image;
     }
@@ -59,7 +59,9 @@ export function CategoryCard({
             variant="secondary"
             onClick={() => onToggleStatus(category)}
             className="h-8 w-8 p-0"
-            title={category.isActive ? 'Deactivate category' : 'Activate category'}
+            title={
+              category.isActive ? 'Deactivate category' : 'Activate category'
+            }
           >
             {category.isActive ? (
               <Eye className="h-4 w-4" />

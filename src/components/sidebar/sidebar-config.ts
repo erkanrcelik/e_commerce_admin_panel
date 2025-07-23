@@ -1,16 +1,10 @@
-import {
-    BarChart3,
-    Megaphone,
-    Store,
-    Tag,
-    Users,
-} from 'lucide-react';
+import { BarChart3, Megaphone, Store, Tag, Users } from 'lucide-react';
 
 import type { SidebarConfig } from './types';
 
 /**
  * E-commerce admin panel sidebar configuration
- * 
+ *
  * Defines the navigation structure and user information for the admin sidebar.
  * Uses purple and blue color scheme to match the application design.
  */

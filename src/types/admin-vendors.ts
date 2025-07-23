@@ -6,7 +6,12 @@
 /**
  * Vendor status types
  */
-export type VendorStatus = 'active' | 'inactive' | 'pending' | 'approved' | 'rejected';
+export type VendorStatus =
+  | 'active'
+  | 'inactive'
+  | 'pending'
+  | 'approved'
+  | 'rejected';
 
 /**
  * Vendor business types
@@ -148,4 +153,4 @@ export interface VendorStats {
  */
 export interface VendorApiResponse {
   message: string;
-} 
+}

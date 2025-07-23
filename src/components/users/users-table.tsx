@@ -33,8 +33,6 @@ export function UsersTable({
   onToggleStatus,
   onViewDetails,
 }: UsersTableProps) {
-
-
   /**
    * Get status badge variant
    */
@@ -175,7 +173,11 @@ export function UsersTable({
                       variant="outline"
                       onClick={() => onToggleStatus(user)}
                       className="h-8 w-8 p-0"
-                      title={user.isActive ? 'Deactivate customer' : 'Activate customer'}
+                      title={
+                        user.isActive
+                          ? 'Deactivate customer'
+                          : 'Activate customer'
+                      }
                     >
                       {user.isActive ? (
                         <EyeOff className="h-4 w-4" />
@@ -201,4 +203,4 @@ export function UsersTable({
       </Table>
     </div>
   );
-} 
+}

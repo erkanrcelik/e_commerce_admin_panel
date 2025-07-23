@@ -14,10 +14,16 @@ import { useEffect, useState } from 'react';
  */
 export function useCategories() {
   const [categories, setCategories] = useState<AdminCategory[]>([]);
-  const [filteredCategories, setFilteredCategories] = useState<AdminCategory[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<AdminCategory[]>(
+    []
+  );
   const [filters, setFilters] = useState<CategoryListQuery>({});
-  const [editingCategory, setEditingCategory] = useState<AdminCategory | undefined>();
-  const [deletingCategory, setDeletingCategory] = useState<AdminCategory | undefined>();
+  const [editingCategory, setEditingCategory] = useState<
+    AdminCategory | undefined
+  >();
+  const [deletingCategory, setDeletingCategory] = useState<
+    AdminCategory | undefined
+  >();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError, showLoading, dismiss } = useToast();
@@ -35,8 +41,7 @@ export function useCategories() {
       });
       setCategories(response.data);
       setFilteredCategories(response.data);
-    } catch (error) {
-      console.error('Failed to load categories:', error);
+    } catch {
       showError({
         message: 'Failed to load categories',
         description: 'Please try again later.',
@@ -82,7 +87,10 @@ export function useCategories() {
   /**
    * Handle category creation with form data and optional image
    */
-  const createCategory = async (data: CreateCategoryRequest, imageFile?: File) => {
+  const createCategory = async (
+    data: CreateCategoryRequest,
+    imageFile?: File
+  ) => {
     let loadingToastId: string | number | undefined;
 
     try {
@@ -94,23 +102,24 @@ export function useCategories() {
 
       // Create category first
       const newCategory = await AdminCategoriesService.createCategory(data);
-      
+
       // Upload image if provided
       if (imageFile) {
         try {
-          const imageResponse = await AdminCategoriesService.uploadCategoryImage(
-            newCategory._id, 
-            imageFile
-          );
-          // API'de image field'ı var
+          const imageResponse =
+            await AdminCategoriesService.uploadCategoryImage(
+              newCategory._id,
+              imageFile
+            );
+          // API has image field
           newCategory.image = imageResponse.imageUrl;
-          newCategory.imageUrl = imageResponse.imageUrl; // Geriye uyumluluk
+          newCategory.imageUrl = imageResponse.imageUrl; // Backward compatibility
           newCategory.imageKey = imageResponse.imageKey;
-        } catch (imageError) {
-          console.error('Failed to upload image:', imageError);
+        } catch {
           showError({
             message: 'Category created but image upload failed',
-            description: 'You can upload an image later by editing the category.',
+            description:
+              'You can upload an image later by editing the category.',
           });
         }
       }
@@ -121,13 +130,11 @@ export function useCategories() {
         message: 'Category created successfully!',
         description: `"${newCategory.name}" has been added to your categories.`,
       });
-    } catch (error) {
-      console.error('Failed to create category:', error);
+    } catch {
       showError({
         message: 'Failed to create category',
         description: 'Please check your input and try again.',
       });
-      throw error;
     } finally {
       setIsSubmitting(false);
       if (loadingToastId) dismiss(loadingToastId);
@@ -137,7 +144,11 @@ export function useCategories() {
   /**
    * Handle category update with form data and optional image
    */
-  const updateCategory = async (data: UpdateCategoryRequest, imageFile?: File, shouldRemoveImage?: boolean) => {
+  const updateCategory = async (
+    data: UpdateCategoryRequest,
+    imageFile?: File,
+    shouldRemoveImage?: boolean
+  ) => {
     if (!editingCategory) return;
 
     let loadingToastId: string | number | undefined;
@@ -151,27 +162,28 @@ export function useCategories() {
 
       // Update category data first
       const updatedCategory = await AdminCategoriesService.updateCategory(
-        editingCategory._id, 
+        editingCategory._id,
         data
       );
-      
+
       // Handle image operations
       if (imageFile) {
         // Upload new image
         try {
-          const imageResponse = await AdminCategoriesService.uploadCategoryImage(
-            updatedCategory._id, 
-            imageFile
-          );
-          // API'de image field'ı var
+          const imageResponse =
+            await AdminCategoriesService.uploadCategoryImage(
+              updatedCategory._id,
+              imageFile
+            );
+          // API has image field
           updatedCategory.image = imageResponse.imageUrl;
-          updatedCategory.imageUrl = imageResponse.imageUrl; // Geriye uyumluluk
+          updatedCategory.imageUrl = imageResponse.imageUrl; // Backward compatibility
           updatedCategory.imageKey = imageResponse.imageKey;
-        } catch (imageError) {
-          console.error('Failed to upload image:', imageError);
+        } catch {
           showError({
             message: 'Category updated but image upload failed',
-            description: 'You can upload an image later by editing the category.',
+            description:
+              'You can upload an image later by editing the category.',
           });
         }
       } else if (shouldRemoveImage) {
@@ -181,33 +193,33 @@ export function useCategories() {
           updatedCategory.image = undefined;
           updatedCategory.imageUrl = undefined;
           updatedCategory.imageKey = undefined;
-        } catch (imageError) {
-          console.error('Failed to remove image:', imageError);
+        } catch {
           showError({
             message: 'Category updated but image removal failed',
-            description: 'You can remove the image later by editing the category.',
+            description:
+              'You can remove the image later by editing the category.',
           });
         }
       }
 
       setCategories(prev =>
-        prev.map(cat => (cat._id === editingCategory._id ? updatedCategory : cat))
+        prev.map(cat =>
+          cat._id === editingCategory._id ? updatedCategory : cat
+        )
       );
 
       showSuccess({
         message: 'Category updated successfully!',
         description: `"${updatedCategory.name}" has been updated.`,
       });
-      
+
       // Clear editing state
       setEditingCategory(undefined);
-    } catch (error) {
-      console.error('Failed to update category:', error);
+    } catch {
       showError({
         message: 'Failed to update category',
         description: 'Please check your input and try again.',
       });
-      throw error;
     } finally {
       setIsSubmitting(false);
       if (loadingToastId) dismiss(loadingToastId);
@@ -241,13 +253,11 @@ export function useCategories() {
       });
 
       setDeletingCategory(undefined);
-    } catch (error) {
-      console.error('Failed to delete category:', error);
+    } catch {
       showError({
         message: 'Failed to delete category',
         description: 'This category might be in use. Please try again later.',
       });
-      throw error;
     } finally {
       setIsSubmitting(false);
       if (loadingToastId) dismiss(loadingToastId);
@@ -259,7 +269,9 @@ export function useCategories() {
    */
   const toggleCategoryStatus = async (category: AdminCategory) => {
     try {
-      const updatedCategory = await AdminCategoriesService.toggleCategoryStatus(category._id);
+      const updatedCategory = await AdminCategoriesService.toggleCategoryStatus(
+        category._id
+      );
 
       setCategories(prev =>
         prev.map(cat => (cat._id === category._id ? updatedCategory : cat))
@@ -269,13 +281,11 @@ export function useCategories() {
         message: 'Category status updated!',
         description: `"${category.name}" is now ${updatedCategory.isActive ? 'active' : 'inactive'}.`,
       });
-    } catch (error) {
-      console.error('Failed to toggle category status:', error);
+    } catch {
       showError({
         message: 'Failed to update category status',
         description: 'Please try again later.',
       });
-      throw error;
     }
   };
 
@@ -314,4 +324,4 @@ export function useCategories() {
     toggleCategoryStatus,
     loadCategories,
   };
-} 
+}

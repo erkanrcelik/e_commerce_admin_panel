@@ -150,4 +150,4 @@ export interface CreateSellerCampaignRequest {
   endDate: string;
   productIds: string[];
   imageUrl?: string;
-} 
+}

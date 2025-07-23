@@ -113,4 +113,4 @@ export interface SellerStats {
  */
 export interface SellerApiResponse {
   message: string;
-} 
+}

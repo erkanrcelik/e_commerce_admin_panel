@@ -1,14 +1,14 @@
 'use client';
 
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { AdminCampaign } from '@/types/admin-campaigns';
 
@@ -58,4 +58,4 @@ export function CampaignDeleteDialog({
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

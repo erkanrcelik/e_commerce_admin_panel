@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { AlertTriangle, Home, RefreshCw } from 'lucide-react'
-import { useEffect } from 'react'
+import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
+import { useEffect } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 /**
  * Global Error Page
- * 
+ *
  * Handles all application errors with a modern, clean design.
  * Provides retry and home navigation options.
  */
@@ -16,12 +16,12 @@ export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Global error:', error)
-  }, [error])
+    console.error('Global error:', error);
+  }, [error]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
@@ -36,14 +36,15 @@ export default function Error({
               <span className="text-xs text-white font-bold">!</span>
             </div>
           </div>
-          
+
           {/* Error Content */}
           <div className="space-y-3">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               An Error Occurred
             </h1>
             <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-              An unexpected error occurred. Please try again or return to the home page.
+              An unexpected error occurred. Please try again or return to the
+              home page.
             </p>
           </div>
 
@@ -58,7 +59,7 @@ export default function Error({
               Try Again
             </Button>
             <Button
-              onClick={() => window.location.href = '/'}
+              onClick={() => (window.location.href = '/')}
               variant="outline"
               className="flex-1 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
               size="lg"
@@ -82,5 +83,5 @@ export default function Error({
         </div>
       </Card>
     </div>
-  )
-} 
+  );
+}

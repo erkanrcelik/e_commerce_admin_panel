@@ -14,10 +14,10 @@ interface SystemHealthProps {
 
 /**
  * System Health Component
- * 
+ *
  * Displays system health metrics, alerts, and status indicators.
  * Shows loading states and handles empty data gracefully.
- * 
+ *
  * @param health - Dashboard health data or null
  * @param isLoading - Whether to show loading skeleton (default: false)
  */
@@ -92,9 +92,14 @@ export function SystemHealth({ health, isLoading = false }: SystemHealthProps) {
         <CardTitle className="flex items-center gap-2">
           {getStatusIcon(health.status)}
           <span>System Health</span>
-          <Badge variant={health.status === 'healthy' ? 'default' : 'destructive'}>
-            {health.status === 'healthy' ? 'Healthy' : 
-             health.status === 'warning' ? 'Warning' : 'Critical'}
+          <Badge
+            variant={health.status === 'healthy' ? 'default' : 'destructive'}
+          >
+            {health.status === 'healthy'
+              ? 'Healthy'
+              : health.status === 'warning'
+                ? 'Warning'
+                : 'Critical'}
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -102,20 +107,36 @@ export function SystemHealth({ health, isLoading = false }: SystemHealthProps) {
         {/* System Metrics */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Pending Seller Approvals</div>
-            <div className="text-2xl font-bold">{health.systemHealth.pendingSellerApprovals}</div>
+            <div className="text-sm text-muted-foreground">
+              Pending Seller Approvals
+            </div>
+            <div className="text-2xl font-bold">
+              {health.systemHealth.pendingSellerApprovals}
+            </div>
           </div>
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Low Stock Products</div>
-            <div className="text-2xl font-bold">{health.systemHealth.lowStockProducts}</div>
+            <div className="text-sm text-muted-foreground">
+              Low Stock Products
+            </div>
+            <div className="text-2xl font-bold">
+              {health.systemHealth.lowStockProducts}
+            </div>
           </div>
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Expired Campaigns</div>
-            <div className="text-2xl font-bold">{health.systemHealth.expiredCampaigns}</div>
+            <div className="text-sm text-muted-foreground">
+              Expired Campaigns
+            </div>
+            <div className="text-2xl font-bold">
+              {health.systemHealth.expiredCampaigns}
+            </div>
           </div>
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">Unverified Users</div>
-            <div className="text-2xl font-bold">{health.systemHealth.unverifiedUsers}</div>
+            <div className="text-sm text-muted-foreground">
+              Unverified Users
+            </div>
+            <div className="text-2xl font-bold">
+              {health.systemHealth.unverifiedUsers}
+            </div>
           </div>
         </div>
 
@@ -130,8 +151,11 @@ export function SystemHealth({ health, isLoading = false }: SystemHealthProps) {
                   <span>{alert.message}</span>
                   <div className="flex items-center gap-2">
                     <Badge variant={getSeverityVariant(alert.severity)}>
-                      {alert.severity === 'high' ? 'High' :
-                       alert.severity === 'medium' ? 'Medium' : 'Low'}
+                      {alert.severity === 'high'
+                        ? 'High'
+                        : alert.severity === 'medium'
+                          ? 'Medium'
+                          : 'Low'}
                     </Badge>
                     {alert.actionRequired && (
                       <Badge variant="destructive">Action Required</Badge>
@@ -158,4 +182,4 @@ export function SystemHealth({ health, isLoading = false }: SystemHealthProps) {
       </CardContent>
     </Card>
   );
-} 
+}

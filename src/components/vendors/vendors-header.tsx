@@ -16,12 +16,14 @@ export function VendorsHeader({ onAddVendor }: VendorsHeaderProps) {
       title="Vendors"
       description="Manage vendor accounts, store approvals and seller permissions"
       actionButton={
-        onAddVendor ? {
-          label: 'Add Vendor',
-          onClick: onAddVendor,
-          icon: <Plus className="w-4 h-4 mr-2" />,
-        } : undefined
+        onAddVendor
+          ? {
+              label: 'Add Vendor',
+              onClick: onAddVendor,
+              icon: <Plus className="w-4 h-4 mr-2" />,
+            }
+          : undefined
       }
     />
   );
-} 
+}

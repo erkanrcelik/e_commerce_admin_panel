@@ -1,8 +1,8 @@
 import { AdminCustomersService } from '@/services/admin-customers.service';
 import type {
-    AdminCustomer,
-    CustomerListQuery,
-    CustomerStats
+  AdminCustomer,
+  CustomerListQuery,
+  CustomerStats,
 } from '@/types/admin-customers';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -24,7 +24,9 @@ export function useUsers() {
     limit: 10,
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [deletingUser, setDeletingUser] = useState<AdminCustomer | undefined>(undefined);
+  const [deletingUser, setDeletingUser] = useState<AdminCustomer | undefined>(
+    undefined
+  );
 
   /**
    * Fetch customers from API
@@ -34,8 +36,7 @@ export function useUsers() {
       setIsLoading(true);
       const response = await AdminCustomersService.getCustomers(filters);
       setUsers(response.data);
-    } catch (error) {
-      console.error('Failed to fetch users:', error);
+    } catch {
       toast.error('Failed to load customers');
     } finally {
       setIsLoading(false);
@@ -49,8 +50,7 @@ export function useUsers() {
     try {
       const statsData = await AdminCustomersService.getCustomerStats();
       setStats(statsData);
-    } catch (error) {
-      console.error('Failed to fetch customer stats:', error);
+    } catch {
       toast.error('Failed to load customer statistics');
     }
   }, []);
@@ -60,8 +60,10 @@ export function useUsers() {
    */
   const toggleUserStatus = useCallback(async (user: AdminCustomer) => {
     try {
-      const updatedUser = await AdminCustomersService.toggleCustomerStatus(user._id);
-      
+      const updatedUser = await AdminCustomersService.toggleCustomerStatus(
+        user._id
+      );
+
       // Update user in the list
       setUsers(prevUsers =>
         prevUsers.map(u => (u._id === user._id ? updatedUser : u))
@@ -70,8 +72,7 @@ export function useUsers() {
       toast.success(
         `Customer ${updatedUser.isActive ? 'activated' : 'deactivated'} successfully`
       );
-    } catch (error) {
-      console.error('Failed to toggle user status:', error);
+    } catch {
       toast.error('Failed to update customer status');
     }
   }, []);
@@ -84,16 +85,13 @@ export function useUsers() {
 
     try {
       await AdminCustomersService.deleteCustomer(deletingUser._id);
-      
+
       // Remove user from the list
-      setUsers(prevUsers =>
-        prevUsers.filter(u => u._id !== deletingUser._id)
-      );
+      setUsers(prevUsers => prevUsers.filter(u => u._id !== deletingUser._id));
 
       setDeletingUser(undefined);
       toast.success('Customer deleted successfully');
-    } catch (error) {
-      console.error('Failed to delete user:', error);
+    } catch {
       toast.error('Failed to delete customer');
     }
   }, [deletingUser]);
@@ -101,13 +99,16 @@ export function useUsers() {
   /**
    * Update filters and refetch data
    */
-  const updateFilters = useCallback((newFilters: Partial<CustomerListQuery>) => {
-    setFilters(prev => ({
-      ...prev,
-      ...newFilters,
-      page: 1, // Reset to first page when filters change
-    }));
-  }, []);
+  const updateFilters = useCallback(
+    (newFilters: Partial<CustomerListQuery>) => {
+      setFilters(prev => ({
+        ...prev,
+        ...newFilters,
+        page: 1, // Reset to first page when filters change
+      }));
+    },
+    []
+  );
 
   // Fetch data on mount and when filters change
   useEffect(() => {
@@ -130,4 +131,4 @@ export function useUsers() {
     deleteUser,
     toggleUserStatus,
   };
-} 
+}

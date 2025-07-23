@@ -100,4 +100,4 @@ export interface CustomerStats {
  */
 export interface CustomerApiResponse {
   message: string;
-} 
+}

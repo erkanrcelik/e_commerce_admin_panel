@@ -5,13 +5,13 @@ import { Calendar, Mail, MapPin, Phone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 
-import type { AdminUser } from '@/types/admin-users';
+import type { AdminUser } from '../../types/admin-users';
 
 interface UserDetailsModalProps {
   user: AdminUser | null;
@@ -75,13 +75,7 @@ export function UserDetailsModal({
                   </h3>
                   <p className="text-muted-foreground">{user.email}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <Badge
-                      className={
-                        roleColors[user.role as keyof typeof roleColors]
-                      }
-                    >
-                      {user.role}
-                    </Badge>
+                    <Badge className={roleColors[user.role]}>{user.role}</Badge>
                     <Badge
                       className={
                         statusColors[user.isActive ? 'active' : 'inactive']
@@ -132,7 +126,7 @@ export function UserDetailsModal({
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {user.addresses.map((address, index) => (
+                  {(user.addresses ?? []).map((address, index: number) => (
                     <div key={index} className="flex items-start gap-2">
                       <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                       <div className="space-y-1">

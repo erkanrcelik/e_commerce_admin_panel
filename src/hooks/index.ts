@@ -9,9 +9,11 @@ export { useVendors } from './use-vendors';
 
 // Dashboard hooks
 export {
-    useDashboard, useDashboardActivities,
-    useDashboardCharts,
-    useDashboardHealth, useDashboardStats
+  useDashboard,
+  useDashboardActivities,
+  useDashboardCharts,
+  useDashboardHealth,
+  useDashboardStats,
 } from './use-dashboard';
 
 // Redux hooks

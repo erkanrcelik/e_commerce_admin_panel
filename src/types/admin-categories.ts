@@ -10,8 +10,8 @@ export interface AdminCategory {
   name: string;
   description: string;
   isActive: boolean;
-  image?: string; // API'de image field'ı var
-  imageUrl?: string; // Geriye uyumluluk için
+  image?: string; // API has image field
+  imageUrl?: string; // For backward compatibility
   imageKey?: string;
   createdAt: string;
   updatedAt: string;
@@ -80,4 +80,4 @@ export interface AdminCategoryStats {
  */
 export interface CategoryApiResponse {
   message: string;
-} 
+}

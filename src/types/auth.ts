@@ -32,7 +32,7 @@ export interface AuthState {
   status: AuthStatus;
   error: string | null;
 }
-  
+
 /**
  * Login form data structure with platform
  */

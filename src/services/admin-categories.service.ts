@@ -21,12 +21,14 @@ export class AdminCategoriesService {
    * @returns Promise<AdminCategory> - Created category information
    * @throws {Error} Throws error on API failure
    */
-  static async createCategory(data: CreateCategoryRequest): Promise<AdminCategory> {
+  static async createCategory(
+    data: CreateCategoryRequest
+  ): Promise<AdminCategory> {
     try {
       const response = await api.post<AdminCategory>('/admin/categories', data);
       return response.data;
     } catch (error) {
-      console.error('Category creation error:', error);
+      console.error('Create category error:', error);
       throw error;
     }
   }
@@ -37,18 +39,23 @@ export class AdminCategoriesService {
    * @returns Promise<CategoryListResponse> - Category list and pagination info
    * @throws {Error} Throws error on API failure
    */
-  static async getCategories(query?: CategoryListQuery): Promise<CategoryListResponse> {
+  static async getCategories(
+    query?: CategoryListQuery
+  ): Promise<CategoryListResponse> {
     try {
       const params = new URLSearchParams();
       if (query?.page) params.append('page', query.page.toString());
       if (query?.limit) params.append('limit', query.limit.toString());
       if (query?.search) params.append('search', query.search);
-      if (query?.isActive !== undefined) params.append('isActive', query.isActive.toString());
+      if (query?.isActive !== undefined)
+        params.append('isActive', query.isActive.toString());
 
-      const response = await api.get<CategoryListResponse>(`/admin/categories?${params.toString()}`);
+      const response = await api.get<CategoryListResponse>(
+        `/admin/categories?${params.toString()}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get categories:', error);
+      console.error('Get categories error:', error);
       throw error;
     }
   }
@@ -64,7 +71,7 @@ export class AdminCategoriesService {
       const response = await api.get<AdminCategory>(`/admin/categories/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Failed to get category details:', error);
+      console.error('Get category by ID error:', error);
       throw error;
     }
   }
@@ -76,16 +83,23 @@ export class AdminCategoriesService {
    * @returns Promise<AdminCategory> - Updated category information
    * @throws {Error} Throws error on API failure
    */
-  static async updateCategory(id: string, data: UpdateCategoryRequest): Promise<AdminCategory> {
+  static async updateCategory(
+    id: string,
+    data: UpdateCategoryRequest
+  ): Promise<AdminCategory> {
     try {
-      const response = await api.put<AdminCategory>(`/admin/categories/${id}`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await api.put<AdminCategory>(
+        `/admin/categories/${id}`,
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error('Category update error:', error);
+      console.error('Update category error:', error);
       throw error;
     }
   }
@@ -98,23 +112,29 @@ export class AdminCategoriesService {
    */
   static async deleteCategory(id: string): Promise<CategoryApiResponse> {
     try {
-      const response = await api.delete<CategoryApiResponse>(`/admin/categories/${id}`);
+      const response = await api.delete<CategoryApiResponse>(
+        `/admin/categories/${id}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Category deletion error:', error);
+      console.error('Delete category error:', error);
       throw error;
     }
   }
 
   /**
    * Upload category image
-   * @param id - Category ID  
+   * @param id - Category ID
    * @param imageFile - Image file to upload
    * @param categoryName - Category name for the image
    * @returns Promise<CategoryImageUploadResponse> - Uploaded image information
    * @throws {Error} Throws error on API failure
    */
-  static async uploadCategoryImage(id: string, imageFile: File, categoryName?: string): Promise<CategoryImageUploadResponse> {
+  static async uploadCategoryImage(
+    id: string,
+    imageFile: File,
+    categoryName?: string
+  ): Promise<CategoryImageUploadResponse> {
     try {
       const formData = new FormData();
       formData.append('image', imageFile);
@@ -123,14 +143,18 @@ export class AdminCategoriesService {
         formData.append('name', categoryName);
       }
 
-      const response = await api.post<CategoryImageUploadResponse>(`/admin/categories/${id}/upload-image`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await api.post<CategoryImageUploadResponse>(
+        `/admin/categories/${id}/upload-image`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error('Category image upload error:', error);
+      console.error('Upload category image error:', error);
       throw error;
     }
   }
@@ -143,10 +167,12 @@ export class AdminCategoriesService {
    */
   static async deleteCategoryImage(id: string): Promise<CategoryApiResponse> {
     try {
-      const response = await api.delete<CategoryApiResponse>(`/admin/categories/${id}/image`);
+      const response = await api.delete<CategoryApiResponse>(
+        `/admin/categories/${id}/image`
+      );
       return response.data;
     } catch (error) {
-      console.error('Category image deletion error:', error);
+      console.error('Delete category image error:', error);
       throw error;
     }
   }
@@ -159,10 +185,12 @@ export class AdminCategoriesService {
    */
   static async toggleCategoryStatus(id: string): Promise<AdminCategory> {
     try {
-      const response = await api.patch<AdminCategory>(`/admin/categories/${id}/toggle-status`);
+      const response = await api.patch<AdminCategory>(
+        `/admin/categories/${id}/toggle-status`
+      );
       return response.data;
     } catch (error) {
-      console.error('Category status toggle error:', error);
+      console.error('Toggle category status error:', error);
       throw error;
     }
   }
@@ -174,11 +202,13 @@ export class AdminCategoriesService {
    */
   static async getCategoryStats(): Promise<AdminCategoryStats> {
     try {
-      const response = await api.get<AdminCategoryStats>('/admin/categories/stats/overview');
+      const response = await api.get<AdminCategoryStats>(
+        '/admin/categories/stats/overview'
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get category statistics:', error);
+      console.error('Get category stats error:', error);
       throw error;
     }
   }
-} 
+}

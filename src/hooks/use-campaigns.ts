@@ -4,7 +4,7 @@ import type {
   AdminCampaign,
   AdminCampaignStats,
   CampaignListQuery,
-  CampaignType
+  CampaignType,
 } from '@/types/admin-campaigns';
 import { useEffect, useState } from 'react';
 
@@ -14,9 +14,13 @@ import { useEffect, useState } from 'react';
  */
 export function useCampaigns() {
   const [campaigns, setCampaigns] = useState<AdminCampaign[]>([]);
-  const [filteredCampaigns, setFilteredCampaigns] = useState<AdminCampaign[]>([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState<AdminCampaign[]>(
+    []
+  );
   const [filters, setFilters] = useState<CampaignListQuery>({});
-  const [deletingCampaign, setDeletingCampaign] = useState<AdminCampaign | undefined>();
+  const [deletingCampaign, setDeletingCampaign] = useState<
+    AdminCampaign | undefined
+  >();
   const [isLoading, setIsLoading] = useState(true);
   const { showSuccess, showError, showLoading, dismiss } = useToast();
 
@@ -33,7 +37,7 @@ export function useCampaigns() {
         type: filters.type,
         isActive: filters.isActive,
       });
-      
+
       setCampaigns(response.data);
       setFilteredCampaigns(response.data);
     } catch (error) {
@@ -76,19 +80,21 @@ export function useCampaigns() {
 
     // Active status filter
     if (filters.isActive !== undefined) {
-      filtered = filtered.filter(campaign => campaign.isActive === filters.isActive);
+      filtered = filtered.filter(
+        campaign => campaign.isActive === filters.isActive
+      );
     }
 
     // Date filters
     if (filters.startDate) {
-      filtered = filtered.filter(campaign => 
-        new Date(campaign.startDate) >= new Date(filters.startDate!)
+      filtered = filtered.filter(
+        campaign => new Date(campaign.startDate) >= new Date(filters.startDate!)
       );
     }
 
     if (filters.endDate) {
-      filtered = filtered.filter(campaign => 
-        new Date(campaign.endDate) <= new Date(filters.endDate!)
+      filtered = filtered.filter(
+        campaign => new Date(campaign.endDate) <= new Date(filters.endDate!)
       );
     }
 
@@ -117,7 +123,9 @@ export function useCampaigns() {
       });
 
       await AdminCampaignsService.deleteCampaign(deletingCampaign._id);
-      setCampaigns(prev => prev.filter(campaign => campaign._id !== deletingCampaign._id));
+      setCampaigns(prev =>
+        prev.filter(campaign => campaign._id !== deletingCampaign._id)
+      );
       setDeletingCampaign(undefined);
 
       showSuccess({
@@ -147,8 +155,10 @@ export function useCampaigns() {
         description: 'Please wait while we update the campaign status',
       });
 
-      const updatedCampaign = await AdminCampaignsService.toggleCampaignStatus(campaign._id);
-      
+      const updatedCampaign = await AdminCampaignsService.toggleCampaignStatus(
+        campaign._id
+      );
+
       setCampaigns(prev =>
         prev.map(c => (c._id === campaign._id ? updatedCampaign : c))
       );
@@ -192,9 +202,11 @@ export function useCampaigns() {
       seller,
       expiringSoon,
       totalRevenue: 0, // Would come from API
-      averageDiscount: campaigns.length > 0 
-        ? campaigns.reduce((sum, c) => sum + c.discountValue, 0) / campaigns.length 
-        : 0,
+      averageDiscount:
+        campaigns.length > 0
+          ? campaigns.reduce((sum, c) => sum + c.discountValue, 0) /
+            campaigns.length
+          : 0,
     };
   };
 
@@ -215,4 +227,4 @@ export function useCampaigns() {
     toggleCampaignStatus,
     loadCampaigns,
   };
-} 
+}

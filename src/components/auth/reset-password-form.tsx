@@ -12,8 +12,8 @@ import { clearError, resetPassword } from '@/features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useToast } from '@/hooks/use-toast';
 import {
-    resetPasswordSchema,
-    type ResetPasswordFormData,
+  resetPasswordSchema,
+  type ResetPasswordFormData,
 } from '@/utils/validation';
 
 import { AuthLayout } from '@/components/layout';
@@ -75,7 +75,8 @@ export function ResetPasswordForm() {
         // Success
         showSuccess({
           message: 'Password reset successfully!',
-          description: 'Your password has been updated. You can now sign in with your new password.',
+          description:
+            'Your password has been updated. You can now sign in with your new password.',
           duration: 4000,
           action: {
             label: 'Sign In',
@@ -84,10 +85,10 @@ export function ResetPasswordForm() {
             },
           },
         });
-        
+
         // Reset form
         reset();
-        
+
         // Redirect to login page after a short delay
         setTimeout(() => {
           router.push('/login');
@@ -134,11 +135,13 @@ export function ResetPasswordForm() {
         <div className="w-full max-w-md mx-auto text-center">
           <div className="mb-6">
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              The password reset link is invalid or has expired. Please request a new password reset link.
+              The password reset link is invalid or has expired. Please request
+              a new password reset link.
             </p>
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                <strong>Note:</strong> For testing purposes, the reset code is always <strong>1234</strong>.
+                <strong>Note:</strong> For testing purposes, the reset code is
+                always <strong>1234</strong>.
               </p>
             </div>
           </div>
@@ -160,11 +163,17 @@ export function ResetPasswordForm() {
       title="Reset Password"
       subtitle="Create a new password for your account"
     >
-      <form onSubmit={(e) => { void handleSubmit(onSubmit)(e); }} className="space-y-4">
+      <form
+        onSubmit={e => {
+          void handleSubmit(onSubmit)(e);
+        }}
+        className="space-y-4"
+      >
         {/* Static Code Notice */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> For testing purposes, the reset code is always <strong>1234</strong>.
+            <strong>Note:</strong> For testing purposes, the reset code is
+            always <strong>1234</strong>.
           </p>
         </div>
 
@@ -194,7 +203,9 @@ export function ResetPasswordForm() {
             disabled={isLoading}
           />
           {errors.password && (
-            <p className="text-sm text-destructive">{errors.password.message}</p>
+            <p className="text-sm text-destructive">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -209,7 +220,9 @@ export function ResetPasswordForm() {
             disabled={isLoading}
           />
           {errors.confirmPassword && (
-            <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+            <p className="text-sm text-destructive">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
 
@@ -233,4 +246,4 @@ export function ResetPasswordForm() {
       </form>
     </AuthLayout>
   );
-} 
+}

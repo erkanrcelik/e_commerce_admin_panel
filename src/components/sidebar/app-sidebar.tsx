@@ -3,11 +3,11 @@
 import * as React from 'react';
 
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarHeader as SidebarHeaderUI,
-    SidebarRail,
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader as SidebarHeaderUI,
+  SidebarRail,
 } from '@/components/ui/sidebar';
 
 import { sidebarConfig } from './sidebar-config';
@@ -17,10 +17,10 @@ import { SidebarUser } from './sidebar-user';
 
 /**
  * App Sidebar Component
- * 
+ *
  * Main sidebar component for the admin panel with purple and blue color scheme.
  * Includes header with logo and title, navigation menu, and user section.
- * 
+ *
  * @param props - React component props extending Sidebar component props
  */
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {

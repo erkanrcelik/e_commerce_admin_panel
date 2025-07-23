@@ -32,11 +32,10 @@ export function useUserInfo() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const profile = await AuthService.getUserInfo();
       setUserProfile(profile);
     } catch (err) {
-      console.error('Failed to load user profile:', err);
       setError(err instanceof Error ? err.message : 'Failed to load profile');
     } finally {
       setIsLoading(false);
@@ -82,4 +81,4 @@ export function useUserInfo() {
     getUserDisplayName,
     getUserInitials,
   };
-} 
+}

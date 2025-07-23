@@ -39,7 +39,7 @@ const api = axios.create({
  * Cookie configuration
  */
 const COOKIE_CONFIG = {
-  tokenName: process.env.NEXT_PUBLIC_TOKEN_COOKIE_NAME || 'auth_token',
+  tokenName: process.env.NEXT_PUBLIC_TOKEN_COOKIE_NAME || 'accessToken',
   refreshTokenName:
     process.env.NEXT_PUBLIC_REFRESH_TOKEN_COOKIE_NAME || 'refreshToken',
   expires: parseInt(process.env.NEXT_PUBLIC_TOKEN_EXPIRES_IN || '7'),
@@ -55,9 +55,6 @@ const COOKIE_CONFIG = {
  * Set authentication token in cookie
  */
 export const setAuthToken = (token: string) => {
-  console.log('Setting auth token in cookie:', token);
-  console.log('Cookie config:', COOKIE_CONFIG);
-  
   Cookies.set(COOKIE_CONFIG.tokenName, token, {
     expires: COOKIE_CONFIG.expires,
     domain: COOKIE_CONFIG.domain,
@@ -65,16 +62,12 @@ export const setAuthToken = (token: string) => {
     sameSite: COOKIE_CONFIG.sameSite,
     path: '/',
   });
-  
-  console.log('Auth token cookie set');
 };
 
 /**
  * Set refresh token in cookie
  */
 export const setRefreshToken = (token: string) => {
-  console.log('Setting refresh token in cookie:', token);
-  
   Cookies.set(COOKIE_CONFIG.refreshTokenName, token, {
     expires: COOKIE_CONFIG.expires * 2, // Refresh token lasts longer
     domain: COOKIE_CONFIG.domain,
@@ -83,8 +76,6 @@ export const setRefreshToken = (token: string) => {
     path: '/',
     httpOnly: false, // Note: Can't set httpOnly from client-side
   });
-  
-  console.log('Refresh token cookie set');
 };
 
 /**
@@ -92,7 +83,6 @@ export const setRefreshToken = (token: string) => {
  */
 export const getAuthToken = (): string | undefined => {
   const token = Cookies.get(COOKIE_CONFIG.tokenName);
-  console.log('Getting auth token from cookie:', token);
   return token;
 };
 
@@ -142,11 +132,16 @@ const tokenUtils = {
     try {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join('')
+      );
       const decoded = JSON.parse(jsonPayload) as JwtPayload;
-      
+
       // Validate that it has required fields
       if (typeof decoded.exp === 'number' && typeof decoded.iat === 'number') {
         return decoded;
@@ -168,7 +163,7 @@ const tokenUtils = {
 
     // Check if token expires in next 5 minutes
     const currentTime = Date.now() / 1000;
-    return decoded.exp < (currentTime + 300);
+    return decoded.exp < currentTime + 300;
   },
 
   /**
@@ -182,7 +177,7 @@ const tokenUtils = {
 
     const currentTime = Date.now() / 1000;
     return Math.max(0, decoded.exp - currentTime);
-  }
+  },
 };
 
 /**
@@ -192,8 +187,7 @@ const tokenUtils = {
 api.interceptors.request.use(
   config => {
     const token = getAuthToken();
-    console.log('Request interceptor - token:', token);
-    
+
     if (token && token !== 'undefined') {
       // Check if token is about to expire (within 5 minutes)
       if (tokenUtils.isTokenExpired(token)) {
@@ -202,17 +196,17 @@ api.interceptors.request.use(
         if (refreshToken) {
           // This will be handled by response interceptor
           // For now, continue with current token
-          console.warn('Token is expired, will attempt refresh on response');
         }
       }
-      
+
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('Authorization header set:', `Bearer ${token}`);
     }
     return config;
   },
   error => {
-    return Promise.reject(new Error((error as Error).message || 'Request failed'));
+    return Promise.reject(
+      new Error((error as Error).message || 'Request failed')
+    );
   }
 );
 
@@ -230,11 +224,12 @@ api.interceptors.response.use(
     // Handle 401 Unauthorized - Token expired or invalid
     // Skip token refresh for auth endpoints (login, etc.)
     if (error.response?.status === 401 && originalRequest) {
-      const isAuthEndpoint = originalRequest.url?.includes('/auth/login') || 
-                            originalRequest.url?.includes('/auth/forgot-password') ||
-                            originalRequest.url?.includes('/auth/reset-password') ||
-                            originalRequest.url?.includes('/auth/refresh');
-      
+      const isAuthEndpoint =
+        originalRequest.url?.includes('/auth/login') ||
+        originalRequest.url?.includes('/auth/forgot-password') ||
+        originalRequest.url?.includes('/auth/reset-password') ||
+        originalRequest.url?.includes('/auth/refresh');
+
       // If it's an auth endpoint, don't try to refresh token
       if (isAuthEndpoint) {
         return Promise.reject(error);
@@ -254,10 +249,11 @@ api.interceptors.response.use(
             }
           );
 
-          const { accessToken, refreshToken: newRefreshToken } = response.data as { 
-            accessToken: string; 
-            refreshToken?: string 
-          };
+          const { accessToken, refreshToken: newRefreshToken } =
+            response.data as {
+              accessToken: string;
+              refreshToken?: string;
+            };
 
           // Update tokens
           setAuthToken(accessToken);
@@ -271,26 +267,32 @@ api.interceptors.response.use(
         } catch (refreshError) {
           // Refresh failed - redirect to login
           removeAuthTokens();
-          
+
           // Clear any stored user data
           if (typeof window !== 'undefined') {
             localStorage.removeItem('user');
             sessionStorage.clear();
           }
-          
+
           window.location.href = '/login';
-          return Promise.reject(new Error(refreshError instanceof Error ? refreshError.message : 'Token refresh failed'));
+          return Promise.reject(
+            new Error(
+              refreshError instanceof Error
+                ? refreshError.message
+                : 'Token refresh failed'
+            )
+          );
         }
       } else {
         // No refresh token or refresh already attempted
         removeAuthTokens();
-        
+
         // Clear any stored user data
         if (typeof window !== 'undefined') {
           localStorage.removeItem('user');
           sessionStorage.clear();
         }
-        
+
         if (typeof window !== 'undefined') {
           window.location.href = '/login';
         }
@@ -299,7 +301,10 @@ api.interceptors.response.use(
 
     // Handle other HTTP errors
     if (error.response) {
-      const { status, data } = error.response as { status: number; data: ApiErrorResponse };
+      const { status, data } = error.response as {
+        status: number;
+        data: ApiErrorResponse;
+      };
 
       switch (status) {
         case 400:
@@ -358,13 +363,16 @@ api.interceptors.response.use(
       const isLogoutRequest = error.config?.url?.includes('/auth/logout');
       if (!isLogoutRequest) {
         toast.error('Error', {
-          description: (error as Error).message || 'An unexpected error occurred',
+          description:
+            (error as Error).message || 'An unexpected error occurred',
           duration: 3000,
         });
       }
     }
 
-    return Promise.reject(new Error((error as Error).message || 'Request failed'));
+    return Promise.reject(
+      new Error((error as Error).message || 'Request failed')
+    );
   }
 );
 

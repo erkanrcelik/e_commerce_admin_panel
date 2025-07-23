@@ -1,25 +1,23 @@
 'use client';
 
-import {
-    Calendar,
-    Edit,
-    MoreVertical,
-    Tag,
-    Trash2
-} from 'lucide-react';
+import { Calendar, Edit, MoreVertical, Tag, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import type { AdminCampaign, CampaignStatus, CampaignType } from '@/types/admin-campaigns';
+import type {
+  AdminCampaign,
+  CampaignStatus,
+  CampaignType,
+} from '@/types/admin-campaigns';
 
 interface CampaignCardProps {
   campaign: AdminCampaign;
@@ -140,10 +138,10 @@ export function CampaignCard({
             <Badge className={statusColors[campaign.status]}>
               {campaign.status}
             </Badge>
-            <Badge className={typeColors[campaign.type]}>{getCampaignTypeText()}</Badge>
-            <Badge variant="outline">
-              {getScopeText()}
+            <Badge className={typeColors[campaign.type]}>
+              {getCampaignTypeText()}
             </Badge>
+            <Badge variant="outline">{getScopeText()}</Badge>
           </div>
 
           {/* Discount Info */}

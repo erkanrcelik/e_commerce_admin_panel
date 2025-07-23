@@ -19,18 +19,23 @@ export class AdminCustomersService {
    * @returns Promise<CustomerListResponse> - Customer list and pagination info
    * @throws {Error} Throws error on API failure
    */
-  static async getCustomers(query?: CustomerListQuery): Promise<CustomerListResponse> {
+  static async getCustomers(
+    query?: CustomerListQuery
+  ): Promise<CustomerListResponse> {
     try {
       const params = new URLSearchParams();
       if (query?.page) params.append('page', query.page.toString());
       if (query?.limit) params.append('limit', query.limit.toString());
       if (query?.search) params.append('search', query.search);
-      if (query?.isActive !== undefined) params.append('isActive', query.isActive.toString());
+      if (query?.isActive !== undefined)
+        params.append('isActive', query.isActive.toString());
 
-      const response = await api.get<CustomerListResponse>(`/admin/customers?${params.toString()}`);
+      const response = await api.get<CustomerListResponse>(
+        `/admin/customers?${params.toString()}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get customers:', error);
+      console.error('Get customers error:', error);
       throw error;
     }
   }
@@ -46,7 +51,7 @@ export class AdminCustomersService {
       const response = await api.get<AdminCustomer>(`/admin/customers/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Failed to get customer details:', error);
+      console.error('Get customer by ID error:', error);
       throw error;
     }
   }
@@ -59,10 +64,12 @@ export class AdminCustomersService {
    */
   static async getCustomerOrders(id: string): Promise<CustomerOrder[]> {
     try {
-      const response = await api.get<CustomerOrder[]>(`/admin/customers/${id}/orders`);
+      const response = await api.get<CustomerOrder[]>(
+        `/admin/customers/${id}/orders`
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get customer orders:', error);
+      console.error('Get customer orders error:', error);
       throw error;
     }
   }
@@ -75,10 +82,12 @@ export class AdminCustomersService {
    */
   static async deleteCustomer(id: string): Promise<CustomerApiResponse> {
     try {
-      const response = await api.delete<CustomerApiResponse>(`/admin/customers/${id}`);
+      const response = await api.delete<CustomerApiResponse>(
+        `/admin/customers/${id}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Customer deletion error:', error);
+      console.error('Delete customer error:', error);
       throw error;
     }
   }
@@ -91,10 +100,12 @@ export class AdminCustomersService {
    */
   static async toggleCustomerStatus(id: string): Promise<AdminCustomer> {
     try {
-      const response = await api.put<AdminCustomer>(`/admin/customers/${id}/toggle-status`);
+      const response = await api.put<AdminCustomer>(
+        `/admin/customers/${id}/toggle-status`
+      );
       return response.data;
     } catch (error) {
-      console.error('Customer status toggle error:', error);
+      console.error('Toggle customer status error:', error);
       throw error;
     }
   }
@@ -106,11 +117,13 @@ export class AdminCustomersService {
    */
   static async getCustomerStats(): Promise<CustomerStats> {
     try {
-      const response = await api.get<CustomerStats>('/admin/customers/stats/overview');
+      const response = await api.get<CustomerStats>(
+        '/admin/customers/stats/overview'
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get customer statistics:', error);
+      console.error('Get customer stats error:', error);
       throw error;
     }
   }
-} 
+}

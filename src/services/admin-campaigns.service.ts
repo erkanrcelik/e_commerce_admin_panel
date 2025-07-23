@@ -20,12 +20,17 @@ export class AdminCampaignsService {
    * @returns Promise<AdminCampaign> - Created campaign information
    * @throws {Error} Throws error on API failure
    */
-  static async createPlatformCampaign(data: CreatePlatformCampaignRequest): Promise<AdminCampaign> {
+  static async createPlatformCampaign(
+    data: CreatePlatformCampaignRequest
+  ): Promise<AdminCampaign> {
     try {
-      const response = await api.post<AdminCampaign>('/admin/campaigns/platform', data);
+      const response = await api.post<AdminCampaign>(
+        '/admin/campaigns/platform',
+        data
+      );
       return response.data;
     } catch (error) {
-      console.error('Platform campaign creation error:', error);
+      console.error('Create platform campaign error:', error);
       throw error;
     }
   }
@@ -36,19 +41,24 @@ export class AdminCampaignsService {
    * @returns Promise<CampaignListResponse> - Campaign list and pagination info
    * @throws {Error} Throws error on API failure
    */
-  static async getCampaigns(query?: CampaignListQuery): Promise<CampaignListResponse> {
+  static async getCampaigns(
+    query?: CampaignListQuery
+  ): Promise<CampaignListResponse> {
     try {
       const params = new URLSearchParams();
       if (query?.page) params.append('page', query.page.toString());
       if (query?.limit) params.append('limit', query.limit.toString());
       if (query?.search) params.append('search', query.search);
-      if (query?.isActive !== undefined) params.append('isActive', query.isActive.toString());
+      if (query?.isActive !== undefined)
+        params.append('isActive', query.isActive.toString());
       if (query?.type) params.append('type', query.type);
 
-      const response = await api.get<CampaignListResponse>(`/admin/campaigns?${params.toString()}`);
+      const response = await api.get<CampaignListResponse>(
+        `/admin/campaigns?${params.toString()}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get campaigns:', error);
+      console.error('Get campaigns error:', error);
       throw error;
     }
   }
@@ -64,7 +74,7 @@ export class AdminCampaignsService {
       const response = await api.get<AdminCampaign>(`/admin/campaigns/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Failed to get campaign details:', error);
+      console.error('Get campaign by ID error:', error);
       throw error;
     }
   }
@@ -76,12 +86,18 @@ export class AdminCampaignsService {
    * @returns Promise<AdminCampaign> - Updated campaign information
    * @throws {Error} Throws error on API failure
    */
-  static async updateCampaign(id: string, data: UpdateCampaignRequest): Promise<AdminCampaign> {
+  static async updateCampaign(
+    id: string,
+    data: UpdateCampaignRequest
+  ): Promise<AdminCampaign> {
     try {
-      const response = await api.put<AdminCampaign>(`/admin/campaigns/${id}`, data);
+      const response = await api.put<AdminCampaign>(
+        `/admin/campaigns/${id}`,
+        data
+      );
       return response.data;
     } catch (error) {
-      console.error('Campaign update error:', error);
+      console.error('Update campaign error:', error);
       throw error;
     }
   }
@@ -94,10 +110,12 @@ export class AdminCampaignsService {
    */
   static async deleteCampaign(id: string): Promise<CampaignApiResponse> {
     try {
-      const response = await api.delete<CampaignApiResponse>(`/admin/campaigns/${id}`);
+      const response = await api.delete<CampaignApiResponse>(
+        `/admin/campaigns/${id}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Campaign deletion error:', error);
+      console.error('Delete campaign error:', error);
       throw error;
     }
   }
@@ -110,10 +128,12 @@ export class AdminCampaignsService {
    */
   static async toggleCampaignStatus(id: string): Promise<AdminCampaign> {
     try {
-      const response = await api.put<AdminCampaign>(`/admin/campaigns/${id}/toggle-status`);
+      const response = await api.put<AdminCampaign>(
+        `/admin/campaigns/${id}/toggle-status`
+      );
       return response.data;
     } catch (error) {
-      console.error('Campaign status toggle error:', error);
+      console.error('Toggle campaign status error:', error);
       throw error;
     }
   }
@@ -125,11 +145,13 @@ export class AdminCampaignsService {
    */
   static async getCampaignStats(): Promise<AdminCampaignStats> {
     try {
-      const response = await api.get<AdminCampaignStats>('/admin/campaigns/stats/overview');
+      const response = await api.get<AdminCampaignStats>(
+        '/admin/campaigns/stats/overview'
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get campaign statistics:', error);
+      console.error('Get campaign stats error:', error);
       throw error;
     }
   }
-} 
+}

@@ -12,8 +12,8 @@ import { clearError, forgotPassword } from '@/features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useToast } from '@/hooks/use-toast';
 import {
-    forgotPasswordSchema,
-    type ForgotPasswordFormData,
+  forgotPasswordSchema,
+  type ForgotPasswordFormData,
 } from '@/utils/validation';
 
 import { AuthLayout } from '@/components/layout';
@@ -68,18 +68,20 @@ export function ForgotPasswordForm() {
         // Success
         showSuccess({
           message: 'Reset email sent!',
-          description: 'We\'ve sent a verification code to your email address. Please check your inbox.',
+          description:
+            "We've sent a verification code to your email address. Please check your inbox.",
           duration: 5000,
         });
-        
+
         // Reset form
         reset();
-        
+
         // Redirect to verify code page with email
         router.push(`/verify-code?email=${encodeURIComponent(data.email)}`);
       } else if (forgotPassword.rejected.match(result)) {
         // Error
-        const errorMessage = result.payload?.message || 'Failed to send reset email';
+        const errorMessage =
+          result.payload?.message || 'Failed to send reset email';
         showError({
           message: 'Failed to send reset email',
           description: errorMessage,
@@ -114,11 +116,17 @@ export function ForgotPasswordForm() {
       title="Forgot Password"
       subtitle="Enter your email address and we'll send you a link to reset your password"
     >
-      <form onSubmit={(e) => { void handleSubmit(onSubmit)(e); }} className="space-y-4">
+      <form
+        onSubmit={e => {
+          void handleSubmit(onSubmit)(e);
+        }}
+        className="space-y-4"
+      >
         {/* Static Code Notice */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> For testing purposes, the reset code is always <strong>1234</strong>.
+            <strong>Note:</strong> For testing purposes, the reset code is
+            always <strong>1234</strong>.
           </p>
         </div>
 

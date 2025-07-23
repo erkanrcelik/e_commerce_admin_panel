@@ -34,13 +34,18 @@ import type {
   UpdateCampaignRequest,
 } from '@/types/admin-campaigns';
 import type { AdminCategory } from '@/types/admin-categories';
-import { campaignFormSchema, type CampaignFormData } from '@/types/campaign-form';
+import {
+  campaignFormSchema,
+  type CampaignFormData,
+} from '@/types/campaign-form';
 
 interface CampaignFormProps {
   campaign?: AdminCampaign;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreatePlatformCampaignRequest | UpdateCampaignRequest) => void;
+  onSubmit: (
+    data: CreatePlatformCampaignRequest | UpdateCampaignRequest
+  ) => void;
   isLoading?: boolean;
 }
 
@@ -57,7 +62,9 @@ export function CampaignForm({
 }: CampaignFormProps) {
   const isEditing = !!campaign;
   const [categories, setCategories] = useState<AdminCategory[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<CampaignCategory[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<
+    CampaignCategory[]
+  >([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(false);
 
   const form = useForm<CampaignFormData>({
@@ -74,7 +81,14 @@ export function CampaignForm({
     },
   });
 
-  const { register, handleSubmit, setValue, watch, formState: { errors }, reset } = form;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+    reset,
+  } = form;
 
   /**
    * Load categories from API
@@ -148,7 +162,7 @@ export function CampaignForm({
         tomorrow.setDate(tomorrow.getDate() + 1);
         const nextWeek = new Date();
         nextWeek.setDate(nextWeek.getDate() + 7);
-        
+
         reset({
           name: '',
           description: '',
@@ -176,7 +190,7 @@ export function CampaignForm({
         endDate: new Date(data.endDate).toISOString(),
         categoryIds: selectedCategories.map(c => c._id), // Use selected categories
       };
-      
+
       onSubmit(formData);
       handleClose();
     } catch (error) {
@@ -202,11 +216,11 @@ export function CampaignForm({
           </DialogTitle>
         </DialogHeader>
 
-        <form 
-          onSubmit={(e) => {
+        <form
+          onSubmit={e => {
             e.preventDefault();
             void handleSubmit(handleFormSubmit)(e);
-          }} 
+          }}
           className="space-y-6"
         >
           <Card>
@@ -237,7 +251,9 @@ export function CampaignForm({
                   className={errors.description ? 'border-red-500' : ''}
                 />
                 {errors.description && (
-                  <p className="text-sm text-red-600">{errors.description.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
 
@@ -250,7 +266,9 @@ export function CampaignForm({
                       setValue('discountType', value, { shouldValidate: true })
                     }
                   >
-                    <SelectTrigger className={errors.discountType ? 'border-red-500' : ''}>
+                    <SelectTrigger
+                      className={errors.discountType ? 'border-red-500' : ''}
+                    >
                       <SelectValue placeholder="Select discount type" />
                     </SelectTrigger>
                     <SelectContent>
@@ -259,7 +277,9 @@ export function CampaignForm({
                     </SelectContent>
                   </Select>
                   {errors.discountType && (
-                    <p className="text-sm text-red-600">{errors.discountType.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.discountType.message}
+                    </p>
                   )}
                 </div>
 
@@ -270,13 +290,21 @@ export function CampaignForm({
                     type="number"
                     step="0.01"
                     min="0"
-                    max={watch('discountType') === 'percentage' ? '100' : undefined}
+                    max={
+                      watch('discountType') === 'percentage' ? '100' : undefined
+                    }
                     {...register('discountValue', { valueAsNumber: true })}
-                    placeholder={watch('discountType') === 'percentage' ? '0-100' : 'Amount in ₺'}
+                    placeholder={
+                      watch('discountType') === 'percentage'
+                        ? '0-100'
+                        : 'Amount in ₺'
+                    }
                     className={errors.discountValue ? 'border-red-500' : ''}
                   />
                   {errors.discountValue && (
-                    <p className="text-sm text-red-600">{errors.discountValue.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.discountValue.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -291,7 +319,9 @@ export function CampaignForm({
                     className={errors.startDate ? 'border-red-500' : ''}
                   />
                   {errors.startDate && (
-                    <p className="text-sm text-red-600">{errors.startDate.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.startDate.message}
+                    </p>
                   )}
                 </div>
 
@@ -304,7 +334,9 @@ export function CampaignForm({
                     className={errors.endDate ? 'border-red-500' : ''}
                   />
                   {errors.endDate && (
-                    <p className="text-sm text-red-600">{errors.endDate.message}</p>
+                    <p className="text-sm text-red-600">
+                      {errors.endDate.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -317,10 +349,16 @@ export function CampaignForm({
                   disabled={isLoadingCategories}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={isLoadingCategories ? "Loading categories..." : "Select categories"} />
+                    <SelectValue
+                      placeholder={
+                        isLoadingCategories
+                          ? 'Loading categories...'
+                          : 'Select categories'
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
+                    {categories.map(category => (
                       <SelectItem key={category._id} value={category._id}>
                         {category.name}
                       </SelectItem>
@@ -328,8 +366,8 @@ export function CampaignForm({
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-muted-foreground">
-                  Select categories to apply the campaign to specific product categories. 
-                  Leave empty to apply to all products.
+                  Select categories to apply the campaign to specific product
+                  categories. Leave empty to apply to all products.
                 </p>
               </div>
 
@@ -338,8 +376,12 @@ export function CampaignForm({
                 <div className="space-y-2">
                   <Label>Selected Categories</Label>
                   <div className="flex flex-wrap gap-2">
-                    {selectedCategories.map((category) => (
-                      <Badge key={category._id} variant="secondary" className="flex items-center gap-1">
+                    {selectedCategories.map(category => (
+                      <Badge
+                        key={category._id}
+                        variant="secondary"
+                        className="flex items-center gap-1"
+                      >
                         {category.name}
                         <button
                           type="button"

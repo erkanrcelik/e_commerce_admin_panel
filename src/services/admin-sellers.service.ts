@@ -1,10 +1,10 @@
 import api from '@/lib/axios';
 import type {
-    AdminSeller,
-    SellerApiResponse,
-    SellerListQuery,
-    SellerListResponse,
-    SellerStats,
+  AdminSeller,
+  SellerApiResponse,
+  SellerListQuery,
+  SellerListResponse,
+  SellerStats,
 } from '@/types/admin-sellers';
 
 /**
@@ -18,19 +18,25 @@ export class AdminSellersService {
    * @returns Promise<SellerListResponse> - Seller list and pagination info
    * @throws {Error} Throws error on API failure
    */
-  static async getSellers(query?: SellerListQuery): Promise<SellerListResponse> {
+  static async getSellers(
+    query?: SellerListQuery
+  ): Promise<SellerListResponse> {
     try {
       const params = new URLSearchParams();
       if (query?.page) params.append('page', query.page.toString());
       if (query?.limit) params.append('limit', query.limit.toString());
       if (query?.search) params.append('search', query.search);
-      if (query?.isApproved !== undefined) params.append('isApproved', query.isApproved.toString());
-      if (query?.isActive !== undefined) params.append('isActive', query.isActive.toString());
+      if (query?.isApproved !== undefined)
+        params.append('isApproved', query.isApproved.toString());
+      if (query?.isActive !== undefined)
+        params.append('isActive', query.isActive.toString());
 
-      const response = await api.get<SellerListResponse>(`/admin/sellers?${params.toString()}`);
+      const response = await api.get<SellerListResponse>(
+        `/admin/sellers?${params.toString()}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get sellers:', error);
+      console.error('Get sellers error:', error);
       throw error;
     }
   }
@@ -46,7 +52,7 @@ export class AdminSellersService {
       const response = await api.get<AdminSeller>(`/admin/sellers/${id}`);
       return response.data;
     } catch (error) {
-      console.error('Failed to get seller details:', error);
+      console.error('Get seller by ID error:', error);
       throw error;
     }
   }
@@ -59,10 +65,12 @@ export class AdminSellersService {
    */
   static async approveSeller(id: string): Promise<AdminSeller> {
     try {
-      const response = await api.patch<AdminSeller>(`/admin/sellers/${id}/approve`);
+      const response = await api.patch<AdminSeller>(
+        `/admin/sellers/${id}/approve`
+      );
       return response.data;
     } catch (error) {
-      console.error('Seller approval error:', error);
+      console.error('Approve seller error:', error);
       throw error;
     }
   }
@@ -75,10 +83,12 @@ export class AdminSellersService {
    */
   static async rejectSeller(id: string): Promise<AdminSeller> {
     try {
-      const response = await api.patch<AdminSeller>(`/admin/sellers/${id}/reject`);
+      const response = await api.patch<AdminSeller>(
+        `/admin/sellers/${id}/reject`
+      );
       return response.data;
     } catch (error) {
-      console.error('Seller rejection error:', error);
+      console.error('Reject seller error:', error);
       throw error;
     }
   }
@@ -91,10 +101,12 @@ export class AdminSellersService {
    */
   static async deleteSeller(id: string): Promise<SellerApiResponse> {
     try {
-      const response = await api.delete<SellerApiResponse>(`/admin/sellers/${id}`);
+      const response = await api.delete<SellerApiResponse>(
+        `/admin/sellers/${id}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Seller deletion error:', error);
+      console.error('Delete seller error:', error);
       throw error;
     }
   }
@@ -107,10 +119,12 @@ export class AdminSellersService {
    */
   static async toggleSellerStatus(id: string): Promise<AdminSeller> {
     try {
-      const response = await api.put<AdminSeller>(`/admin/sellers/${id}/toggle-status`);
+      const response = await api.put<AdminSeller>(
+        `/admin/sellers/${id}/toggle-status`
+      );
       return response.data;
     } catch (error) {
-      console.error('Seller status toggle error:', error);
+      console.error('Toggle seller status error:', error);
       throw error;
     }
   }
@@ -122,11 +136,13 @@ export class AdminSellersService {
    */
   static async getSellerStats(): Promise<SellerStats> {
     try {
-      const response = await api.get<SellerStats>('/admin/sellers/stats/overview');
+      const response = await api.get<SellerStats>(
+        '/admin/sellers/stats/overview'
+      );
       return response.data;
     } catch (error) {
-      console.error('Failed to get seller statistics:', error);
+      console.error('Get seller stats error:', error);
       throw error;
     }
   }
-} 
+}

@@ -14,4 +14,4 @@ export default function VerifyCodePage() {
 export const metadata = {
   title: 'Verify Code',
   description: 'Enter the verification code sent to your email.',
-}; 
+};

@@ -14,4 +14,4 @@ export default function VerifyEmailPage() {
 export const metadata = {
   title: 'Verify Email',
   description: 'Verify your email address to complete your registration.',
-}; 
+};

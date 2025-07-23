@@ -5,11 +5,11 @@ import { Building, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 
 import type { VendorFilters } from '@/types/admin-vendors';
@@ -23,7 +23,10 @@ export function VendorFilters({
   filters,
   onFiltersChange,
 }: VendorFiltersProps) {
-  const handleFilterChange = (key: keyof VendorFilters, value: string | boolean | undefined) => {
+  const handleFilterChange = (
+    key: keyof VendorFilters,
+    value: string | boolean | undefined
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value === 'all' || value === '' ? undefined : value,
@@ -59,11 +62,11 @@ export function VendorFilters({
   };
 
   const hasActiveFilters = Object.entries(filters).some(
-    ([key, value]) => 
-      value !== undefined && 
-      value !== '' && 
+    ([key, value]) =>
+      value !== undefined &&
+      value !== '' &&
       value !== 'all' &&
-      key !== 'page' && 
+      key !== 'page' &&
       key !== 'limit'
   );
 
@@ -136,9 +139,7 @@ export function VendorFilters({
               <SelectItem value="createdAt">Date Created</SelectItem>
               <SelectItem value="totalSales">Total Sales</SelectItem>
               <SelectItem value="rating">Rating</SelectItem>
-              <SelectItem value="totalProducts">
-                Total Products
-              </SelectItem>
+              <SelectItem value="totalProducts">Total Products</SelectItem>
             </SelectContent>
           </Select>
 

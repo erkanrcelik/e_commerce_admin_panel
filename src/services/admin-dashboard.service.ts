@@ -15,45 +15,60 @@ import type {
   RawActivitiesResponse,
   RawActivityItem,
   RecentActivity,
-  RecentOrder
+  RecentOrder,
 } from '@/types/admin-dashboard';
 
 /**
  * Transform raw activities to categorized format
  */
-const transformActivities = (rawActivities: RawActivityItem[]): DashboardActivities => {
+const transformActivities = (
+  rawActivities: RawActivityItem[]
+): DashboardActivities => {
   const newUsers: NewUser[] = [];
   const recentOrders: RecentOrder[] = [];
   const newProducts: NewProduct[] = [];
   const newCampaigns: NewCampaign[] = [];
 
-  rawActivities.forEach((activity) => {
+  rawActivities.forEach(activity => {
     switch (activity.type) {
       case 'user_registration':
         if (activity.userId && activity.userEmail) {
           // Extract names from description or use defaults
-          const nameParts = activity.description.match(/^(\w+)\s+(\w+)/);
+          const nameParts = activity.description.match(/^( w+)\s+(\w+)/);
           const firstName = nameParts?.[1] || 'Unknown';
           const lastName = nameParts?.[2] || 'User';
-          
+
           newUsers.push({
             _id: activity.userId,
             firstName,
             lastName,
             email: activity.userEmail,
-            role: (activity.userRole as 'customer' | 'seller' | 'admin') || 'customer',
+            role:
+              (activity.userRole as 'customer' | 'seller' | 'admin') ||
+              'customer',
             createdAt: activity.createdAt,
           });
         }
         break;
 
       case 'order_placed':
-        if (activity.orderId && activity.customerName && activity.totalPrice && activity.itemCount) {
+        if (
+          activity.orderId &&
+          activity.customerName &&
+          activity.totalPrice &&
+          activity.itemCount
+        ) {
           recentOrders.push({
             _id: activity.orderId,
             customerName: activity.customerName,
             totalPrice: activity.totalPrice,
-            status: (activity.orderStatus as 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled') || 'pending',
+            status:
+              (activity.orderStatus as
+                | 'pending'
+                | 'processing'
+                | 'shipped'
+                | 'delivered'
+                | 'cancelled') || 'pending',
             itemCount: activity.itemCount,
             createdAt: activity.createdAt,
           });
@@ -74,11 +89,16 @@ const transformActivities = (rawActivities: RawActivityItem[]): DashboardActivit
         break;
 
       case 'campaign_created':
-        if (activity.campaignId && activity.campaignName && activity.discountValue) {
+        if (
+          activity.campaignId &&
+          activity.campaignName &&
+          activity.discountValue
+        ) {
           newCampaigns.push({
             _id: activity.campaignId,
             name: activity.campaignName,
-            type: (activity.campaignType as 'platform' | 'seller') || 'platform',
+            type:
+              (activity.campaignType as 'platform' | 'seller') || 'platform',
             discountValue: activity.discountValue,
             sellerName: activity.sellerName || null,
             createdAt: activity.createdAt,
@@ -110,7 +130,7 @@ export const adminDashboardService = {
       const response = await api.get<DashboardStats>('/admin/dashboard/stats');
       return response.data;
     } catch (error) {
-      console.error('Dashboard stats fetch error:', error);
+      console.error('Get dashboard stats error:', error);
       throw error;
     }
   },
@@ -121,10 +141,12 @@ export const adminDashboardService = {
    */
   getActivities: async (limit: number = 10): Promise<DashboardActivities> => {
     try {
-      const response = await api.get<RawActivitiesResponse>(`/admin/dashboard/activities?limit=${limit}`);
+      const response = await api.get<RawActivitiesResponse>(
+        `/admin/dashboard/activities?limit=${limit}`
+      );
       return transformActivities(response.data);
     } catch (error) {
-      console.error('Dashboard activities fetch error:', error);
+      console.error('Get dashboard activities error:', error);
       throw error;
     }
   },
@@ -135,10 +157,12 @@ export const adminDashboardService = {
    */
   getCharts: async (days: number = 30): Promise<DashboardCharts> => {
     try {
-      const response = await api.get<DashboardCharts>(`/admin/dashboard/charts?days=${days}`);
+      const response = await api.get<DashboardCharts>(
+        `/admin/dashboard/charts?days=${days}`
+      );
       return response.data;
     } catch (error) {
-      console.error('Dashboard charts fetch error:', error);
+      console.error('Get dashboard charts error:', error);
       throw error;
     }
   },
@@ -149,10 +173,12 @@ export const adminDashboardService = {
    */
   getHealth: async (): Promise<DashboardHealth> => {
     try {
-      const response = await api.get<DashboardHealth>('/admin/dashboard/health');
+      const response = await api.get<DashboardHealth>(
+        '/admin/dashboard/health'
+      );
       return response.data;
     } catch (error) {
-      console.error('Dashboard health fetch error:', error);
+      console.error('Get dashboard health error:', error);
       throw error;
     }
   },
@@ -168,14 +194,18 @@ export const adminDashboardService = {
   /**
    * @deprecated Use getActivities() instead
    */
-  getRecentActivity: (limit: number = 10): Promise<ApiResponse<RecentActivity>> => {
+  getRecentActivity: (
+    limit: number = 10
+  ): Promise<ApiResponse<RecentActivity>> => {
     return api.get(`/admin/dashboard/recent-activity?limit=${limit}`);
   },
 
   /**
    * @deprecated Use getCharts() instead
    */
-  getTrends: (period: 'daily' | 'weekly' | 'monthly' = 'monthly'): Promise<ApiResponse<PlatformTrends>> => {
+  getTrends: (
+    period: 'daily' | 'weekly' | 'monthly' = 'monthly'
+  ): Promise<ApiResponse<PlatformTrends>> => {
     return api.get(`/admin/dashboard/trends?period=${period}`);
   },
 
@@ -185,4 +215,4 @@ export const adminDashboardService = {
   getSummary: (): Promise<ApiResponse<DashboardSummary>> => {
     return api.get('/admin/dashboard/summary');
   },
-}; 
+};

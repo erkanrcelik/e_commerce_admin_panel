@@ -20,7 +20,10 @@ interface UserFiltersProps {
 }
 
 export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
-  const handleFilterChange = (key: keyof UserFiltersType, value: string | boolean | undefined) => {
+  const handleFilterChange = (
+    key: keyof UserFiltersType,
+    value: string | boolean | undefined
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value === '' || value === false ? undefined : value,
@@ -52,7 +55,13 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
 
         <div className="flex items-center gap-2">
           <Select
-            value={filters.isActive === undefined ? 'all' : filters.isActive ? 'active' : 'inactive'}
+            value={
+              filters.isActive === undefined
+                ? 'all'
+                : filters.isActive
+                  ? 'active'
+                  : 'inactive'
+            }
             onValueChange={value => {
               if (value === 'all') {
                 handleFilterChange('isActive', undefined);
@@ -73,7 +82,12 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
 
           <Select
             value={filters.sortBy || 'default'}
-            onValueChange={value => handleFilterChange('sortBy', value === 'default' ? undefined : value)}
+            onValueChange={value =>
+              handleFilterChange(
+                'sortBy',
+                value === 'default' ? undefined : value
+              )
+            }
           >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Sort by" />

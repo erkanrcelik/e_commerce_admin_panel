@@ -2,10 +2,10 @@
 
 import { adminDashboardService } from '@/services/admin-dashboard.service';
 import type {
-    DashboardActivities,
-    DashboardCharts,
-    DashboardHealth,
-    DashboardStats,
+  DashboardActivities,
+  DashboardCharts,
+  DashboardHealth,
+  DashboardStats,
 } from '@/types/admin-dashboard';
 import { useEffect, useState } from 'react';
 
@@ -47,7 +47,9 @@ export function useDashboardStats() {
  * Custom hook for dashboard activities
  */
 export function useDashboardActivities(limit: number = 10) {
-  const [activities, setActivities] = useState<DashboardActivities | null>(null);
+  const [activities, setActivities] = useState<DashboardActivities | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -154,8 +156,17 @@ export function useDashboard() {
   const charts = useDashboardCharts(30);
   const health = useDashboardHealth();
 
-  const isLoading = stats.isLoading || activities.isLoading || charts.isLoading || health.isLoading;
-  const hasError = !!(stats.error || activities.error || charts.error || health.error);
+  const isLoading =
+    stats.isLoading ||
+    activities.isLoading ||
+    charts.isLoading ||
+    health.isLoading;
+  const hasError = !!(
+    stats.error ||
+    activities.error ||
+    charts.error ||
+    health.error
+  );
 
   const refetchAll = () => {
     void stats.refetch();
@@ -179,4 +190,4 @@ export function useDashboard() {
     },
     refetch: refetchAll,
   };
-} 
+}

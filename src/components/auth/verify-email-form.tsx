@@ -64,7 +64,8 @@ export function VerifyEmailForm() {
         setIsVerified(true);
         showSuccess({
           message: 'Email verified successfully!',
-          description: 'Your email address has been verified. You can now sign in to your account.',
+          description:
+            'Your email address has been verified. You can now sign in to your account.',
           duration: 5000,
           action: {
             label: 'Sign In',
@@ -81,7 +82,8 @@ export function VerifyEmailForm() {
       } else if (verifyEmail.rejected.match(result)) {
         // Error
         setIsError(true);
-        const errorMessage = result.payload?.message || 'Email verification failed';
+        const errorMessage =
+          result.payload?.message || 'Email verification failed';
         showError({
           message: 'Email verification failed',
           description: errorMessage,
@@ -124,11 +126,13 @@ export function VerifyEmailForm() {
         <div className="w-full max-w-md mx-auto">
           <div className="text-center">
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              The verification link is invalid or has expired. Please check your email for a valid link.
+              The verification link is invalid or has expired. Please check your
+              email for a valid link.
             </p>
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                <strong>Note:</strong> For testing purposes, the verification code is always <strong>1234</strong>.
+                <strong>Note:</strong> For testing purposes, the verification
+                code is always <strong>1234</strong>.
               </p>
             </div>
             <Button asChild>
@@ -150,12 +154,23 @@ export function VerifyEmailForm() {
         <div className="w-full max-w-md mx-auto text-center">
           <div className="mb-6">
             <div className="w-16 h-16 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              <svg
+                className="w-8 h-8 text-green-600 dark:text-green-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
             <p className="text-gray-600 dark:text-gray-400">
-              Your email address has been successfully verified. You can now sign in to your account.
+              Your email address has been successfully verified. You can now
+              sign in to your account.
             </p>
           </div>
           <Button asChild>
@@ -175,16 +190,28 @@ export function VerifyEmailForm() {
         <div className="w-full max-w-md mx-auto text-center">
           <div className="mb-6">
             <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-8 h-8 text-red-600 dark:text-red-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </div>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              We couldn't verify your email address. The link may be invalid or expired.
+              We couldn't verify your email address. The link may be invalid or
+              expired.
             </p>
             <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
               <p className="text-sm text-blue-800 dark:text-blue-200">
-                <strong>Note:</strong> For testing purposes, the verification code is always <strong>1234</strong>.
+                <strong>Note:</strong> For testing purposes, the verification
+                code is always <strong>1234</strong>.
               </p>
             </div>
           </div>
@@ -210,8 +237,18 @@ export function VerifyEmailForm() {
       <div className="w-full max-w-md mx-auto text-center">
         <div className="mb-6">
           <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            <svg
+              className="w-8 h-8 text-blue-600 dark:text-blue-400 animate-spin"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
             </svg>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
@@ -220,10 +257,11 @@ export function VerifyEmailForm() {
         </div>
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <p className="text-sm text-blue-800 dark:text-blue-200">
-            <strong>Note:</strong> For testing purposes, the verification code is always <strong>1234</strong>.
+            <strong>Note:</strong> For testing purposes, the verification code
+            is always <strong>1234</strong>.
           </p>
         </div>
       </div>
     </AuthLayout>
   );
-} 
+}

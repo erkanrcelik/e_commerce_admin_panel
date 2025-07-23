@@ -17,7 +17,9 @@ export function useVendors() {
   const [vendors, setVendors] = useState<AdminVendor[]>([]);
   const [filteredVendors, setFilteredVendors] = useState<AdminVendor[]>([]);
   const [filters, setFilters] = useState<VendorListQuery>({});
-  const [deletingVendor, setDeletingVendor] = useState<AdminVendor | undefined>();
+  const [deletingVendor, setDeletingVendor] = useState<
+    AdminVendor | undefined
+  >();
   const [isLoading, setIsLoading] = useState(true);
   const { showSuccess, showError, showLoading, dismiss } = useToast();
 
@@ -31,14 +33,17 @@ export function useVendors() {
       lastName: seller.lastName,
       email: seller.email,
       phoneNumber: seller.phoneNumber,
-      companyName: seller.profile?.companyName || `${seller.firstName} ${seller.lastName}`,
+      companyName:
+        seller.profile?.companyName || `${seller.firstName} ${seller.lastName}`,
       role: seller.role,
       isActive: seller.isActive,
       isApproved: seller.profile?.isApproved || false,
       isEmailVerified: seller.isEmailVerified,
       profile: {
         _id: seller.profile?._id || seller._id,
-        storeName: seller.profile?.companyName || `${seller.firstName} ${seller.lastName}`,
+        storeName:
+          seller.profile?.companyName ||
+          `${seller.firstName} ${seller.lastName}`,
         description: seller.profile?.description || '',
         storeDescription: seller.profile?.description || '',
         isApproved: seller.profile?.isApproved || false,
@@ -82,13 +87,12 @@ export function useVendors() {
         isActive: filters.isActive,
         isApproved: filters.isApproved,
       });
-      
+
       // Transform sellers to vendors format
       const transformedVendors = response.data.map(transformSellerToVendor);
       setVendors(transformedVendors);
       setFilteredVendors(transformedVendors);
-    } catch (error) {
-      console.error('Failed to load vendors:', error);
+    } catch {
       showError({
         message: 'Failed to load vendors',
         description: 'Please try again later.',
@@ -112,7 +116,8 @@ export function useVendors() {
           vendor.firstName.toLowerCase().includes(searchLower) ||
           vendor.lastName.toLowerCase().includes(searchLower) ||
           vendor.email.toLowerCase().includes(searchLower) ||
-          (vendor.profile && vendor.profile.storeName.toLowerCase().includes(searchLower))
+          (vendor.profile &&
+            vendor.profile.storeName.toLowerCase().includes(searchLower))
       );
     }
 
@@ -155,15 +160,16 @@ export function useVendors() {
       });
 
       await AdminSellersService.deleteSeller(deletingVendor._id);
-      setVendors(prev => prev.filter(vendor => vendor._id !== deletingVendor._id));
+      setVendors(prev =>
+        prev.filter(vendor => vendor._id !== deletingVendor._id)
+      );
       setDeletingVendor(undefined);
 
       showSuccess({
         message: 'Vendor deleted successfully!',
         description: `"${deletingVendor.firstName} ${deletingVendor.lastName}" has been removed.`,
       });
-    } catch (error) {
-      console.error('Failed to delete vendor:', error);
+    } catch {
       showError({
         message: 'Failed to delete vendor',
         description: 'Please try again later.',
@@ -185,9 +191,11 @@ export function useVendors() {
         description: 'Please wait while we update the vendor status',
       });
 
-      const updatedSeller = await AdminSellersService.toggleSellerStatus(vendor._id);
+      const updatedSeller = await AdminSellersService.toggleSellerStatus(
+        vendor._id
+      );
       const updatedVendor = transformSellerToVendor(updatedSeller);
-      
+
       setVendors(prev =>
         prev.map(v => (v._id === vendor._id ? updatedVendor : v))
       );
@@ -196,8 +204,7 @@ export function useVendors() {
         message: 'Status updated successfully!',
         description: `"${updatedVendor.firstName} ${updatedVendor.lastName}" is now ${updatedVendor.isActive ? 'active' : 'inactive'}.`,
       });
-    } catch (error) {
-      console.error('Failed to toggle vendor status:', error);
+    } catch {
       showError({
         message: 'Failed to update status',
         description: 'Please try again later.',
@@ -247,4 +254,4 @@ export function useVendors() {
     toggleVendorStatus,
     loadVendors,
   };
-} 
+}

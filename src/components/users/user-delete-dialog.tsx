@@ -1,14 +1,14 @@
 'use client';
 
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import type { AdminUser } from '@/types/admin-users';
 
@@ -40,9 +40,11 @@ export function UserDeleteDialog({
           <AlertDialogTitle>Delete User</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete{' '}
-            <span className="font-medium">"{user.firstName} {user.lastName}"</span>? 
-            This action cannot be undone and will permanently remove the user account,
-            their order history, and all associated data.
+            <span className="font-medium">
+              "{user.firstName} {user.lastName}"
+            </span>
+            ? This action cannot be undone and will permanently remove the user
+            account, their order history, and all associated data.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -58,4 +60,4 @@ export function UserDeleteDialog({
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

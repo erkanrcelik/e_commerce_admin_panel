@@ -9,7 +9,7 @@ import type {
   AuthResponse,
   ForgotPasswordFormData,
   LoginFormData,
-  ResetPasswordFormData
+  ResetPasswordFormData,
 } from '@/types/auth';
 
 /**
@@ -32,10 +32,13 @@ export class AuthService {
     role?: string;
   }): Promise<{ message: string }> {
     try {
-      const response = await api.post<{ message: string }>('/auth/register', userData);
+      const response = await api.post<{ message: string }>(
+        '/auth/register',
+        userData
+      );
       return response.data;
     } catch (error) {
-      console.error('Register API error:', error);
+      console.error('Registration error:', error);
       throw error;
     }
   }
@@ -49,15 +52,10 @@ export class AuthService {
     try {
       const response = await api.post<AuthResponse>('/auth/login', {
         ...credentials,
-        platform: 'admin' // Admin platform for admin panel
+        platform: 'admin', // Admin platform for admin panel
       });
-      
-      console.log('Login response:', response.data);
-      
-      const { accessToken, refreshToken } = response.data;
 
-      console.log('Access token:', accessToken);
-      console.log('Refresh token:', refreshToken);
+      const { accessToken, refreshToken } = response.data;
 
       // Store tokens in cookies
       setAuthToken(accessToken);
@@ -65,15 +63,13 @@ export class AuthService {
         setRefreshToken(refreshToken);
       }
 
-      console.log('Tokens stored in cookies');
-
       return response.data;
     } catch (error) {
-      console.error('Login API error:', error);
+      console.error('Login error:', error);
       throw error;
     }
   }
-  
+
   /**
    * Send forgot password email
    * @param emailData - Email for password reset
@@ -89,7 +85,7 @@ export class AuthService {
       );
       return response.data;
     } catch (error) {
-      console.error('Forgot password API error:', error);
+      console.error('Forgot password error:', error);
       throw error;
     }
   }
@@ -109,7 +105,7 @@ export class AuthService {
       );
       return response.data;
     } catch (error) {
-      console.error('Reset password API error:', error);
+      console.error('Reset password error:', error);
       throw error;
     }
   }
@@ -120,14 +116,17 @@ export class AuthService {
    * @param email - Email to verify
    * @returns Promise with success message
    */
-  static async verifyEmail(token: string, email: string): Promise<{ message: string }> {
+  static async verifyEmail(
+    token: string,
+    email: string
+  ): Promise<{ message: string }> {
     try {
       const response = await api.get<{ message: string }>(
         `/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
       );
       return response.data;
     } catch (error) {
-      console.error('Email verification API error:', error);
+      console.error('Email verification error:', error);
       throw error;
     }
   }
@@ -145,7 +144,7 @@ export class AuthService {
         await api.post('/auth/logout');
       }
     } catch (error) {
-      console.error('Logout API error:', error);
+      console.error('Logout error:', error);
       // Continue with local logout even if API call fails
       // This is important for offline scenarios or when backend is not available
     } finally {
@@ -179,7 +178,7 @@ export class AuthService {
 
       return response.data;
     } catch (error) {
-      console.error('Refresh token API error:', error);
+      console.error('Token refresh error:', error);
       throw error;
     }
   }
@@ -215,7 +214,7 @@ export class AuthService {
       }>('/auth/user-info');
       return response.data;
     } catch (error) {
-      console.error('Get user info API error:', error);
+      console.error('Get user info error:', error);
       throw error;
     }
   }
@@ -233,7 +232,7 @@ export class AuthService {
       );
       return response.data;
     } catch (error) {
-      console.error('Resend verification API error:', error);
+      console.error('Resend verification error:', error);
       throw error;
     }
   }

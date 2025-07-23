@@ -30,13 +30,20 @@ import type {
   CreateCategoryRequest,
   UpdateCategoryRequest,
 } from '@/types/admin-categories';
-import { categoryFormSchema, type CategoryFormData } from '@/types/category-form';
+import {
+  categoryFormSchema,
+  type CategoryFormData,
+} from '@/types/category-form';
 
 interface CategoryFormProps {
   category?: AdminCategory;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateCategoryRequest | UpdateCategoryRequest, imageFile?: File, shouldRemoveImage?: boolean) => void;
+  onSubmit: (
+    data: CreateCategoryRequest | UpdateCategoryRequest,
+    imageFile?: File,
+    shouldRemoveImage?: boolean
+  ) => void;
   isLoading?: boolean;
 }
 
@@ -54,7 +61,8 @@ export function CategoryForm({
   const isEditing = !!category;
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [shouldRemoveExistingImage, setShouldRemoveExistingImage] = useState(false);
+  const [shouldRemoveExistingImage, setShouldRemoveExistingImage] =
+    useState(false);
   const { showError } = useToast();
 
   const form = useForm<CategoryFormData>({
@@ -66,10 +74,17 @@ export function CategoryForm({
     },
   });
 
-  const { register, handleSubmit, setValue, watch, formState: { errors }, reset } = form;
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+    reset,
+  } = form;
 
   /**
-   * Get the current image URL from category (API'de image field'ı var)
+   * Get the current image URL from category (API has image field)
    */
   const getCategoryImageUrl = () => {
     return category?.image || category?.imageUrl || null;
@@ -134,7 +149,7 @@ export function CategoryForm({
 
       // Generate preview
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         setImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
@@ -149,7 +164,7 @@ export function CategoryForm({
       // Pass image file or removal flag
       let imageFileToSubmit: File | undefined = undefined;
       let shouldRemoveImage = false;
-      
+
       if (selectedImageFile) {
         // New image selected
         imageFileToSubmit = selectedImageFile;
@@ -157,7 +172,7 @@ export function CategoryForm({
         // Existing image should be removed
         shouldRemoveImage = true;
       }
-      
+
       onSubmit(data, imageFileToSubmit, shouldRemoveImage);
       handleClose();
     } catch (error) {
@@ -224,11 +239,11 @@ export function CategoryForm({
           </DialogTitle>
         </DialogHeader>
 
-        <form 
-          onSubmit={(e) => {
+        <form
+          onSubmit={e => {
             e.preventDefault();
             void handleSubmit(handleFormSubmit)(e);
-          }} 
+          }}
           className="space-y-6"
         >
           <Card>
@@ -259,7 +274,9 @@ export function CategoryForm({
                   className={errors.description ? 'border-red-500' : ''}
                 />
                 {errors.description && (
-                  <p className="text-sm text-red-600">{errors.description.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
 
@@ -280,7 +297,9 @@ export function CategoryForm({
                   </SelectContent>
                 </Select>
                 {errors.isActive && (
-                  <p className="text-sm text-red-600">{errors.isActive.message}</p>
+                  <p className="text-sm text-red-600">
+                    {errors.isActive.message}
+                  </p>
                 )}
               </div>
 
@@ -296,7 +315,7 @@ export function CategoryForm({
                 <p className="text-xs text-muted-foreground">
                   Supported formats: JPG, PNG, GIF. Maximum size: 5MB
                 </p>
-                
+
                 {/* Show message if existing image will be removed */}
                 {shouldRemoveExistingImage && getCategoryImageUrl() && (
                   <div className="mt-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
@@ -304,7 +323,8 @@ export function CategoryForm({
                       Current image will be removed
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      The category will have no image after saving. You can add a new image by selecting a file above.
+                      The category will have no image after saving. You can add
+                      a new image by selecting a file above.
                     </p>
                     <Button
                       type="button"
@@ -339,7 +359,9 @@ export function CategoryForm({
                           >
                             Remove New Image
                           </Button>
-                        ) : getCategoryImageUrl() && imagePreview === getCategoryImageUrl() && !shouldRemoveExistingImage ? (
+                        ) : getCategoryImageUrl() &&
+                          imagePreview === getCategoryImageUrl() &&
+                          !shouldRemoveExistingImage ? (
                           // Existing image from category (not marked for removal)
                           <Button
                             type="button"
@@ -364,12 +386,12 @@ export function CategoryForm({
                     </div>
                     {/* Show image source info */}
                     <p className="text-xs text-muted-foreground mt-2">
-                      {selectedImageFile 
+                      {selectedImageFile
                         ? `New image: ${selectedImageFile.name}`
-                        : getCategoryImageUrl() && imagePreview === getCategoryImageUrl() 
-                        ? 'Current category image'
-                        : 'Image preview'
-                      }
+                        : getCategoryImageUrl() &&
+                            imagePreview === getCategoryImageUrl()
+                          ? 'Current category image'
+                          : 'Image preview'}
                     </p>
                   </div>
                 )}

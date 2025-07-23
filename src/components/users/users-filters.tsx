@@ -27,7 +27,10 @@ export function UsersFilters({
   onFiltersChange,
   onReset,
 }: UsersFiltersProps) {
-  const handleFilterChange = (key: keyof CustomerListQuery, value: string | boolean | undefined) => {
+  const handleFilterChange = (
+    key: keyof CustomerListQuery,
+    value: string | boolean | undefined
+  ) => {
     onFiltersChange({
       ...filters,
       [key]: value === 'all' || value === '' ? undefined : value,
@@ -39,11 +42,11 @@ export function UsersFilters({
   };
 
   const hasActiveFilters = Object.entries(filters).some(
-    ([key, value]) => 
-      value !== undefined && 
-      value !== '' && 
+    ([key, value]) =>
+      value !== undefined &&
+      value !== '' &&
       value !== 'all' &&
-      key !== 'page' && 
+      key !== 'page' &&
       key !== 'limit'
   );
 
@@ -86,9 +89,16 @@ export function UsersFilters({
           <div className="space-y-2">
             <Label htmlFor="isActive">Status</Label>
             <Select
-              value={filters.isActive !== undefined ? filters.isActive.toString() : 'all'}
-              onValueChange={(value) => 
-                handleFilterChange('isActive', value === 'all' ? undefined : value === 'true')
+              value={
+                filters.isActive !== undefined
+                  ? filters.isActive.toString()
+                  : 'all'
+              }
+              onValueChange={value =>
+                handleFilterChange(
+                  'isActive',
+                  value === 'all' ? undefined : value === 'true'
+                )
               }
             >
               <SelectTrigger>
@@ -109,10 +119,14 @@ export function UsersFilters({
             <p className="text-sm text-muted-foreground">
               <span className="font-medium">Active filters:</span>{' '}
               {Object.entries(filters)
-                .filter(([, value]) => value !== undefined && value !== '' && value !== 'all')
+                .filter(
+                  ([, value]) =>
+                    value !== undefined && value !== '' && value !== 'all'
+                )
                 .map(([key, value]) => {
                   if (key === 'search') return `Search: "${value as string}"`;
-                  if (key === 'isActive') return `Status: ${value ? 'Active' : 'Inactive'}`;
+                  if (key === 'isActive')
+                    return `Status: ${value ? 'Active' : 'Inactive'}`;
                   return `${key}: ${value as string}`;
                 })
                 .join(', ')}
@@ -122,4 +136,4 @@ export function UsersFilters({
       </CardContent>
     </Card>
   );
-} 
+}

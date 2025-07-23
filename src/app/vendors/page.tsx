@@ -108,7 +108,9 @@ export default function VendorsPage() {
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 text-sm font-medium">🏪</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Total Vendors</span>
+            <span className="text-sm font-medium text-gray-600">
+              Total Vendors
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">{stats.total}</div>
         </div>
@@ -138,41 +140,54 @@ export default function VendorsPage() {
             <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
               <span className="text-purple-600 text-sm font-medium">🛍️</span>
             </div>
-            <span className="text-sm font-medium text-gray-600">Active Stores</span>
+            <span className="text-sm font-medium text-gray-600">
+              Active Stores
+            </span>
           </div>
           <div className="text-2xl font-bold mt-1">{stats.active}</div>
         </div>
       </div>
 
       {/* Filters */}
-      <VendorsFilters
-        filters={filters}
-        onFiltersChange={setFilters}
-      />
+      <VendorsFilters filters={filters} onFiltersChange={setFilters} />
 
       {/* Vendors Table */}
       <VendorsTable
         vendors={vendors}
         isLoading={isLoading}
-        onDelete={(vendor) => { void handleDeleteVendor(vendor); }}
-        onToggleStatus={(vendor) => { void handleToggleStatus(vendor); }}
-        onViewDetails={(vendor) => { void handleViewDetails(vendor); }}
+        onDelete={vendor => {
+          void handleDeleteVendor(vendor);
+        }}
+        onToggleStatus={vendor => {
+          void handleToggleStatus(vendor);
+        }}
+        onViewDetails={vendor => {
+          void handleViewDetails(vendor);
+        }}
       />
 
       {/* Delete Confirmation Dialog */}
       <VendorDeleteDialog
         vendor={deletingVendor || null}
         isOpen={!!deletingVendor}
-        onClose={() => { handleCloseDeleteDialog(); }}
-        onConfirm={() => { void handleConfirmDelete(); }}
+        onClose={() => {
+          handleCloseDeleteDialog();
+        }}
+        onConfirm={() => {
+          void handleConfirmDelete();
+        }}
         isLoading={false}
       />
 
       {/* Add Vendor Dialog */}
       <VendorForm
         isOpen={showAddVendor}
-        onClose={() => { handleCloseAddVendor(); }}
-        onSuccess={() => { void handleAddVendorSuccess(); }}
+        onClose={() => {
+          handleCloseAddVendor();
+        }}
+        onSuccess={() => {
+          void handleAddVendorSuccess();
+        }}
       />
     </PageLayout>
   );

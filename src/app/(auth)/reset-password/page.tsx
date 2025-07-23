@@ -14,4 +14,4 @@ export default function ResetPasswordPage() {
 export const metadata = {
   title: 'Reset Password',
   description: 'Create a new password for your account.',
-}; 
+};

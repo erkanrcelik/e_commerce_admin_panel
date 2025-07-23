@@ -12,9 +12,9 @@ interface CampaignsFiltersProps {
  * Filters component for campaigns page
  * Handles search, status, and type filtering for campaigns
  */
-export function CampaignsFilters({ 
-  filters, 
-  onFiltersChange 
+export function CampaignsFilters({
+  filters,
+  onFiltersChange,
 }: CampaignsFiltersProps) {
   /**
    * Filter field configurations for campaigns
@@ -56,4 +56,4 @@ export function CampaignsFilters({
       searchPlaceholder="Search campaigns..."
     />
   );
-} 
+}

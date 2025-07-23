@@ -1,14 +1,14 @@
-'use client'
+'use client';
 
-import { AlertTriangle, Home, RefreshCw } from 'lucide-react'
-import { useEffect } from 'react'
+import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
+import { useEffect } from 'react';
 
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 /**
  * Global Error Page (Root Level)
- * 
+ *
  * Handles root-level errors that occur outside of the app directory.
  * Provides a clean, modern error interface.
  */
@@ -16,12 +16,12 @@ export default function GlobalError({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Global error:', error)
-  }, [error])
+    console.error('Global error:', error);
+  }, [error]);
 
   return (
     <html>
@@ -38,14 +38,15 @@ export default function GlobalError({
                   <span className="text-xs text-white font-bold">!</span>
                 </div>
               </div>
-              
+
               {/* Error Content */}
               <div className="space-y-3">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                   Critical Error
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  An error occurred while starting the application. Please refresh the page.
+                  An error occurred while starting the application. Please
+                  refresh the page.
                 </p>
               </div>
 
@@ -60,7 +61,7 @@ export default function GlobalError({
                   Refresh Page
                 </Button>
                 <Button
-                  onClick={() => window.location.href = '/'}
+                  onClick={() => (window.location.href = '/')}
                   variant="outline"
                   className="flex-1 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                   size="lg"
@@ -74,5 +75,5 @@ export default function GlobalError({
         </div>
       </body>
     </html>
-  )
-} 
+  );
+}

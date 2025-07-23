@@ -18,10 +18,10 @@ interface KPICardProps {
 
 /**
  * KPI Card Component
- * 
+ *
  * Displays key performance indicators in a card format with optional trend indicators.
  * Supports different value formats (number, currency, percentage) and loading states.
- * 
+ *
  * @param title - The title of the KPI metric
  * @param value - The numeric value to display
  * @param subtitle - Optional subtitle text below the value
@@ -105,4 +105,4 @@ export function KPICard({
       </CardContent>
     </Card>
   );
-} 
+}

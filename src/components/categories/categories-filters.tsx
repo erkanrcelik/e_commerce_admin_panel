@@ -12,9 +12,9 @@ interface CategoriesFiltersProps {
  * Filters component for categories page
  * Handles search and status filtering for categories
  */
-export function CategoriesFilters({ 
-  filters, 
-  onFiltersChange 
+export function CategoriesFilters({
+  filters,
+  onFiltersChange,
 }: CategoriesFiltersProps) {
   /**
    * Filter field configurations for categories
@@ -46,4 +46,4 @@ export function CategoriesFilters({
       searchPlaceholder="Search categories..."
     />
   );
-} 
+}

@@ -40,10 +40,13 @@ export function VendorDeleteDialog({
           <AlertDialogTitle>Delete Vendor</AlertDialogTitle>
           <AlertDialogDescription>
             Are you sure you want to delete vendor{' '}
-            <span className="font-medium">"{vendor.firstName} {vendor.lastName}"</span> 
-            and their store <span className="font-medium">"{vendor.profile?.storeName}"</span>? 
-            This action cannot be undone and will permanently remove the vendor account,
-            their store profile, and all associated data.
+            <span className="font-medium">
+              "{vendor.firstName} {vendor.lastName}"
+            </span>
+            and their store{' '}
+            <span className="font-medium">"{vendor.profile?.storeName}"</span>?
+            This action cannot be undone and will permanently remove the vendor
+            account, their store profile, and all associated data.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -59,4 +62,4 @@ export function VendorDeleteDialog({
       </AlertDialogContent>
     </AlertDialog>
   );
-} 
+}

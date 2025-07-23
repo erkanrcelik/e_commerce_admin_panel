@@ -19,7 +19,7 @@ import {
   MapPin,
   Phone,
   ShoppingBag,
-  Trash2
+  Trash2,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -74,9 +74,11 @@ export default function CustomerDetailPage() {
 
     try {
       setIsSubmitting(true);
-      const updatedCustomer = await AdminCustomersService.toggleCustomerStatus(customer._id);
+      const updatedCustomer = await AdminCustomersService.toggleCustomerStatus(
+        customer._id
+      );
       setCustomer(updatedCustomer);
-      
+
       toast.success('Customer status updated', {
         description: `${updatedCustomer.firstName} ${updatedCustomer.lastName} is now ${updatedCustomer.isActive ? 'active' : 'inactive'}.`,
       });
@@ -99,11 +101,11 @@ export default function CustomerDetailPage() {
     try {
       setIsSubmitting(true);
       await AdminCustomersService.deleteCustomer(customer._id);
-      
+
       toast.success('Customer deleted', {
         description: `${customer.firstName} ${customer.lastName} has been deleted.`,
       });
-      
+
       router.push('/users');
     } catch (error) {
       console.error('Failed to delete customer:', error);
@@ -211,7 +213,10 @@ export default function CustomerDetailPage() {
       breadcrumbs={[
         { label: 'Dashboard', href: '/' },
         { label: 'Customers', href: '/users' },
-        { label: `${customer.firstName} ${customer.lastName}`, isCurrent: true },
+        {
+          label: `${customer.firstName} ${customer.lastName}`,
+          isCurrent: true,
+        },
       ]}
     >
       {/* Header */}
@@ -229,7 +234,9 @@ export default function CustomerDetailPage() {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={() => { void handleToggleStatus(); }}
+            onClick={() => {
+              void handleToggleStatus();
+            }}
             disabled={isSubmitting}
           >
             {customer.isActive ? (
@@ -246,7 +253,9 @@ export default function CustomerDetailPage() {
           </Button>
           <Button
             variant="destructive"
-            onClick={() => { void handleDeleteCustomer(); }}
+            onClick={() => {
+              void handleDeleteCustomer();
+            }}
             disabled={isSubmitting}
           >
             <Trash2 className="mr-2 h-4 w-4" />
@@ -277,8 +286,13 @@ export default function CustomerDetailPage() {
                 <h2 className="text-xl font-semibold">
                   {customer.firstName} {customer.lastName}
                 </h2>
-                <p className="text-muted-foreground">Customer ID: {customer._id}</p>
-                <Badge variant={customer.isActive ? 'default' : 'secondary'} className="mt-2">
+                <p className="text-muted-foreground">
+                  Customer ID: {customer._id}
+                </p>
+                <Badge
+                  variant={customer.isActive ? 'default' : 'secondary'}
+                  className="mt-2"
+                >
                   {customer.isActive ? 'Active' : 'Inactive'}
                 </Badge>
               </div>
@@ -309,12 +323,18 @@ export default function CustomerDetailPage() {
                 <h3 className="font-medium">Statistics</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="text-center p-3 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold">{customer.orderCount}</div>
+                    <div className="text-2xl font-bold">
+                      {customer.orderCount}
+                    </div>
                     <div className="text-xs text-muted-foreground">Orders</div>
                   </div>
                   <div className="text-center p-3 bg-muted rounded-lg">
-                    <div className="text-2xl font-bold">{formatCurrency(customer.totalSpent)}</div>
-                    <div className="text-xs text-muted-foreground">Total Spent</div>
+                    <div className="text-2xl font-bold">
+                      {formatCurrency(customer.totalSpent)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Total Spent
+                    </div>
                   </div>
                 </div>
               </div>
@@ -364,9 +384,13 @@ export default function CustomerDetailPage() {
                           <p className="text-sm text-muted-foreground">
                             {address.city}, {address.state} {address.postalCode}
                           </p>
-                          <p className="text-sm text-muted-foreground">{address.country}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {address.country}
+                          </p>
                           {address.isDefault && (
-                            <Badge variant="outline" className="mt-1">Default</Badge>
+                            <Badge variant="outline" className="mt-1">
+                              Default
+                            </Badge>
                           )}
                         </div>
                       </div>
@@ -393,27 +417,36 @@ export default function CustomerDetailPage() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {orders.map((order) => (
+                  {orders.map(order => (
                     <div key={order._id} className="p-4 border rounded-lg">
                       <div className="flex items-center justify-between mb-3">
                         <div>
-                          <h4 className="font-medium">Order #{order.orderNumber}</h4>
+                          <h4 className="font-medium">
+                            Order #{order.orderNumber}
+                          </h4>
                           <p className="text-sm text-muted-foreground">
                             {formatDate(order.createdAt)}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium">{formatCurrency(order.totalAmount)}</p>
+                          <p className="font-medium">
+                            {formatCurrency(order.totalAmount)}
+                          </p>
                           <Badge variant={getOrderStatusVariant(order.status)}>
                             {order.status}
                           </Badge>
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
-                        {order.items.map((item) => (
-                          <div key={item._id} className="flex justify-between text-sm">
-                            <span>{item.productName} x{item.quantity}</span>
+                        {order.items.map(item => (
+                          <div
+                            key={item._id}
+                            className="flex justify-between text-sm"
+                          >
+                            <span>
+                              {item.productName} x{item.quantity}
+                            </span>
                             <span>{formatCurrency(item.total)}</span>
                           </div>
                         ))}
@@ -428,4 +461,4 @@ export default function CustomerDetailPage() {
       </div>
     </PageLayout>
   );
-} 
+}

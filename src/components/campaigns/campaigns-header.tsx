@@ -21,4 +21,4 @@ export function CampaignsHeader({ onAddCampaign }: CampaignsHeaderProps) {
       }}
     />
   );
-} 
+}

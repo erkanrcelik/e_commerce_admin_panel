@@ -57,7 +57,12 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
     },
   });
 
-  const { register, handleSubmit, formState: { errors }, reset } = form;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = form;
 
   /**
    * Handle form submission
@@ -65,7 +70,7 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
   const onSubmit = async (data: VendorFormData) => {
     try {
       setIsLoading(true);
-      
+
       // Register new vendor using AuthService
       const registerData = {
         ...data,
@@ -73,9 +78,9 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
       };
 
       await AuthService.register(registerData);
-      
+
       toast.success('Vendor registered successfully');
-      
+
       // Create a mock vendor object for the success callback
       const vendorData: AdminSeller = {
         _id: 'temp-id', // This will be replaced when the vendor list is refreshed
@@ -114,13 +119,15 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      
+
       onSuccess(vendorData);
       onClose();
       reset();
     } catch (error) {
       console.error('Vendor registration error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to register vendor');
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to register vendor'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -140,11 +147,17 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
         <DialogHeader>
           <DialogTitle>Add New Vendor</DialogTitle>
           <DialogDescription>
-            Register a new vendor account. The vendor will receive an email to verify their account.
+            Register a new vendor account. The vendor will receive an email to
+            verify their account.
           </DialogDescription>
         </DialogHeader>
-        
-        <form onSubmit={(e) => { void handleSubmit(onSubmit)(e); }} className="space-y-4">
+
+        <form
+          onSubmit={e => {
+            void handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First Name</Label>
@@ -155,10 +168,12 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
                 className={errors.firstName ? 'border-red-500' : ''}
               />
               {errors.firstName && (
-                <p className="text-sm text-red-500">{errors.firstName.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.firstName.message}
+                </p>
               )}
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="lastName">Last Name</Label>
               <Input
@@ -168,7 +183,9 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
                 className={errors.lastName ? 'border-red-500' : ''}
               />
               {errors.lastName && (
-                <p className="text-sm text-red-500">{errors.lastName.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.lastName.message}
+                </p>
               )}
             </div>
           </div>
@@ -196,7 +213,9 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
               className={errors.phoneNumber ? 'border-red-500' : ''}
             />
             {errors.phoneNumber && (
-              <p className="text-sm text-red-500">{errors.phoneNumber.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.phoneNumber.message}
+              </p>
             )}
           </div>
 
@@ -216,17 +235,21 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="role">Role</Label>
-            <Input
-              id="role"
-              value="Seller"
-              disabled
-              className="bg-gray-50"
-            />
-            <p className="text-xs text-gray-500">Vendors are automatically registered as sellers</p>
+            <Input id="role" value="Seller" disabled className="bg-gray-50" />
+            <p className="text-xs text-gray-500">
+              Vendors are automatically registered as sellers
+            </p>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => { handleClose(); }} disabled={isLoading}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                handleClose();
+              }}
+              disabled={isLoading}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isLoading}>
@@ -237,4 +260,4 @@ export function VendorForm({ isOpen, onClose, onSuccess }: VendorFormProps) {
       </DialogContent>
     </Dialog>
   );
-} 
+}
