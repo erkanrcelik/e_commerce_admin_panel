@@ -1,11 +1,23 @@
 import { VerifyCodeForm } from '@/components/auth/verify-code-form';
+import { Suspense } from 'react';
 
 /**
  * Verify code page component
  * Renders the code verification form for password reset
  */
-export default function VerifyCodePage() {
+function VerifyCodePageContent() {
   return <VerifyCodeForm />;
+}
+
+/**
+ * Verify code page with Suspense boundary
+ */
+export default function VerifyCodePage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyCodePageContent />
+    </Suspense>
+  );
 }
 
 /**
@@ -13,5 +25,5 @@ export default function VerifyCodePage() {
  */
 export const metadata = {
   title: 'Verify Code',
-  description: 'Enter the verification code sent to your email.',
-};
+  description: 'Enter the verification code sent to your email to complete the process.',
+}; 

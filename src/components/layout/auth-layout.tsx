@@ -43,24 +43,24 @@ export function AuthLayout({
   return (
     <>
       <Head>
-        <title>{title} | Playable Factory Admin</title>
-        <meta name="description" content="Playable Factory Admin Panel - Authentication and account management." />
+        <title>{title} | Admin Panel</title>
+        <meta name="description" content="Admin Panel - Authentication and account management for Admins." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div
-        className={cn('flex flex-col gap-6 w-full max-w-5xl mx-auto', className)}
+        className={cn('flex flex-col gap-6 w-full max-w-4xl mx-auto', className)}
         {...props}
       >
-        <Card className="overflow-hidden p-0 shadow-2xl border-0">
+        <Card className="overflow-hidden p-0 shadow-xl">
           <CardContent className="grid p-0 lg:grid-cols-2">
             {/* Form Section */}
             <div className="p-8 lg:p-12 flex items-center">
-              <div className="flex flex-col gap-6 w-full max-w-lg mx-auto lg:mx-0 lg:max-w-none">
+              <div className="flex flex-col gap-6 w-full max-w-md mx-auto lg:mx-0 lg:max-w-none">
                 {/* Header */}
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-3xl font-bold">{title}</h1>
-                  <p className="text-muted-foreground text-balance mt-2">{subtitle}</p>
-                  <span className="mt-3 inline-block px-4 py-2 text-sm font-semibold bg-purple-100 text-purple-700 rounded-full">Admin Panel</span>
+                  <h1 className="text-2xl font-bold">{title}</h1>
+                  <p className="text-muted-foreground text-balance">{subtitle}</p>
+                  <span className="mt-2 inline-block px-3 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded-full">Admin Panel</span>
                 </div>
 
                 {/* Error Alert */}
@@ -91,10 +91,10 @@ export function AuthLayout({
             <div className="bg-gradient-to-br from-indigo-500/10 to-purple-600/5 relative hidden lg:block">
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-transparent" />
               <div className="relative h-full flex items-center justify-center p-12">
-                <div className="text-center space-y-6">
-                  <div className="w-32 h-32 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl">
+                <div className="text-center space-y-4">
+                  <div className="w-24 h-24 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                     <svg
-                      className="w-16 h-16 text-white"
+                      className="w-12 h-12 text-white"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -107,13 +107,14 @@ export function AuthLayout({
                       />
                     </svg>
                   </div>
-                  <h3 className="text-3xl font-bold text-gray-800 dark:text-gray-200">
+                  <h3 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
                     Secure & Trusted
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-400 max-w-md text-lg">
-                    Your data is protected with enterprise-grade security. Manage your platform with confidence.
+                  <p className="text-gray-600 dark:text-gray-400 max-w-sm">
+                    Your data is protected with enterprise-grade security. Shop
+                    with confidence on our platform.
                   </p>
-                  <span className="inline-block px-4 py-2 text-sm font-semibold bg-purple-100 text-purple-700 rounded-full">Admin Panel</span>
+                  <span className="inline-block px-3 py-1 text-xs font-semibold bg-purple-100 text-purple-700 rounded-full">Admin Panel</span>
                 </div>
               </div>
             </div>
