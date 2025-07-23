@@ -134,7 +134,7 @@ export function SidebarUser() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-purple-200" />
         <DropdownMenuItem 
-          onClick={handleLogout}
+          onClick={() => { void handleLogout(); }}
           className="text-red-600 hover:text-red-700 hover:bg-red-50 focus:text-red-700 focus:bg-red-50"
         >
           <LogOut className="mr-2 h-4 w-4" />

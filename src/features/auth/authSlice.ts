@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
+import { parseApiErrorMessage } from '@/lib/api-error';
 import { AuthService } from '@/services/auth.service';
 
 import type {
@@ -10,8 +11,7 @@ import type {
   LoginFormData,
   RegisterFormData,
   ResetPasswordFormData,
-  User,
-  VerifyCodeFormData
+  User
 } from '@/types';
 
 /**
@@ -40,12 +40,13 @@ export const loginUser = createAsyncThunk<
     // Handle axios error response
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as {
-        response?: { data?: { message?: string; code?: string } };
+        response?: { data?: any };
       };
       if (axiosError.response?.data) {
+        const errorMessage = parseApiErrorMessage(axiosError.response.data);
         return rejectWithValue({
-          message: axiosError.response.data.message || 'Login failed',
-          code: axiosError.response.data.code || 'LOGIN_ERROR',
+          message: errorMessage || 'Login failed',
+          code: 'LOGIN_ERROR',
         });
       }
     }
@@ -74,12 +75,13 @@ export const registerUser = createAsyncThunk<
     // Handle axios error response
     if (error && typeof error === 'object' && 'response' in error) {
       const axiosError = error as {
-        response?: { data?: { message?: string; code?: string } };
+        response?: { data?: any };
       };
       if (axiosError.response?.data) {
+        const errorMessage = parseApiErrorMessage(axiosError.response.data);
         return rejectWithValue({
-          message: axiosError.response.data.message || 'Registration failed',
-          code: axiosError.response.data.code || 'REGISTER_ERROR',
+          message: errorMessage || 'Registration failed',
+          code: 'REGISTER_ERROR',
         });
       }
     }
@@ -126,40 +128,7 @@ export const forgotPassword = createAsyncThunk<
   }
 });
 
-/**
- * Verify reset code async thunk
- * @param codeData - Reset code verification data
- */
-export const verifyResetCode = createAsyncThunk<
-  { message: string; token: string },
-  VerifyCodeFormData,
-  { rejectValue: AuthError }
->('auth/verifyResetCode', async (codeData, { rejectWithValue }) => {
-  try {
-    return await AuthService.verifyResetCode(codeData);
-  } catch (error: unknown) {
-    console.error('Verify reset code error:', error);
 
-    // Handle axios error response
-    if (error && typeof error === 'object' && 'response' in error) {
-      const axiosError = error as {
-        response?: { data?: { message?: string; code?: string } };
-      };
-      if (axiosError.response?.data) {
-        return rejectWithValue({
-          message:
-            axiosError.response.data.message || 'Code verification failed',
-          code: axiosError.response.data.code || 'VERIFY_CODE_ERROR',
-        });
-      }
-    }
-
-    return rejectWithValue({
-      message: 'Code verification failed',
-      code: 'VERIFY_CODE_ERROR',
-    });
-  }
-});
 
 /**
  * Reset password async thunk
@@ -197,15 +166,15 @@ export const resetPassword = createAsyncThunk<
 
 /**
  * Verify email async thunk
- * @param token - Email verification token
+ * @param params - Email verification parameters
  */
 export const verifyEmail = createAsyncThunk<
   { message: string },
-  string,
+  { token: string; email: string },
   { rejectValue: AuthError }
->('auth/verifyEmail', async (token, { rejectWithValue }) => {
+>('auth/verifyEmail', async (params, { rejectWithValue }) => {
   try {
-    return await AuthService.verifyEmail(token);
+    return await AuthService.verifyEmail(params.token, params.email);
   } catch (error: unknown) {
     console.error('Email verification error:', error);
 
@@ -290,8 +259,9 @@ export const getUserProfile = createAsyncThunk<
       email: userInfo.email,
       firstName: userInfo.firstName,
       lastName: userInfo.lastName,
-      role: userInfo.role as 'admin' | 'customer' | 'vendor' | 'seller',
+      role: userInfo.role as 'admin' | 'customer' | 'seller',
       isEmailVerified: userInfo.isEmailVerified,
+      isActive: userInfo.isActive,
       avatar: undefined, // API doesn't return avatar
       createdAt: userInfo.createdAt,
       updatedAt: userInfo.updatedAt,
@@ -493,20 +463,7 @@ const authSlice = createSlice({
         state.error = (action.payload as AuthError)?.message || 'Failed to send reset email';
       });
 
-    // Verify reset code cases
-    builder
-      .addCase(verifyResetCode.pending, state => {
-        state.status = 'loading';
-        state.error = null;
-      })
-      .addCase(verifyResetCode.fulfilled, state => {
-        state.status = 'idle';
-        state.error = null;
-      })
-      .addCase(verifyResetCode.rejected, (state, action) => {
-        state.status = 'idle';
-        state.error = (action.payload as AuthError)?.message || 'Code verification failed';
-      });
+
 
     // Reset password cases
     builder

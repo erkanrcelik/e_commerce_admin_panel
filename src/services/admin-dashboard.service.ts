@@ -53,7 +53,7 @@ const transformActivities = (rawActivities: RawActivityItem[]): DashboardActivit
             _id: activity.orderId,
             customerName: activity.customerName,
             totalPrice: activity.totalPrice,
-            status: (activity.orderStatus as any) || 'pending',
+            status: (activity.orderStatus as 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled') || 'pending',
             itemCount: activity.itemCount,
             createdAt: activity.createdAt,
           });

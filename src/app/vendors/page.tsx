@@ -78,7 +78,7 @@ export default function VendorsPage() {
   };
 
   /**
-   * Handle toggle status with void wrapper
+   * Handle toggle status
    */
   const handleToggleStatus = (vendor: AdminVendor) => {
     void toggleVendorStatus(vendor);
@@ -154,25 +154,25 @@ export default function VendorsPage() {
       <VendorsTable
         vendors={vendors}
         isLoading={isLoading}
-        onDelete={handleDeleteVendor}
-        onToggleStatus={handleToggleStatus}
-        onViewDetails={handleViewDetails}
+        onDelete={(vendor) => { void handleDeleteVendor(vendor); }}
+        onToggleStatus={(vendor) => { void handleToggleStatus(vendor); }}
+        onViewDetails={(vendor) => { void handleViewDetails(vendor); }}
       />
 
       {/* Delete Confirmation Dialog */}
       <VendorDeleteDialog
         vendor={deletingVendor || null}
         isOpen={!!deletingVendor}
-        onClose={handleCloseDeleteDialog}
-        onConfirm={handleConfirmDelete}
+        onClose={() => { handleCloseDeleteDialog(); }}
+        onConfirm={() => { void handleConfirmDelete(); }}
         isLoading={false}
       />
 
       {/* Add Vendor Dialog */}
       <VendorForm
         isOpen={showAddVendor}
-        onClose={handleCloseAddVendor}
-        onSuccess={handleAddVendorSuccess}
+        onClose={() => { handleCloseAddVendor(); }}
+        onSuccess={() => { void handleAddVendorSuccess(); }}
       />
     </PageLayout>
   );

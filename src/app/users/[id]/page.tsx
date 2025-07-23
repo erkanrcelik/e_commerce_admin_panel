@@ -12,14 +12,14 @@ import { Separator } from '@/components/ui/separator';
 import { AdminCustomersService } from '@/services/admin-customers.service';
 import type { AdminCustomer, CustomerOrder } from '@/types/admin-customers';
 import {
-    ArrowLeft,
-    Eye,
-    EyeOff,
-    Mail,
-    MapPin,
-    Phone,
-    ShoppingBag,
-    Trash2
+  ArrowLeft,
+  Eye,
+  EyeOff,
+  Mail,
+  MapPin,
+  Phone,
+  ShoppingBag,
+  Trash2
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -229,7 +229,7 @@ export default function CustomerDetailPage() {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={handleToggleStatus}
+            onClick={() => { void handleToggleStatus(); }}
             disabled={isSubmitting}
           >
             {customer.isActive ? (
@@ -246,7 +246,7 @@ export default function CustomerDetailPage() {
           </Button>
           <Button
             variant="destructive"
-            onClick={handleDeleteCustomer}
+            onClick={() => { void handleDeleteCustomer(); }}
             disabled={isSubmitting}
           >
             <Trash2 className="mr-2 h-4 w-4" />

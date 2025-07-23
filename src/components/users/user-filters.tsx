@@ -32,7 +32,7 @@ export function UserFilters({ filters, onFiltersChange }: UserFiltersProps) {
   };
 
   const hasActiveFilters = Object.values(filters).some(
-    value => value !== undefined && value !== ''
+    (value): value is string | boolean => value !== undefined && value !== ''
   );
 
   return (

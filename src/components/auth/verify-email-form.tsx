@@ -13,7 +13,7 @@ import { AuthLayout } from '@/components/layout';
 
 /**
  * Email verification form component
- * Handles email verification with token
+ * Handles email verification with token and email from URL parameters
  */
 export function VerifyEmailForm() {
   const dispatch = useAppDispatch();
@@ -24,21 +24,22 @@ export function VerifyEmailForm() {
   const [isVerified, setIsVerified] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  // Get token from URL params
+  // Get token and email from URL params
   const token = searchParams.get('token');
+  const email = searchParams.get('email');
 
   useEffect(() => {
     // Auto-verify email when component mounts
-    if (token && !isVerifying && !isVerified && !isError) {
+    if (token && email && !isVerifying && !isVerified && !isError) {
       void handleVerifyEmail();
     }
-  }, [token, isVerifying, isVerified, isError]);
+  }, [token, email, isVerifying, isVerified, isError]);
 
   /**
    * Handle email verification
    */
   const handleVerifyEmail = async () => {
-    if (!token) return;
+    if (!token || !email) return;
 
     let loadingToastId: string | number | undefined;
 
@@ -52,8 +53,8 @@ export function VerifyEmailForm() {
         description: 'Please wait while we verify your email address',
       });
 
-      // Dispatch verify email action
-      const result = await dispatch(verifyEmail(token));
+      // Dispatch verify email action with token and email
+      const result = await dispatch(verifyEmail({ token, email }));
 
       // Dismiss loading toast
       if (loadingToastId) dismiss(loadingToastId);
@@ -113,8 +114,8 @@ export function VerifyEmailForm() {
     }
   };
 
-  // If no token provided, show error
-  if (!token) {
+  // If no token or email provided, show error
+  if (!token || !email) {
     return (
       <AuthLayout
         title="Invalid Verification Link"

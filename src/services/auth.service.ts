@@ -9,17 +9,19 @@ import type {
   AuthResponse,
   ForgotPasswordFormData,
   LoginFormData,
-  ResetPasswordFormData,
-  VerifyCodeFormData
+  ResetPasswordFormData
 } from '@/types/auth';
 
 /**
  * Authentication API service
  * Handles all authentication-related API calls
+ * Updated according to the latest API documentation
  */
 export class AuthService {
   /**
    * Register new user
+   * @param userData - User registration data
+   * @returns Promise with success message
    */
   static async register(userData: {
     email: string;
@@ -39,13 +41,15 @@ export class AuthService {
   }
 
   /**
-   * Login user with email and password
+   * Login user with email, password and platform
+   * @param credentials - Login credentials with platform
+   * @returns Promise with auth response including tokens
    */
   static async login(credentials: LoginFormData): Promise<AuthResponse> {
     try {
       const response = await api.post<AuthResponse>('/auth/login', {
         ...credentials,
-        platform: 'admin'
+        platform: 'admin' // Admin platform for admin panel
       });
       
       console.log('Login response:', response.data);
@@ -72,6 +76,8 @@ export class AuthService {
   
   /**
    * Send forgot password email
+   * @param emailData - Email for password reset
+   * @returns Promise with success message
    */
   static async forgotPassword(
     emailData: ForgotPasswordFormData
@@ -89,25 +95,9 @@ export class AuthService {
   }
 
   /**
-   * Verify reset code
-   */
-  static async verifyResetCode(
-    codeData: VerifyCodeFormData
-  ): Promise<{ message: string; token: string }> {
-    try {
-      const response = await api.post<{ message: string; token: string }>(
-        '/auth/verify-reset-code',
-        codeData
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Verify reset code API error:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Reset password with token
+   * Reset password with token, email and new password
+   * @param resetData - Token, email and new password
+   * @returns Promise with success message
    */
   static async resetPassword(
     resetData: ResetPasswordFormData
@@ -125,12 +115,15 @@ export class AuthService {
   }
 
   /**
-   * Verify email with token
+   * Verify email with token (GET request)
+   * @param token - Email verification token
+   * @param email - Email to verify
+   * @returns Promise with success message
    */
-  static async verifyEmail(token: string): Promise<{ message: string }> {
+  static async verifyEmail(token: string, email: string): Promise<{ message: string }> {
     try {
       const response = await api.get<{ message: string }>(
-        `/auth/verify-email?token=${token}`
+        `/auth/verify-email?token=${token}&email=${encodeURIComponent(email)}`
       );
       return response.data;
     } catch (error) {
@@ -140,7 +133,8 @@ export class AuthService {
   }
 
   /**
-   * Logout user
+   * Logout user and invalidate tokens
+   * @returns Promise<void>
    */
   static async logout(): Promise<void> {
     try {
@@ -161,7 +155,8 @@ export class AuthService {
   }
 
   /**
-   * Refresh access token
+   * Refresh access token using refresh token
+   * @returns Promise with new auth response
    */
   static async refreshToken(): Promise<AuthResponse> {
     try {
@@ -190,7 +185,8 @@ export class AuthService {
   }
 
   /**
-   * Get user info
+   * Get user profile information
+   * @returns Promise with user profile data
    */
   static async getUserInfo(): Promise<{
     id: string;
@@ -226,6 +222,8 @@ export class AuthService {
 
   /**
    * Resend email verification
+   * @param email - Email to resend verification to
+   * @returns Promise with success message
    */
   static async resendVerification(email: string): Promise<{ message: string }> {
     try {

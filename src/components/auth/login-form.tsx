@@ -146,7 +146,7 @@ export function LoginForm() {
             id="password"
             type="password"
             placeholder="Enter your password"
-            {...register('password')}
+            {...register('password')} 
             className={errors.password ? 'border-destructive' : ''}
             disabled={isLoading}
           />

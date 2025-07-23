@@ -27,8 +27,8 @@ interface FilterField {
 }
 
 interface FilterBarProps {
-  filters: Record<string, any>;
-  onFiltersChange: (filters: Record<string, any>) => void;
+  filters: Record<string, string | number | boolean | undefined>;
+  onFiltersChange: (filters: Record<string, string | number | boolean | undefined>) => void;
   fields: FilterField[];
   searchPlaceholder?: string;
   showClearButton?: boolean;
@@ -41,7 +41,7 @@ export function FilterBar({
   searchPlaceholder = 'Search...',
   showClearButton = true,
 }: FilterBarProps) {
-  const handleFilterChange = (key: string, value: any) => {
+  const handleFilterChange = (key: string, value: string | number | boolean | undefined) => {
     onFiltersChange({
       ...filters,
       [key]: value === '' || value === 'all' ? undefined : value,

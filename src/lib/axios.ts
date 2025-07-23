@@ -125,20 +125,33 @@ export const isAuthenticated = (): boolean => {
 };
 
 /**
- * Token validation utilities
+ * JWT Token Interface
  */
+interface JwtPayload {
+  exp: number;
+  iat: number;
+  sub: string;
+  [key: string]: unknown;
+}
+
 const tokenUtils = {
   /**
    * Decode JWT token
    */
-  decodeToken: (token: string) => {
+  decodeToken: (token: string): JwtPayload | null => {
     try {
       const base64Url = token.split('.')[1];
       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
       const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
         return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
       }).join(''));
-      return JSON.parse(jsonPayload);
+      const decoded = JSON.parse(jsonPayload) as JwtPayload;
+      
+      // Validate that it has required fields
+      if (typeof decoded.exp === 'number' && typeof decoded.iat === 'number') {
+        return decoded;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -147,7 +160,7 @@ const tokenUtils = {
   /**
    * Check if token is expired
    */
-  isTokenExpired: (token: string) => {
+  isTokenExpired: (token: string): boolean => {
     if (!token) return true;
 
     const decoded = tokenUtils.decodeToken(token);
@@ -161,7 +174,7 @@ const tokenUtils = {
   /**
    * Get time left for token (in seconds)
    */
-  getTokenTimeLeft: (token: string) => {
+  getTokenTimeLeft: (token: string): number => {
     if (!token) return 0;
 
     const decoded = tokenUtils.decodeToken(token);

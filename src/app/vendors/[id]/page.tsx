@@ -202,7 +202,7 @@ export default function VendorDetailPage() {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            onClick={handleToggleStatus}
+            onClick={() => { void handleToggleStatus(); }}
             disabled={isDeleting}
           >
             {vendor.isActive ? (
@@ -220,7 +220,7 @@ export default function VendorDetailPage() {
           
           <Button
             variant="destructive"
-            onClick={handleDeleteVendor}
+            onClick={() => { void handleDeleteVendor(); }}
             disabled={isDeleting}
           >
             <Trash2 className="w-4 h-4 mr-2" />

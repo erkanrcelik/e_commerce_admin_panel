@@ -8,19 +8,19 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { clearError, verifyResetCode } from '@/features/auth/authSlice';
+import { clearError, resetPassword } from '@/features/auth/authSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/redux';
 import { useToast } from '@/hooks/use-toast';
 import {
-    verifyCodeSchema,
-    type VerifyCodeFormData,
+    resetPasswordSchema,
+    type ResetPasswordFormData,
 } from '@/utils/validation';
 
 import { AuthLayout } from '@/components/layout';
 
 /**
- * Verify code form component
- * Handles reset code verification
+ * Verify code form component for password reset
+ * Handles password reset with token (1234) and email
  */
 export function VerifyCodeForm() {
   const dispatch = useAppDispatch();
@@ -38,10 +38,12 @@ export function VerifyCodeForm() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<VerifyCodeFormData>({
-    resolver: zodResolver(verifyCodeSchema),
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      code: '',
+      password: '',
+      confirmPassword: '',
+      token: '1234', // Static token for testing
       email: email || '',
     },
   });
@@ -50,7 +52,7 @@ export function VerifyCodeForm() {
    * Handle form submission
    * @param data - Form data from React Hook Form
    */
-  const onSubmit = async (data: VerifyCodeFormData) => {
+  const onSubmit = async (data: ResetPasswordFormData) => {
     let loadingToastId: string | number | undefined;
 
     try {
@@ -59,40 +61,47 @@ export function VerifyCodeForm() {
 
       // Show loading toast
       loadingToastId = showLoading({
-        message: 'Verifying code...',
-        description: 'Please wait while we verify your code',
+        message: 'Resetting password...',
+        description: 'Please wait while we update your password',
       });
 
-      // Dispatch verify code action
-      const result = await dispatch(verifyResetCode(data));
+      // Dispatch reset password action directly
+      const result = await dispatch(resetPassword(data));
 
       // Dismiss loading toast
       if (loadingToastId) dismiss(loadingToastId);
 
-      if (verifyResetCode.fulfilled.match(result)) {
+      if (resetPassword.fulfilled.match(result)) {
         // Success
         showSuccess({
-          message: 'Code verified successfully!',
-          description: 'You can now reset your password.',
-          duration: 3000,
+          message: 'Password reset successfully!',
+          description: 'Your password has been updated. You can now sign in with your new password.',
+          duration: 4000,
+          action: {
+            label: 'Sign In',
+            onClick: () => {
+              router.push('/login');
+            },
+          },
         });
         
         // Reset form
         reset();
         
-        // Redirect to reset password page with token
-        const token = result.payload?.token || 'temp-token';
-        router.push(`/reset-password?token=${token}`);
-      } else if (verifyResetCode.rejected.match(result)) {
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      } else if (resetPassword.rejected.match(result)) {
         // Error
-        const errorMessage = result.payload?.message || 'Code verification failed';
+        const errorMessage = result.payload?.message || 'Password reset failed';
         showError({
-          message: 'Code verification failed',
+          message: 'Password reset failed',
           description: errorMessage,
           action: {
             label: 'Try again',
             onClick: () => {
-              window.location.reload();
+              void window.location.reload();
             },
           },
         });
@@ -101,9 +110,9 @@ export function VerifyCodeForm() {
       // Dismiss loading toast if still showing
       if (loadingToastId) dismiss(loadingToastId);
 
-      console.error('Code verification error:', error);
+      console.error('Password reset error:', error);
       showError({
-        message: 'Code verification failed',
+        message: 'Password reset failed',
         description: 'An unexpected error occurred. Please try again.',
         action: {
           label: 'Try again',
@@ -148,10 +157,10 @@ export function VerifyCodeForm() {
 
   return (
     <AuthLayout
-      title="Verify Code"
-      subtitle={`Enter the verification code sent to ${email}`}
+      title="Reset Password"
+      subtitle={`Enter new password for ${email}`}
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={(e) => { void handleSubmit(onSubmit)(e); }} className="space-y-4">
         {/* Static Code Notice */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <p className="text-sm text-blue-800 dark:text-blue-200">
@@ -159,28 +168,43 @@ export function VerifyCodeForm() {
           </p>
         </div>
 
-        {/* Code Field */}
+        {/* Password Field */}
         <div className="space-y-2">
-          <Label htmlFor="code">Verification Code</Label>
+          <Label htmlFor="password">New Password</Label>
           <Input
-            id="code"
-            type="text"
-            placeholder="Enter verification code"
-            {...register('code')}
+            id="password"
+            type="password"
+            placeholder="Enter your new password"
+            {...register('password')}
             disabled={isLoading}
-            maxLength={4}
           />
-          {errors.code && (
-            <p className="text-sm text-destructive">{errors.code.message}</p>
+          {errors.password && (
+            <p className="text-sm text-destructive">{errors.password.message}</p>
           )}
         </div>
 
-        {/* Hidden Email Field */}
+        {/* Confirm Password Field */}
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword">Confirm New Password</Label>
+          <Input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm your new password"
+            {...register('confirmPassword')}
+            disabled={isLoading}
+          />
+          {errors.confirmPassword && (
+            <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
+          )}
+        </div>
+
+        {/* Hidden Fields */}
+        <input type="hidden" {...register('token')} />
         <input type="hidden" {...register('email')} />
 
         {/* Submit Button */}
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Verifying Code...' : 'Verify Code'}
+          {isLoading ? 'Resetting Password...' : 'Reset Password'}
         </Button>
 
         {/* Back to Forgot Password Link */}

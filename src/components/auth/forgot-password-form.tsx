@@ -86,7 +86,7 @@ export function ForgotPasswordForm() {
           action: {
             label: 'Try again',
             onClick: () => {
-              window.location.reload();
+              void window.location.reload();
             },
           },
         });
@@ -114,7 +114,7 @@ export function ForgotPasswordForm() {
       title="Forgot Password"
       subtitle="Enter your email address and we'll send you a link to reset your password"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={(e) => { void handleSubmit(onSubmit)(e); }} className="space-y-4">
         {/* Static Code Notice */}
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
           <p className="text-sm text-blue-800 dark:text-blue-200">

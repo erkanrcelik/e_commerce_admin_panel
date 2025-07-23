@@ -8,18 +8,20 @@ export type AuthStatus =
   | 'unauthenticated';
 
 /**
- * User data structure
+ * User data structure according to API documentation
  */
 export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: 'admin' | 'customer' | 'vendor' | 'seller';
+  role: 'admin' | 'customer' | 'seller';
   isEmailVerified: boolean;
+  isActive: boolean;
+  phoneNumber?: string;
   avatar?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
@@ -30,9 +32,9 @@ export interface AuthState {
   status: AuthStatus;
   error: string | null;
 }
-
+  
 /**
- * Login form data structure
+ * Login form data structure with platform
  */
 export interface LoginFormData {
   email: string;
@@ -60,7 +62,7 @@ export interface ForgotPasswordFormData {
 }
 
 /**
- * Verify code form data
+ * Verify code form data for password reset
  */
 export interface VerifyCodeFormData {
   code: string;
@@ -68,19 +70,21 @@ export interface VerifyCodeFormData {
 }
 
 /**
- * Password reset form data
+ * Password reset form data with token and email
  */
 export interface ResetPasswordFormData {
   password: string;
   confirmPassword: string;
   token: string;
+  email: string;
 }
 
 /**
- * Email verification data
+ * Email verification data with token and email
  */
 export interface EmailVerificationData {
   token: string;
+  email: string;
 }
 
 /**
