@@ -8,35 +8,36 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
 } from '@/components/ui/dialog';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { X } from 'lucide-react';
 
 import { AdminCategoriesService } from '@/services/admin-categories.service';
 import type {
-  AdminCampaign,
-  CampaignCategory,
-  CreatePlatformCampaignRequest,
-  DiscountType,
-  UpdateCampaignRequest,
+    AdminCampaign,
+    CampaignCategory,
+    CreatePlatformCampaignRequest,
+    DiscountType,
+    UpdateCampaignRequest,
 } from '@/types/admin-campaigns';
 import type { AdminCategory } from '@/types/admin-categories';
 import {
-  campaignFormSchema,
-  type CampaignFormData,
+    campaignFormSchema,
+    type CampaignFormData,
 } from '@/types/campaign-form';
 
 interface CampaignFormProps {
@@ -72,6 +73,7 @@ export function CampaignForm({
     defaultValues: {
       name: '',
       description: '',
+      imageUrl: '',
       discountType: 'percentage',
       discountValue: 0,
       startDate: '',
@@ -144,6 +146,7 @@ export function CampaignForm({
         reset({
           name: campaign.name,
           description: campaign.description,
+          imageUrl: campaign.imageUrl || '',
           discountType: campaign.discountType,
           discountValue: campaign.discountValue,
           startDate: campaign.startDate ? campaign.startDate.split('T')[0] : '',
@@ -166,6 +169,7 @@ export function CampaignForm({
         reset({
           name: '',
           description: '',
+          imageUrl: '',
           discountType: 'percentage',
           discountValue: 0,
           startDate: tomorrow.toISOString().split('T')[0],
@@ -209,7 +213,7 @@ export function CampaignForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? 'Edit Campaign' : 'Create Platform Campaign'}
@@ -256,6 +260,14 @@ export function CampaignForm({
                   </p>
                 )}
               </div>
+
+              <ImageUpload
+                label="Campaign Image"
+                value={watch('imageUrl')}
+                onChange={(value) => setValue('imageUrl', value)}
+                maxSize={5}
+                accept="image/*"
+              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">

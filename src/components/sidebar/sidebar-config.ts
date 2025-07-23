@@ -1,4 +1,4 @@
-import { BarChart3, Megaphone, Store, Tag, Users } from 'lucide-react';
+import { BarChart3, Megaphone, MessageSquare, Store, Tag, Users } from 'lucide-react';
 
 import type { SidebarConfig } from './types';
 
@@ -40,6 +40,11 @@ export const sidebarConfig: SidebarConfig = {
       title: 'Campaigns',
       url: '/campaigns',
       icon: Megaphone,
+    },
+    {
+      title: 'Reviews',
+      url: '/reviews',
+      icon: MessageSquare,
     },
   ],
 };

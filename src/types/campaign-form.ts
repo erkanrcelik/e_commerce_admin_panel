@@ -18,6 +18,10 @@ export const campaignFormSchema = z
       .max(500, 'Description must be less than 500 characters')
       .trim(),
 
+    imageUrl: z
+      .string()
+      .optional(),
+
     discountType: z.union([z.literal('percentage'), z.literal('amount')]),
 
     discountValue: z

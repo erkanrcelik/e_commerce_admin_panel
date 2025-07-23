@@ -7,16 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
 import type {
-  AdminCampaign,
-  CampaignStatus,
-  CampaignType,
+    AdminCampaign,
+    CampaignStatus,
+    CampaignType,
 } from '@/types/admin-campaigns';
 
 interface CampaignCardProps {
@@ -92,20 +92,20 @@ export function CampaignCard({
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative h-12 w-12 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="relative h-16 w-16 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center overflow-hidden">
               {campaign.imageUrl ? (
                 <Image
                   src={campaign.imageUrl}
                   alt={campaign.name}
                   fill
-                  className="object-cover rounded-lg"
+                  className="object-cover"
                 />
               ) : (
-                <Tag className="h-6 w-6 text-white" />
+                <Tag className="h-8 w-8 text-white" />
               )}
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-lg">{campaign.name}</h3>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-lg truncate">{campaign.name}</h3>
               <p className="text-sm text-muted-foreground line-clamp-2">
                 {campaign.description}
               </p>
